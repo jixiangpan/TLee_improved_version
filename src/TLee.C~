@@ -1,0 +1,363 @@
+#include "../inc/TLee.h"
+
+
+///////////////////////////////////////////////////////// ccc
+
+void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatrixD matrix_data, TMatrixD matrix_syst, int index)
+{
+  /////////////////////////////////////////////////////////////////////////////////////////////
+  if( num_X==0 ) {
+    TMatrixD matrix_delta = matrix_pred - matrix_data;
+    TMatrixD matrix_delta_T( matrix_delta.GetNcols(), matrix_delta.GetNrows() );
+    matrix_delta_T.Transpose( matrix_delta );
+
+    int rows = matrix_syst.GetNrows();
+    TMatrixD matrix_stat(rows, rows);
+    for(int i=0; i<rows; i++) {
+      double val_pred = matrix_pred(0, i);
+      double val_data = matrix_data(0, i);      
+      matrix_stat(i,i) = val_pred;      
+      if( val_data==1 ) {
+	if( val_pred<0.461 ) {// DocDB-32520, when the prediction is sufficiently low
+	  double numerator = pow(val_pred-val_data, 2);
+	  double denominator = 2*( val_pred - val_data + val_data*log(val_data/val_pred) );
+	  matrix_stat(i,i) = numerator/denominator;
+	}
+      }      
+      if( (val_pred==val_data) && (val_pred==0) ) matrix_stat(i,i) = 1e-6;
+    }
+    
+    TMatrixD matrix_total_cov(rows, rows);
+    matrix_total_cov = matrix_stat + matrix_syst;
+
+    TMatrixD matrix_total_cov_inv = matrix_total_cov;
+    matrix_total_cov_inv.Invert();
+
+    ///
+    TMatrixD matrix_chi2 = matrix_delta * matrix_total_cov_inv *matrix_delta_T;
+    double val_chi2 = matrix_chi2(0,0);
+    double p_value = TMath::Prob( val_chi2, rows );
+    
+    cout<<endl<<TString::Format(" ---> GOF: chi2 %6.2f, ndf %3d, chi2/ndf %6.2f, p-value %10.8f",
+				val_chi2, rows, val_chi2/rows, p_value
+				)<<endl<<endl;
+
+  }
+  /////////////////////////////////////////////////////////////////////////////////////////////
+  else {
+    
+  }
+  
+}
+  
+///////////////////////////////////////////////////////// ccc
+
+void TLee::Set_Collapse()
+{
+  //////////////////////////////////////// pred
+
+  map_pred_spectrum_newworld_bin.clear();
+  TMatrixD matrix_pred_oldworld(1, bins_oldworld);
+  for(int ibin=0; ibin<bins_oldworld; ibin++) matrix_pred_oldworld(0, ibin) = map_input_spectrum_oldworld_bin[ibin];
+
+  matrix_pred_newworld.Clear();
+  matrix_pred_newworld.ResizeTo(1, bins_newworld);
+  matrix_pred_newworld = matrix_pred_oldworld * matrix_transform;
+  if( bins_newworld!=matrix_pred_newworld.GetNcols() ) { cerr<<"bins_newworld!=matrix_pred_newworld.GetNcols()"<<endl; exit(1); }
+  for(int ibin=0; ibin<bins_newworld; ibin++) map_pred_spectrum_newworld_bin[ibin] = matrix_pred_newworld(0, ibin);
+  
+  ////////////////////////////////////////
+  
+  matrix_absolute_cov_oldworld.Clear();
+  matrix_absolute_cov_oldworld.ResizeTo( bins_oldworld, bins_oldworld );
+
+  if( flag_syst_flux_Xs ) matrix_absolute_cov_oldworld += matrix_input_cov_flux_Xs;
+  if( flag_syst_detector ) matrix_absolute_cov_oldworld += matrix_input_cov_detector;
+  if( flag_syst_additional ) matrix_absolute_cov_oldworld += matrix_input_cov_additional;
+
+  TMatrixD matrix_transform_T( bins_newworld, bins_oldworld );
+  matrix_transform_T.Transpose( matrix_transform );
+
+  matrix_absolute_cov_newworld.Clear();
+  matrix_absolute_cov_newworld.ResizeTo(bins_newworld, bins_newworld);
+  matrix_absolute_cov_newworld = matrix_transform_T * matrix_absolute_cov_oldworld * matrix_transform;
+
+  if( flag_syst_mc_stat ) {
+    for(int ibin=0; ibin<bins_newworld; ibin++) {
+      double val_mc_stat_cov = gh_mc_stat_bin[ibin]->Eval( scaleF_Lee );
+      matrix_absolute_cov_newworld(ibin, ibin) += val_mc_stat_cov;
+    }
+  }
+  
+}
+
+///////////////////////////////////////////////////////// ccc
+
+void TLee::Set_TransformMatrix()
+{
+   cout<<endl<<" ---> Set_TransformMatrix"<<endl<<endl;
+
+   ////////////////////////////// correponding to "Set_Spectra_MatrixCov"
+
+}
+
+///////////////////////////////////////////////////////// ccc
+
+void TLee::Set_POT_implement()
+{
+  cout<<endl<<" ---> Set_POT_implement"<<endl<<endl;
+  
+  ////////////////////////////// pred
+
+  int line_pred = -1;
+  for( auto it_ch=map_input_spectrum_ch_bin.begin(); it_ch!=map_input_spectrum_ch_bin.end(); it_ch++ ) {
+    int ich = it_ch->first;
+    for(int ibin=0; ibin<(int)map_input_spectrum_ch_bin[ich].size(); ibin++) {
+      line_pred++;
+      map_input_spectrum_ch_bin[ich][ibin] *= scaleF_POT;
+      map_input_spectrum_oldworld_bin[line_pred] *= scaleF_POT;
+    }// ibin
+  }// ich
+  
+  ////////////////////////////// data
+
+  int line_data = -1;
+  for( auto it_ch=map_data_spectrum_ch_bin.begin(); it_ch!=map_data_spectrum_ch_bin.end(); it_ch++ ) {
+    int ich = it_ch->first;
+    for( int ibin=0; ibin<(int)map_data_spectrum_ch_bin[ich].size(); ibin++ ) {
+      line_data++;
+      map_data_spectrum_ch_bin[ich][ibin] *= scaleF_POT;
+      map_data_spectrum_newworld_bin[line_data] *= scaleF_POT;
+    }// ibin
+  }// ich
+
+  matrix_data_newworld.Clear();
+  matrix_data_newworld.ResizeTo(1, bins_newworld);
+  for(int ibin=0; ibin<bins_newworld; ibin++) {
+    matrix_data_newworld(0, ibin) = map_data_spectrum_newworld_bin[ibin];
+  }
+    
+  ////////////////////////////// flux_Xs, detector, additional, mc_stat
+
+  double scaleF_POT2 = scaleF_POT * scaleF_POT;
+  
+  for(int ibin=0; ibin<bins_oldworld; ibin++) {
+    for(int jbin=0; jbin<bins_oldworld; jbin++) {      
+      matrix_input_cov_flux_Xs(ibin, jbin) *= scaleF_POT2;
+      matrix_input_cov_detector(ibin, jbin) *= scaleF_POT2;
+      matrix_input_cov_additional(ibin, jbin) *= scaleF_POT2;      
+    }// jbin
+  }// ibin
+
+  for(auto it=gh_mc_stat_bin.begin(); it!=gh_mc_stat_bin.end(); it++) {
+    int ibin = it->first; //cout<<Form(" ---> check %3d, %3d", ibin, gh_mc_stat_bin[ibin]->GetN())<<endl;
+    for(int idx=0; idx<ibin; idx++) {
+      double x(0), y(0);
+      gh_mc_stat_bin[ibin]->GetPoint(idx, x, y);
+      gh_mc_stat_bin[ibin]->SetPoint(idx, x, y*scaleF_POT2);
+    }// ipoint
+  }// ibin
+  
+}
+
+///////////////////////////////////////////////////////// ccc
+
+void TLee::Set_Spectra_MatrixCov()
+{
+  /// spectra should be consist with matrix-cov order
+  
+  cout<<endl<<" ---> Set_Spectra_MatrixCov"<<endl<<endl;
+  TString roostr = "";
+
+  ////////////////////////////////////// pred
+  
+  // https://www.phy.bnl.gov/xqian/talks/wire-cell/Leeana/configurations/cov_input.txt  
+  map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
+  map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
+  map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
+  map_input_spectrum_ch_str[4] = "numuCC_PC_norm";
+  map_input_spectrum_ch_str[5] = "CCpi0_FC_norm";
+  map_input_spectrum_ch_str[6] = "CCpi0_PC_norm";
+  map_input_spectrum_ch_str[7] = "NCpi0_norm";
+  map_input_spectrum_ch_str[8] = "Lee_FC";
+  map_input_spectrum_ch_str[9] = "Lee_PC";
+  map_input_spectrum_ch_str[10]= "nueCC_FC_ext";
+  map_input_spectrum_ch_str[11]= "nueCC_PC_ext";
+  map_input_spectrum_ch_str[12]= "numuCC_FC_ext";
+  map_input_spectrum_ch_str[13]= "numuCC_PC_ext";
+  map_input_spectrum_ch_str[14]= "CCpi0_FC_ext";
+  map_input_spectrum_ch_str[15]= "CCpi0_PC_ext";
+  map_input_spectrum_ch_str[16]= "NCpi0_ext";
+
+  map_Lee_ch[8] = 1;
+  map_Lee_ch[9] = 1;
+
+  //////////////////
+  //////////////////
+  
+  roostr = "./data_framework/merge_all.root";
+  TFile *file_spectra = new TFile(roostr, "read");
+
+  ///
+  TMatrixD *mat_collapse = (TMatrixD*)file_spectra->Get("mat_collapse");
+  matrix_transform.Clear();
+  matrix_transform.ResizeTo( mat_collapse->GetNrows(), mat_collapse->GetNcols() );
+  matrix_transform = (*mat_collapse);
+
+  ///
+  for(int ich=1; ich<=16; ich++) {
+    roostr = TString::Format("histo_%d", ich);
+    TH1F *h1_spectrum = (TH1F*)file_spectra->Get(roostr);
+    int bins = h1_spectrum->GetNbinsX() + 1;    
+    cout<<Form(" %2d  %-20s   bin-num %2d", ich, map_input_spectrum_ch_str[ich].Data(), bins)<<endl;
+    
+    for(int ibin=1; ibin<=bins; ibin++) map_input_spectrum_ch_bin[ich][ibin-1] = h1_spectrum->GetBinContent(ibin);
+  }
+  cout<<endl;
+
+  bins_oldworld = 0;
+  for(auto it_ch=map_input_spectrum_ch_bin.begin(); it_ch!=map_input_spectrum_ch_bin.end(); it_ch++) {
+    int ich = it_ch->first;
+      for(int ibin=0; ibin<(int)map_input_spectrum_ch_bin[ich].size(); ibin++) {
+	bins_oldworld++;
+	int index_oldworld = bins_oldworld - 1;	
+	map_input_spectrum_oldworld_bin[ index_oldworld ] = map_input_spectrum_ch_bin[ich][ibin];
+	if( map_Lee_ch.find(ich)!=map_Lee_ch.end() ) map_Lee_oldworld[index_oldworld] = 1;
+    }// ibin
+  }// ich
+
+  ////////////////////////////////////// data
+
+  int line_data = -1;
+  bins_newworld = 0;
+  for(int ich=1; ich<=7; ich++) {
+    roostr = TString::Format("hdata_obsch_%d", ich);
+    TH1F *h1_spectrum = (TH1F*)file_spectra->Get(roostr);
+    for(int ibin=1; ibin<=h1_spectrum->GetNbinsX()+1; ibin++) {
+      map_data_spectrum_ch_bin[ich][ibin-1] = h1_spectrum->GetBinContent(ibin);
+
+      line_data++;
+      bins_newworld++;
+      map_data_spectrum_newworld_bin[line_data] = map_data_spectrum_ch_bin[ich][ibin-1]; 
+    }// ibin
+  }// ich
+
+  ////////////////////////////////////////// flux_Xs
+
+  map<int, TFile*>map_file_flux_Xs_frac;  
+  map<int, TMatrixD*>map_matrix_flux_Xs_frac;
+  
+  TMatrixD matrix_flux_Xs_frac(bins_oldworld, bins_oldworld);
+
+  for(int idx=1; idx<=17; idx++) {
+    roostr = TString::Format("./data_framework/flux_Xs/cov_%d.root", idx);
+    map_file_flux_Xs_frac[idx] = new TFile(roostr, "read");
+    map_matrix_flux_Xs_frac[idx] = (TMatrixD*)map_file_flux_Xs_frac[idx]->Get(TString::Format("frac_cov_xf_mat_%d", idx));
+    // cout<<TString::Format(" ---> check: flux and Xs, %2d  ", idx)<<roostr<<endl;
+    matrix_flux_Xs_frac += (*map_matrix_flux_Xs_frac[idx]);
+  }
+  // cout<<endl;
+  
+  ////////////////////////////////////////// detector
+  
+  map<int, TString>map_detectorfile_str;
+  map_detectorfile_str[1] = "./data_framework/det/cov_LYDown.root";
+  map_detectorfile_str[2] = "./data_framework/det/cov_LYRayleigh.root";
+  map_detectorfile_str[3] = "./data_framework/det/cov_Recomb2.root";
+  map_detectorfile_str[4] = "./data_framework/det/cov_SCE.root";
+  map_detectorfile_str[5] = "./data_framework/det/cov_WMdEdx.root";
+  map_detectorfile_str[6] = "./data_framework/det/cov_WMThetaXZ.root";
+  map_detectorfile_str[7] = "./data_framework/det/cov_WMThetaYZ.root";
+  map_detectorfile_str[8] = "./data_framework/det/cov_WMX.root";
+  map_detectorfile_str[9] = "./data_framework/det/cov_WMYZ.root";
+  
+  map<int, TFile*>map_file_detector_frac;
+  map<int, TMatrixD*>map_matrix_detector_frac;
+  TMatrixD matrix_detector_frac(bins_oldworld, bins_oldworld);
+
+  int size_map_detectorfile_str = map_detectorfile_str.size();
+  for(int idx=1; idx<=size_map_detectorfile_str; idx++) {
+    if(idx==5) continue;
+    roostr = map_detectorfile_str[idx];
+    map_file_detector_frac[idx] = new TFile(roostr, "read");
+    map_matrix_detector_frac[idx] = (TMatrixD*)map_file_detector_frac[idx]->Get(TString::Format("frac_cov_det_mat_%d", idx));
+    // cout<<TString::Format(" ---> check: detector, %2d  ", idx)<<roostr<<endl;
+
+    matrix_detector_frac += (*map_matrix_detector_frac[idx]);
+  }
+  // cout<<endl;
+
+  ////////////////////////////////////////// additional
+
+  TMatrixD *matrix_additional_abs_point = (TMatrixD*)file_spectra->Get("cov_mat_add");
+  TMatrixD matrix_additional_abs = (*matrix_additional_abs_point);
+    
+  //////////////////////////////////////////
+
+  matrix_input_cov_flux_Xs.Clear();
+  matrix_input_cov_detector.Clear();
+  matrix_input_cov_additional.Clear();
+  
+  matrix_input_cov_flux_Xs.ResizeTo( bins_oldworld, bins_oldworld );
+  matrix_input_cov_detector.ResizeTo( bins_oldworld, bins_oldworld );
+  matrix_input_cov_additional.ResizeTo( bins_oldworld, bins_oldworld );
+
+  for(int ibin=0; ibin<bins_oldworld; ibin++) {
+    for(int jbin=0; jbin<bins_oldworld; jbin++) {
+      double val_i = map_input_spectrum_oldworld_bin[ibin];
+      double val_j = map_input_spectrum_oldworld_bin[jbin];
+      double val_cov = 0;
+      
+      val_cov = matrix_flux_Xs_frac(ibin, jbin);
+      matrix_input_cov_flux_Xs(ibin, jbin) = val_cov * val_i * val_j;
+      
+      val_cov = matrix_detector_frac(ibin, jbin);
+      matrix_input_cov_detector(ibin, jbin) = val_cov * val_i * val_j;
+    }
+  }
+
+  matrix_input_cov_additional = matrix_additional_abs;
+  
+  ////////////////////////////////////////// MC statistics
+
+  map<int, map<int, double> >map_mc_stat_file_bin_Lee;
+  map<int, map<int, double> >map_mc_stat_file_bin_mcStat;
+  int gbins_mc_stat = 137;
+  
+  for(int ifile=0; ifile<=99; ifile++) {
+    roostr = TString::Format("./data_framework/mc_stat/%d.log", ifile);
+    ifstream InputFile_aa(roostr, ios::in);
+    if(!InputFile_aa) { cerr<<" No input-list"<<endl; exit(1); }
+
+    int line = 0;    
+    double Lee = 1; double run = 1;
+    
+    for(int idx=1; idx<=gbins_mc_stat+1; idx++) {            
+      int gbin = 0; int lbin = 0; double val_pred = 0; double mc_stat = 0; double nn_stat = 0;
+      if(idx==1) { InputFile_aa>>Lee>>run; }
+      else {
+	InputFile_aa>>gbin>>lbin>>val_pred>>mc_stat>>nn_stat;
+	line++;
+	map_mc_stat_file_bin_Lee[ifile][line-1] = Lee;
+	map_mc_stat_file_bin_mcStat[ifile][line-1] = mc_stat;
+      }
+    }
+  }
+  
+  /// gh_mc_stat_bin
+  for(int ibin=0; ibin<gbins_mc_stat; ibin++) {
+    gh_mc_stat_bin[ibin] = new TGraph(); gh_mc_stat_bin[ibin]->SetName(TString::Format("gh_mc_stat_bin_%03d", ibin));
+    
+    for(auto it=map_mc_stat_file_bin_Lee.begin(); it!=map_mc_stat_file_bin_Lee.end(); it++) {
+      int ifile = it->first;
+      double Lee = map_mc_stat_file_bin_Lee[ifile][ibin];
+      double mc_stat = map_mc_stat_file_bin_mcStat[ifile][ibin];
+      gh_mc_stat_bin[ibin]->SetPoint( gh_mc_stat_bin[ibin]->GetN(), Lee, mc_stat );
+    }
+    
+    double x,y;
+    gh_mc_stat_bin[ibin]->GetPoint( gh_mc_stat_bin[ibin]->GetN()-1, x, y);
+    gh_mc_stat_bin[ibin]->SetPoint( gh_mc_stat_bin[ibin]->GetN(), x+1, y);
+  }  
+  
+}
