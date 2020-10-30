@@ -580,6 +580,7 @@ void TLee::Exe_Constraint_GOF(int num_Y, int num_X, map<int, double>map_h1_pred,
     double val_pred = matrix_pred_Y(ibin-1, 0);
     double val_data = matrix_data_Y(ibin-1, 0);
     matrix_delta_noConstraint(0, ibin-1) = val_pred - val_data;
+    //cout<<Form(" ---> %3d, pred/data %10.6f %10.6f", ibin, val_pred, val_data)<<endl;
   }
   TMatrixD matrix_delta_noConstraint_T(num_Y, 1);
   matrix_delta_noConstraint_T.Transpose(matrix_delta_noConstraint);
@@ -2349,10 +2350,10 @@ void read_TLee_v07(double scalePOT, int nfile)
   bool flag_NCpi0     = 0;// 5
   bool flag_nueCC_PC  = 0;// 6
   bool flag_nueCC_HghE_FC = 0;// 7
-  bool flag_nueCC_LowE_FC = 0;// 8
+  bool flag_nueCC_LowE_FC = 1;// 8
   bool flag_nueCC_LowE_FC_wopi0    = 0;// 9
   bool flag_nueCC_LowE_FC_combined = 0;// 10
-  bool flag_both_numuCC            = 1;// 11
+  bool flag_both_numuCC            = 0;// 11
 
   bool flag_nueCC_LowE_FC_by_numuCC     = 0;// 16
   bool flag_nueCC_LowE_FC_by_numuCC_pi0 = 0;// 17
@@ -2962,6 +2963,13 @@ void read_TLee_v07(double scalePOT, int nfile)
     map_oldworld2neworld[6] = 5;
     map_oldworld2neworld[7] = 6;
 
+
+    // for(int ibin=1; ibin<=Lee_test->num_elements_collapse; ibin++) cout<<Form(" ---> check %3d, %12.4f, %12.4f",
+    // 									      ibin,
+    // 									      Lee_test->map_collapsed_prediction_wiLee[ibin],
+    // 									      sqrt( Lee_test->matrix_collapse_absolute_covariance_wiLee(ibin-1, ibin-1) )
+    // 									      )<<endl;
+    
     /////////
     for(auto it=map_oldworld2neworld.begin(); it!=map_oldworld2neworld.end(); it++) {
       int old_world_channel = it->first;

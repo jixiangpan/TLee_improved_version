@@ -50,6 +50,20 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
 
   int color_no = kRed;
   int color_wi = kBlue;
+
+  /////////////////////////////////////////////////////////////////////////////////////////////
+
+  {
+    double val_cov = 0;
+    for(int ibin=0; ibin<matrix_syst.GetNrows(); ibin++) {
+      val_cov += matrix_syst(ibin, ibin);
+    }
+    if(val_cov==0) {
+      for(int ibin=0; ibin<matrix_syst.GetNrows(); ibin++) {
+	matrix_syst(ibin, ibin) = 1e-6;
+      } 
+    }    
+  }
   
   /////////////////////////////////////////////////////////////////////////////////////////////
   if( num_X==0 ) {
@@ -104,7 +118,8 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     ////
     TGraphAsymmErrors *gh_ratio = new TGraphAsymmErrors();
     TGraphAsymmErrors *gh_data = new TGraphAsymmErrors();
-
+    double val_max_data = 0;
+    
     for(int ibin=0; ibin<rows; ibin++) {
       double val_data = matrix_data(0, ibin);
       double val_pred = matrix_pred(0, ibin);
@@ -132,8 +147,12 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
       gh_ratio->SetPointError( n_point, val_halfw, val_halfw, val_ratio_low, val_ratio_hgh );
       
       gh_data->SetPoint( n_point, val_x, val_data );
-      gh_data->SetPointError( n_point, val_halfw, val_halfw, val_data-val_data_low, val_data_hgh-val_data );     
+      gh_data->SetPointError( n_point, val_halfw, val_halfw, val_data-val_data_low, val_data_hgh-val_data );
+
+      if( val_max_data<val_data_hgh ) val_max_data = val_data_hgh;
     }
+    
+    double val_max_pred = h1_pred->GetBinContent( h1_pred->GetMaximumBin() ) + h1_pred->GetBinError( h1_pred->GetMaximumBin() );
     
     /////////////////////////// plotting
 
@@ -148,6 +167,8 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     
     h1_pred->Draw("e2");
     h1_pred->SetMinimum(0);
+    if( val_max_data > val_max_pred ) h1_pred->SetMaximum( val_max_data*1.1 );
+
     TH1D *h1_pred_clone = (TH1D*)h1_pred->Clone("h1_pred_clone");
     
     h1_pred->Draw("same e2");
@@ -413,6 +434,8 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     TGraphAsymmErrors *gh_ratio_noConstraint = new TGraphAsymmErrors();    
     TGraphAsymmErrors *gh_ratio_wiConstraint = new TGraphAsymmErrors();    
 
+    double val_max_data = 0;
+    
     roostr = TString::Format("h1_ratio_basic_%02d", index);
     TH1D *h1_ratio_basic = new TH1D(roostr, "", num_Y, 0, num_Y);
 
@@ -447,6 +470,8 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
       gh_data->SetPoint( n_point, val_x, val_data );
       gh_data->SetPointError( n_point, val_halfw, val_halfw, val_data-val_data_low, val_data_hgh-val_data );
 
+      if( val_max_data<val_data_hgh ) val_max_data = val_data_hgh;
+      
       ///////
       double val_ratio_no = val_data/val_pred_noConstraint;
       double val_ratio_no_low = val_ratio_no - val_data_low/val_pred_noConstraint;
@@ -454,7 +479,7 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
       if( isnan(val_ratio_no) || isinf(val_ratio_no) ) val_ratio_no = 0;
       gh_ratio_noConstraint->SetPoint( n_point, val_x, val_ratio_no );
       gh_ratio_noConstraint->SetPointError( n_point, val_halfw, val_halfw, val_ratio_no_low, val_ratio_no_hgh );
-      
+
       ///////
       double val_ratio_wi = val_data/val_pred_wiConstraint;
       double val_ratio_wi_low = val_ratio_wi - val_data_low/val_pred_wiConstraint;
@@ -463,6 +488,10 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
       gh_ratio_wiConstraint->SetPoint( n_point, val_x, val_ratio_wi );
       gh_ratio_wiConstraint->SetPointError( n_point, val_halfw, val_halfw, val_ratio_wi_low, val_ratio_wi_hgh );
     }
+    
+    double val_max_pred =
+      h1_pred_Y_noConstraint->GetBinContent( h1_pred_Y_noConstraint->GetMaximumBin() ) +
+      h1_pred_Y_noConstraint->GetBinError( h1_pred_Y_noConstraint->GetMaximumBin() );
     
     //////////////////////////////////////// Plotting
     
@@ -477,6 +506,8 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     
     h1_pred_Y_noConstraint->Draw("e2");
     h1_pred_Y_noConstraint->SetMinimum(0);
+    if( val_max_data > val_max_pred ) h1_pred_Y_noConstraint->SetMaximum( val_max_data*1.1 );	
+    
     TH1D *h1_pred_Y_noConstraint_clone = (TH1D*)h1_pred_Y_noConstraint->Clone("h1_pred_Y_noConstraint_clone");
     
     h1_pred_Y_noConstraint->Draw("same e2");
@@ -637,7 +668,9 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     gh_ratio_wiConstraint->SetLineWidth(3);
     
     h1_ratio_basic->Draw("same axis");
-    
+     
+    roostr = TString::Format("canv_spectra_cmp_%02d.png", index);
+    canv_spectra_cmp->SaveAs(roostr);
   }// else, num_X!=0
    
 }
@@ -648,13 +681,20 @@ void TLee::Set_Collapse()
 {
   //////////////////////////////////////// pred
 
+  TMatrixD matrix_transform_Lee = matrix_transform;
+  for(int ibin=0; ibin<matrix_transform_Lee.GetNrows(); ibin++) {
+    for(int jbin=0; jbin<matrix_transform_Lee.GetNcols(); jbin++) {
+      if( map_Lee_oldworld.find(ibin)!=map_Lee_oldworld.end() ) matrix_transform_Lee(ibin, jbin) *= scaleF_Lee;
+    }
+  }
+  
   map_pred_spectrum_newworld_bin.clear();
   TMatrixD matrix_pred_oldworld(1, bins_oldworld);
   for(int ibin=0; ibin<bins_oldworld; ibin++) matrix_pred_oldworld(0, ibin) = map_input_spectrum_oldworld_bin[ibin];
 
   matrix_pred_newworld.Clear();
   matrix_pred_newworld.ResizeTo(1, bins_newworld);
-  matrix_pred_newworld = matrix_pred_oldworld * matrix_transform;
+  matrix_pred_newworld = matrix_pred_oldworld * matrix_transform_Lee;
   if( bins_newworld!=matrix_pred_newworld.GetNcols() ) { cerr<<"bins_newworld!=matrix_pred_newworld.GetNcols()"<<endl; exit(1); }
   for(int ibin=0; ibin<bins_newworld; ibin++) map_pred_spectrum_newworld_bin[ibin] = matrix_pred_newworld(0, ibin);
   
@@ -667,12 +707,12 @@ void TLee::Set_Collapse()
   if( flag_syst_detector ) matrix_absolute_cov_oldworld += matrix_input_cov_detector;
   if( flag_syst_additional ) matrix_absolute_cov_oldworld += matrix_input_cov_additional;
 
-  TMatrixD matrix_transform_T( bins_newworld, bins_oldworld );
-  matrix_transform_T.Transpose( matrix_transform );
+  TMatrixD matrix_transform_Lee_T( bins_newworld, bins_oldworld );
+  matrix_transform_Lee_T.Transpose( matrix_transform_Lee );
 
   matrix_absolute_cov_newworld.Clear();
   matrix_absolute_cov_newworld.ResizeTo(bins_newworld, bins_newworld);
-  matrix_absolute_cov_newworld = matrix_transform_T * matrix_absolute_cov_oldworld * matrix_transform;
+  matrix_absolute_cov_newworld = matrix_transform_Lee_T * matrix_absolute_cov_oldworld * matrix_transform_Lee;
 
   if( flag_syst_mc_stat ) {
     for(int ibin=0; ibin<bins_newworld; ibin++) {
