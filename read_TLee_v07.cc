@@ -1926,7 +1926,8 @@ void read_TLee_v07(double scalePOT, int nfile)
   
   ////////////////////////////////////////////////////////////////////////////////// Goodness of fit, fg
     
-  Lee_test->scaleF_Lee           = 0;  
+  Lee_test->scaleF_Lee           = 0;
+  
   Lee_test->flag_syst_flux_Xs    = 1;
   Lee_test->flag_syst_detector   = 1;
   Lee_test->flag_syst_additional = 1;
@@ -2350,7 +2351,7 @@ void read_TLee_v07(double scalePOT, int nfile)
   bool flag_NCpi0     = 0;// 5
   bool flag_nueCC_PC  = 0;// 6
   bool flag_nueCC_HghE_FC = 0;// 7
-  bool flag_nueCC_LowE_FC = 1;// 8
+  bool flag_nueCC_LowE_FC = 0;// 8
   bool flag_nueCC_LowE_FC_wopi0    = 0;// 9
   bool flag_nueCC_LowE_FC_combined = 0;// 10
   bool flag_both_numuCC            = 0;// 11
@@ -3225,20 +3226,32 @@ void read_TLee_v07(double scalePOT, int nfile)
   
   ////////////////////////////////////////////////////////////////////////////////// variation
 
-  // {
+  if( 1 ){
+    
+    Lee_test->scaleF_Lee = 1;//////////////////// true8Lee
+    Lee_test->Set_Collapse();
+    
+    Lee_test->Set_fake_data_Asimov();
+    // for(int ibin=0; ibin<Lee_test->matrix_collapse_absolute_covariance_wiLee.GetNrows(); ibin++)
+    //   cout<<Form(" ---> %3d %12.4f %12.4f",
+    // 		 ibin+1,
+    // 		 Lee_test->map_fake_data[ibin],
+    // 		 sqrt(Lee_test->matrix_collapse_absolute_covariance_wiLee(ibin, ibin))
+    // 		 )<<endl;
 
-  //   Lee_test->scaleF_Lee = 1;//////////////////// true8Lee
-  //   Lee_test->Set_Collapse();
-  //   Lee_test->Set_fake_data_Asimov(); 
-  //   Lee_test->Minimization_Lee_strength_FullCov(0, 1);// scaleF_Lee, fixed or not
+    
+    Lee_test->Minimization_Lee_strength_FullCov(2, 0);// scaleF_Lee, fixed or not
+    
+    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
+  				Lee_test->minimization_chi2,
+  				Lee_test->minimization_Lee_strength_val,
+  				Lee_test->minimization_Lee_strength_err
+  				)<<endl<<endl;
+  }
 
-  //   cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
-  // 				Lee_test->minimization_chi2,
-  // 				Lee_test->minimization_Lee_strength_val,
-  // 				Lee_test->minimization_Lee_strength_err
-  // 				)<<endl<<endl;
-  // }
 
+
+  
   if(0) {
     
     //Lee_test->scaleF_POT = 1;

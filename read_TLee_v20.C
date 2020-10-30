@@ -72,6 +72,7 @@ int main(int argc, char** argv)
   Lee_test->flag_syst_detector   = 1;
   Lee_test->flag_syst_additional = 1;
   Lee_test->flag_syst_mc_stat    = 1;
+  
   Lee_test->scaleF_Lee           = 0;
   Lee_test->Set_Collapse();
   
@@ -86,7 +87,24 @@ int main(int argc, char** argv)
   bool flag_NCpi0_by_numuCC        = 0;// 4
   bool flag_nueCC_PC_by_numuCC_pi0 = 0;// 5
   bool flag_nueCC_HghE_FC_by_numuCC_pi0_nueFC = 0;// 6, HghE>800 MeV
-  bool flag_nueCC_LowE_FC_by_all   = 1;// 7
+  bool flag_nueCC_LowE_FC_by_all   = 0;// 7
+  bool flag_nueCC_FC_by_all        = 0;// 8
+  
+  ///////////////////////// gof
+  
+  if( flag_nueCC_FC_by_all ) {
+    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 26*4 + 11*3 );// oldworld, newworld
+    for( int ibin=1; ibin<=26*4 + 11*3; ibin++) matrix_gof_trans(ibin-1, ibin-1) = 1;
+    
+    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
+    matrix_gof_trans_T.Transpose( matrix_gof_trans );
+
+    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
+
+    Lee_test->Exe_Goodness_of_fit( 26, matrix_gof_trans.GetNcols()-26, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 8);
+  }
   
   ///////////////////////// gof
   
@@ -208,8 +226,27 @@ int main(int argc, char** argv)
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////
+
+  if( 0 ) {
+    Lee_test->scaleF_Lee = 1;
+    Lee_test->Set_Collapse();
   
-  theApp.Run();
+    Lee_test->Set_toy_Asimov();
+
+    Lee_test->Minimization_Lee_strength_FullCov(2, 0);
+
+    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
+				Lee_test->minimization_chi2,
+				Lee_test->minimization_Lee_strength_val,
+				Lee_test->minimization_Lee_strength_err
+				)<<endl<<endl;
+  }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////
+  
+  ////////////////////////////////////////////////////////////////////////////////////////
+  
+  //theApp.Run();
   
   return 0;
 }

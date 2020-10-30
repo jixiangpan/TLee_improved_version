@@ -48,8 +48,8 @@ using namespace std;
 #include "TMatrixDSymEigen.h"
 
 /// minuit2
-//#include "Math/Functor.h"
-//#include "Minuit2/Minuit2Minimizer.h"
+#include "Math/Functor.h"
+#include "Minuit2/Minuit2Minimizer.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -109,7 +109,14 @@ public:
   
   TMatrixD matrix_absolute_cov_oldworld;
   TMatrixD matrix_absolute_cov_newworld;
+
+  map<int, double>map_fake_data;
   
+  int minimization_status;
+  double minimization_chi2;
+  double minimization_Lee_strength_val;
+  double minimization_Lee_strength_err;
+
   /////////////////////////////////////////////////////// function member
 
   void Set_Spectra_MatrixCov();
@@ -120,6 +127,13 @@ public:
 
   // Y constrained by X
   void Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatrixD matrix_data, TMatrixD matrix_syst, int index);
+
+  void Set_toy_Asimov();
+
+  // minimization
+  void Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag_fixed);
+  
+  
 };
 
 #endif

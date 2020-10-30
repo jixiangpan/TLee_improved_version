@@ -42,6 +42,135 @@ namespace DataBase {
 
 ///////////////////////////////////////////////////////// ccc
 
+void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag_fixed)
+{
+  TString roostr = "";
+  
+  ROOT::Minuit2::Minuit2Minimizer min_Lee( ROOT::Minuit2::kMigrad );
+  min_Lee.SetPrintLevel(0);
+  min_Lee.SetStrategy(1); //0- cursory, 1- default, 2- thorough yet no more successful
+  min_Lee.SetMaxFunctionCalls(500000);
+  min_Lee.SetMaxIterations(500000);
+  min_Lee.SetTolerance(1e-6); // tolerance*2e-3 = edm precision
+  min_Lee.SetPrecision(1e-18); //precision in the target function
+
+  /// set fitting parameters
+  ROOT::Math::Functor Chi2Functor_Lee( [&](const double *par) {// FCN
+      TString roostr = "";
+      double chi2 = 0;
+      double Lee_strength = par[0];
+
+      /////////      
+      TMatrixD matrix_meas(1, bins_newworld);
+      for(int ibin=0; ibin<matrix_meas.GetNcols(); ibin++) {
+	matrix_meas(0, ibin) = map_fake_data[ibin];	
+      }
+
+      /////////
+  
+      scaleF_Lee = Lee_strength;
+      Set_Collapse();
+      
+      TMatrixD matrix_pred = matrix_pred_newworld;
+
+      /////////
+      TMatrixD matrix_cov_syst = matrix_absolute_cov_newworld;
+      
+      for(int ibin=0; ibin<matrix_cov_syst.GetNrows(); ibin++) {
+	double val_stat_cov = 0;	
+	double val_meas = matrix_meas(0, ibin);
+	double val_pred = matrix_pred(0, ibin);
+	
+	if( val_meas==0 ) val_stat_cov = val_pred/2;
+	else val_stat_cov = 3./( 1./val_meas + 2./val_pred );	
+	if( val_meas==0 && val_pred==0 ) val_stat_cov = 1e-6;
+	matrix_cov_syst(ibin, ibin) += val_stat_cov;
+      }
+
+      TMatrixD matrix_cov_total = matrix_cov_syst;
+      TMatrixD matrix_cov_total_inv = matrix_cov_total;
+      matrix_cov_total_inv.Invert();
+      
+      ////////
+      TMatrixD matrix_delta = matrix_pred - matrix_meas;
+      TMatrixD matrix_delta_T( matrix_delta.GetNcols(), matrix_delta.GetNrows() );
+      matrix_delta_T.Transpose( matrix_delta );
+      
+      TMatrixD matrix_chi2 = matrix_delta * matrix_cov_total_inv *matrix_delta_T;
+      chi2 = matrix_chi2(0,0);
+      
+      /////////
+                  
+      return chi2;
+      
+    },// end of FCN
+    1 // number of fitting parameters
+    );
+  
+  min_Lee.SetFunction(Chi2Functor_Lee);
+  
+  min_Lee.SetVariable( 0, "Lee_strength", Lee_initial_value, 1e-2);
+  //min_Lee.SetVariableLowerLimit(0, 0);
+  min_Lee.SetLowerLimitedVariable(0, "Lee_strength", Lee_initial_value, 1e-2, 0);
+  if( flag_fixed ) {
+    min_Lee.SetFixedVariable( 0, "Lee_strength", Lee_initial_value );
+  }
+  
+  /// do the minimization
+  min_Lee.Minimize();
+  int status_Lee = min_Lee.Status();
+  const double *par_Lee = min_Lee.X();
+  const double *par_Lee_err = min_Lee.Errors();
+
+  if( status_Lee!=0 ) {
+    cerr<<endl<<" -----------> Lee strength fitting failed "<<endl<<endl;
+    minimization_status = status_Lee;
+  }
+
+  minimization_status = status_Lee;
+  minimization_chi2 = min_Lee.MinValue();
+  minimization_Lee_strength_val = par_Lee[0];
+  minimization_Lee_strength_err = par_Lee_err[0];
+
+  /// MinosError
+  // {
+  //   min_Lee.SetErrorDef(1);
+  //   double minosError_low = 0;
+  //   double minosError_hgh = 0;
+  //   min_Lee.GetMinosError(0, minosError_low, minosError_hgh);
+  //   cout<<TString::Format(" ---> Best fit of Lee strength: %5.2f, (1 sigma) from MinosError: %5.2f %5.2f",
+  // 			  minimization_Lee_strength_val, minosError_low, minosError_hgh)<<endl;
+  // }
+  // {
+  //   min_Lee.SetErrorDef(4);
+  //   double minosError_low = 0;
+  //   double minosError_hgh = 0;
+  //   min_Lee.GetMinosError(0, minosError_low, minosError_hgh);
+  //   cout<<TString::Format(" ---> Best fit of Lee strength: %5.2f, (2 sigma) from MinosError: %5.2f %5.2f",
+  // 			  minimization_Lee_strength_val, minosError_low, minosError_hgh)<<endl;
+  // }
+  // {
+  //   min_Lee.SetErrorDef(9);
+  //   double minosError_low = 0;
+  //   double minosError_hgh = 0;
+  //   min_Lee.GetMinosError(0, minosError_low, minosError_hgh);
+  //   cout<<TString::Format(" ---> Best fit of Lee strength: %5.2f, (3 sigma) from MinosError: %5.2f %5.2f",
+  // 			  minimization_Lee_strength_val, minosError_low, minosError_hgh)<<endl;
+  // }
+  
+}  
+
+///////////////////////////////////////////////////////// ccc
+
+void TLee::Set_toy_Asimov()
+{
+  for(int ibin=0; ibin<bins_newworld; ibin++) {
+    map_fake_data[ibin] = matrix_pred_newworld(0, ibin);
+  }
+}
+
+///////////////////////////////////////////////////////// ccc
+
 void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatrixD matrix_data, TMatrixD matrix_syst, int index)
 {
   TString roostr = "";
@@ -783,7 +912,7 @@ void TLee::Set_POT_implement()
 
   for(auto it=gh_mc_stat_bin.begin(); it!=gh_mc_stat_bin.end(); it++) {
     int ibin = it->first; //cout<<Form(" ---> check %3d, %3d", ibin, gh_mc_stat_bin[ibin]->GetN())<<endl;
-    for(int idx=0; idx<ibin; idx++) {
+    for(int idx=0; idx<gh_mc_stat_bin[ibin]->GetN(); idx++) {
       double x(0), y(0);
       gh_mc_stat_bin[ibin]->GetPoint(idx, x, y);
       gh_mc_stat_bin[ibin]->SetPoint(idx, x, y*scaleF_POT2);
