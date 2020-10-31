@@ -227,7 +227,7 @@ int main(int argc, char** argv)
 
   //////////////////////////////////////////////////////////////////////////////////////// LEE strength fitting
 
-  if( 0 ) {
+  if( 1 ) {
     Lee_test->scaleF_Lee = 1;
     Lee_test->Set_Collapse();
 
@@ -292,7 +292,7 @@ int main(int argc, char** argv)
   
   ////////////////////////////////////////////////////////////////////////////////////////
 
-  if( 1 ) {
+  if( 0 ) {
     double chi2_null_null8sm_true8sm  = 0;
     double chi2_gmin_null8sm_true8sm  = 0;
     double chi2_null_null8Lee_true8Lee = 0;
