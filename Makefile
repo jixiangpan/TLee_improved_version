@@ -12,7 +12,7 @@ ROOTSYS=/home/xji/data0/software/root_build
 CFLAGS += $(shell $(ROOTSYS)/bin/root-config --cflags)
 LDFLAGS += $(shell $(ROOTSYS)/bin/root-config --libs) 
 
-CFLAGS += -I./inc/ -I$(ROOTSYS)/include/
+CFLAGS += -std=c++11 -I./inc/ -I$(ROOTSYS)/include/
 
 all: $(SOURCES) $(EXECUTABLE)
 

@@ -286,7 +286,8 @@ int main(int argc, char** argv)
     auto *tt_text_data = new TLatex( 0.2, val_dchi2at1*1.1, Form("#Delta#chi^{2} = %3.2f", val_dchi2at1) );
     tt_text_data->SetTextAlign(11); tt_text_data->SetTextSize(0.05); tt_text_data->SetTextAngle(0);
     tt_text_data->SetTextFont(42);  tt_text_data->Draw(); tt_text_data->SetTextColor(kBlue);
-    
+
+    canv_gh_scan->SaveAs("canv_gh_scan.png");
   }
   
   ////////////////////////////////////////////////////////////////////////////////////////
