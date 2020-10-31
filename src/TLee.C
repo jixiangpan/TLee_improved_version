@@ -1083,7 +1083,7 @@ void TLee::Set_Spectra_MatrixCov()
   map_detectorfile_str[7] = "./data_framework/det/cov_WMThetaYZ.root";
   map_detectorfile_str[8] = "./data_framework/det/cov_WMX.root";
   map_detectorfile_str[9] = "./data_framework/det/cov_WMYZ.root";
-  //map_detectorfile_str[10]= "./data_framework/det/cov_LYatt.root";
+  map_detectorfile_str[10]= "./data_framework/det/cov_LYatt.root";
   
   map<int, TFile*>map_file_detector_frac;
   map<int, TMatrixD*>map_matrix_detector_frac;
