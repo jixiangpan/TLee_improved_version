@@ -23,4 +23,4 @@ $(EXECUTABLE):$(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -f *.o $(DIR_SRC)/*.o; rm $(EXECUTABLE)
+	rm -f *.o $(DIR_SRC)/*.o; rm $(EXECUTABLE); rm -f *.pcm *.d *.so

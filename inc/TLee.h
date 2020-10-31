@@ -67,7 +67,7 @@ using namespace std;
 class TLee {
 public:
   TLee() {
-    rand = new TRandom3(0);
+    rand = new TRandom3(1);
   }
 
   /////////////////////////////////////////////////////// data memeber
@@ -110,6 +110,8 @@ public:
   TMatrixD matrix_absolute_cov_oldworld;
   TMatrixD matrix_absolute_cov_newworld;
 
+  map<int, map<int, double> >map_toy_variation;
+  
   map<int, double>map_fake_data;
   
   int minimization_status;
@@ -128,8 +130,11 @@ public:
   // Y constrained by X
   void Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatrixD matrix_data, TMatrixD matrix_syst, int index);
 
+  void Set_Variations(int num_toy);
+  
   void Set_toy_Asimov();
-
+  void Set_toy_Variation(int itoy);
+  
   // minimization
   void Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag_fixed);
   

@@ -243,6 +243,22 @@ int main(int argc, char** argv)
   }
   
   ////////////////////////////////////////////////////////////////////////////////////////
+
+  if( 0 ) {
+    Lee_test->scaleF_Lee = 1;
+    Lee_test->Set_Collapse();
+
+    Lee_test->Set_Variations( 10 );
+    Lee_test->Set_toy_Variation( 4 );
+    
+    Lee_test->Minimization_Lee_strength_FullCov(2, 0);
+
+    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
+				Lee_test->minimization_chi2,
+				Lee_test->minimization_Lee_strength_val,
+				Lee_test->minimization_Lee_strength_err
+				)<<endl<<endl;
+  }
   
   ////////////////////////////////////////////////////////////////////////////////////////
   

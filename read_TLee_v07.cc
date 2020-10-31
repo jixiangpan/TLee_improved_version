@@ -98,7 +98,7 @@ class TLee
 {
 public:
   TLee() {
-    rand = new TRandom3(0);
+    rand = new TRandom3(1);
     
     bins_total_old_world = 0;
     
@@ -3226,7 +3226,7 @@ void read_TLee_v07(double scalePOT, int nfile)
   
   ////////////////////////////////////////////////////////////////////////////////// variation
 
-  if( 1 ){
+  if( 0 ){
     
     Lee_test->scaleF_Lee = 1;//////////////////// true8Lee
     Lee_test->Set_Collapse();
@@ -3250,6 +3250,25 @@ void read_TLee_v07(double scalePOT, int nfile)
   }
 
 
+  if( 1 ) {
+    
+    Lee_test->scaleF_Lee = 1;
+    Lee_test->Set_Collapse();
+    
+    Lee_test->Set_Variations( 10 );
+    Lee_test->Set_fake_data_Variation( 4 );
+    // for(int ibin=0; ibin<Lee_test->num_elements_collapse; ibin++)
+    //   cout<<TString::Format(" ---> %3d %12.0f", ibin+1, Lee_test->map_meas_variation_TotalSyst_wiLee[9][ibin])<<endl;
+    
+    Lee_test->Minimization_Lee_strength_FullCov(2, 0);// scaleF_Lee, fixed or not
+    
+    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
+  				Lee_test->minimization_chi2,
+  				Lee_test->minimization_Lee_strength_val,
+  				Lee_test->minimization_Lee_strength_err
+  				)<<endl<<endl;
+  }
+  
 
   
   if(0) {

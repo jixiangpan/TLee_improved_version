@@ -169,6 +169,51 @@ void TLee::Set_toy_Asimov()
   }
 }
 
+void TLee::Set_toy_Variation(int itoy)
+{
+  for(int ibin=0; ibin<bins_newworld; ibin++) {
+    map_fake_data[ibin] = map_toy_variation[itoy][ibin];
+  } 
+}
+  
+///////////////////////////////////////////////////////// ccc
+
+void TLee::Set_Variations(int num_toy)
+{
+  map_toy_variation.clear();
+
+  //////////////////////////
+
+  TMatrixDSym DSmatrix_cov(bins_newworld);
+  for(int ibin=0; ibin<bins_newworld; ibin++) {
+    for(int jbin=0; jbin<bins_newworld; jbin++) {
+      DSmatrix_cov(ibin, jbin) = matrix_absolute_cov_newworld(ibin, jbin);
+    }
+  }
+  TMatrixDSymEigen DSmatrix_eigen( DSmatrix_cov );
+  TMatrixD matrix_eigenvector = DSmatrix_eigen.GetEigenVectors();
+  TVectorD matrix_eigenvalue = DSmatrix_eigen.GetEigenValues();
+
+  for(int itoy=1; itoy<=num_toy; itoy++) {    
+    TMatrixD matrix_element(bins_newworld, 1);    
+    for(int ibin=0; ibin<bins_newworld; ibin++) {
+      if( matrix_eigenvalue(ibin)>=0 ) {
+	matrix_element(ibin,0) = rand->Gaus( 0, sqrt( matrix_eigenvalue(ibin) ) );
+      }
+      else {
+	matrix_element(ibin,0) = 0;
+      }      
+    }
+    TMatrixD matrix_variation = matrix_eigenvector * matrix_element;
+    for(int ibin=0; ibin<bins_newworld; ibin++) {
+      double val_with_syst = matrix_variation(ibin,0) + map_pred_spectrum_newworld_bin[ibin];// key point
+      if( val_with_syst<0 ) val_with_syst = 0;
+      map_toy_variation[itoy][ibin] = rand->PoissonD( val_with_syst );
+    }
+  }
+    
+}
+
 ///////////////////////////////////////////////////////// ccc
 
 void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatrixD matrix_data, TMatrixD matrix_syst, int index)
