@@ -305,7 +305,7 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
       double val_data = matrix_data(0, ibin);
       double val_pred = matrix_pred(0, ibin);
       double val_ratio= val_data/val_pred;
-      if( isnan(val_ratio) || isinf(val_ratio) ) val_ratio = 0;
+      if( val_ratio!=val_ratio || val_ratio==1./0 ) val_ratio = 0;
 
       double val_data_low = 0;
       double val_data_hgh = 0;
@@ -629,7 +629,7 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
       double val_pred_wiConstraint = matrix_Y_under_X(ibin-1, 0);
 
       double val_ratio_wi2no = val_pred_wiConstraint/val_pred_noConstraint;
-      if( isnan(val_ratio_wi2no) || isinf(val_ratio_wi2no) ) val_ratio_wi2no = 0;
+      if( val_ratio_wi2no!=val_ratio_wi2no || val_ratio_wi2no==1./0 ) val_ratio_wi2no = 0;
       h1_ratio_wi2no->SetBinContent(ibin, val_ratio_wi2no);
       
       double val_data_low = 0;
@@ -657,7 +657,7 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
       double val_ratio_no = val_data/val_pred_noConstraint;
       double val_ratio_no_low = val_ratio_no - val_data_low/val_pred_noConstraint;
       double val_ratio_no_hgh = val_data_hgh/val_pred_noConstraint - val_ratio_no;
-      if( isnan(val_ratio_no) || isinf(val_ratio_no) ) val_ratio_no = 0;
+      if( val_ratio_no!=val_ratio_no || val_ratio_no==1./0 ) val_ratio_no = 0;
       gh_ratio_noConstraint->SetPoint( n_point, val_x, val_ratio_no );
       gh_ratio_noConstraint->SetPointError( n_point, val_halfw, val_halfw, val_ratio_no_low, val_ratio_no_hgh );
 
@@ -665,7 +665,7 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
       double val_ratio_wi = val_data/val_pred_wiConstraint;
       double val_ratio_wi_low = val_ratio_wi - val_data_low/val_pred_wiConstraint;
       double val_ratio_wi_hgh = val_data_hgh/val_pred_wiConstraint - val_ratio_wi;
-      if( isnan(val_ratio_wi) || isinf(val_ratio_wi) ) val_ratio_wi = 0;
+      if( val_ratio_wi!=val_ratio_wi || val_ratio_wi==1./0 ) val_ratio_wi = 0;
       gh_ratio_wiConstraint->SetPoint( n_point, val_x, val_ratio_wi );
       gh_ratio_wiConstraint->SetPointError( n_point, val_halfw, val_halfw, val_ratio_wi_low, val_ratio_wi_hgh );
     }

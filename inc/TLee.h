@@ -68,7 +68,7 @@ using namespace std;
 class TLee {
 public:
   TLee() {
-    rand = new TRandom3(1);
+    rand = new TRandom3(0);
   }
 
   /////////////////////////////////////////////////////// data memeber
