@@ -175,6 +175,13 @@ void TLee::Set_toy_Variation(int itoy)
     map_fake_data[ibin] = map_toy_variation[itoy][ibin];
   } 
 }
+
+void TLee::Set_measured_data()
+{
+  for(int ibin=0; ibin<bins_newworld; ibin++) {
+    map_fake_data[ibin] = matrix_data_newworld(0, ibin);
+  }
+}
   
 ///////////////////////////////////////////////////////// ccc
 

@@ -3186,7 +3186,7 @@ void read_TLee_v07(double scalePOT, int nfile)
   ////////////////////////////////////////////////////////////////////////////////// Lee strength fitting, lf
 
   
-  if( 0 ) {
+  if( 1 ) {
     //Lee_test->scaleF_POT = 69.5/5.0549670;
     Lee_test->scaleF_Lee = 1; 
     Lee_test->Set_Collapse();
@@ -3250,7 +3250,7 @@ void read_TLee_v07(double scalePOT, int nfile)
   }
 
 
-  if( 1 ) {
+  if( 0 ) {
     
     Lee_test->scaleF_Lee = 1;
     Lee_test->Set_Collapse();

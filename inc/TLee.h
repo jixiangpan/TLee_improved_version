@@ -33,6 +33,7 @@ using namespace std;
 #include "TStyle.h"
 #include "TPaveText.h"
 #include "TText.h"
+#include "TLatex.h"
 
 #include "TCanvas.h"
 #include "TVirtualPad.h"
@@ -134,6 +135,7 @@ public:
   
   void Set_toy_Asimov();
   void Set_toy_Variation(int itoy);
+  void Set_measured_data();
   
   // minimization
   void Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag_fixed);
