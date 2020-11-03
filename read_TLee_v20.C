@@ -94,6 +94,24 @@ int main(int argc, char** argv)
   Lee_test->Set_Collapse();
 
   TFile *file_collapsed_covariance_matrix = new TFile("file_collapsed_covariance_matrix.root", "recreate");
+  
+  TTree *tree_config = new TTree("tree", "configure information");
+  int flag_syst_flux_Xs = config_Lee::flag_syst_flux_Xs;
+  int flag_syst_detector = config_Lee::flag_syst_detector;
+  int flag_syst_additional = config_Lee::flag_syst_additional;
+  int flag_syst_mc_stat = config_Lee::flag_syst_mc_stat;
+  double user_Lee_strength_for_output_covariance_matrix = config_Lee::Lee_strength_for_output_covariance_matrix;
+  tree_config->Branch("flag_syst_flux_Xs", &flag_syst_flux_Xs, "flag_syst_flux_Xs/I" );
+  tree_config->Branch("flag_syst_detector", &flag_syst_detector, "flag_syst_detector/I" );
+  tree_config->Branch("flag_syst_additional", &flag_syst_additional, "flag_syst_additional/I" );
+  tree_config->Branch("flag_syst_mc_stat", &flag_syst_mc_stat, "flag_syst_mc_stat/I" );
+  tree_config->Branch("user_Lee_strength_for_output_covariance_matrix", &user_Lee_strength_for_output_covariance_matrix,
+		      "user_Lee_strength_for_output_covariance_matrix/D" );
+  tree_config->Fill();
+  file_collapsed_covariance_matrix->cd();
+  tree_config->Write();
+
+  file_collapsed_covariance_matrix->cd();
   Lee_test->matrix_absolute_cov_newworld.Write("matrix_absolute_cov_newworld");
   file_collapsed_covariance_matrix->Close();
   
