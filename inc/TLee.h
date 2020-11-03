@@ -82,6 +82,11 @@ public:
   bool flag_syst_detector;
   bool flag_syst_additional;
   bool flag_syst_mc_stat;
+
+  TString spectra_file;
+  TString flux_Xs_directory;
+  TString detector_directory;
+  TString mc_directory;
   
   /// bin index starts from 0, channel index from 1
   map<int, map<int, double> >map_input_spectrum_ch_bin;
@@ -122,6 +127,8 @@ public:
 
   /////////////////////////////////////////////////////// function member
 
+  void Set_config_file_directory(TString spectra_file_, TString flux_Xs_directory_, TString detector_directory_, TString mc_directory_);
+  
   void Set_Spectra_MatrixCov();
   void Set_POT_implement();
   void Set_TransformMatrix();
@@ -140,7 +147,8 @@ public:
   // minimization
   void Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag_fixed);
   
-  
+  // Feldman-Cousins approach
+  void Exe_Feldman_Cousins(double Lee_true_low, double Lee_true_hgh, double step, int num_toy, int ifile);
 };
 
 #endif

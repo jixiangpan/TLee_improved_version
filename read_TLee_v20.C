@@ -9,18 +9,31 @@ using namespace std;
 
 #include "TLee.h"
 
+#include "Configure_Lee.h"
+
 #include "TApplication.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////// MAIN //////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/*
+  
+  usage:
+  
+  make clean
+  make
+  
+  ./read_TLee_v20 -f 1 -p 1
+  
+*/
+
 int main(int argc, char** argv)
 {
   TString roostr = "";
   
   double scaleF_POT = 1;
-  int ifile = 0;
+  int ifile = 1;
   
   for(int i=1; i<argc; i++) {    
     if( strcmp(argv[i],"-p")==0 ) {
@@ -60,20 +73,24 @@ int main(int argc, char** argv)
   TApplication theApp("theApp",&argc,argv);
   
   TLee *Lee_test = new TLee();
-
+    
   ////////// just do it one time in the whole procedure
+  
   Lee_test->scaleF_POT = scaleF_POT;
+  Lee_test->Set_config_file_directory(config_Lee::spectra_file, config_Lee::flux_Xs_directory,
+				      config_Lee::detector_directory, config_Lee::mc_directory);
   Lee_test->Set_Spectra_MatrixCov();
   Lee_test->Set_POT_implement();
   Lee_test->Set_TransformMatrix();
 
   ////////// can do any times
-  Lee_test->flag_syst_flux_Xs    = 1;
-  Lee_test->flag_syst_detector   = 1;
-  Lee_test->flag_syst_additional = 1;
-  Lee_test->flag_syst_mc_stat    = 1;
   
-  Lee_test->scaleF_Lee           = 0;
+  Lee_test->flag_syst_flux_Xs    = config_Lee::flag_syst_flux_Xs;
+  Lee_test->flag_syst_detector   = config_Lee::flag_syst_detector;
+  Lee_test->flag_syst_additional = config_Lee::flag_syst_additional;
+  Lee_test->flag_syst_mc_stat    = config_Lee::flag_syst_mc_stat;
+  
+  Lee_test->scaleF_Lee = 0;
   Lee_test->Set_Collapse();
   
   //////////////////////////////////////////////////////////////////////////////////////// Goodness of fit
@@ -81,14 +98,14 @@ int main(int argc, char** argv)
   Lee_test->scaleF_Lee = 0;
   Lee_test->Set_Collapse();
  
-  bool flag_both_numuCC            = 0;// 1
-  bool flag_CCpi0_FC_by_numuCC     = 0;// 2
-  bool flag_CCpi0_PC_by_numuCC     = 0;// 3
-  bool flag_NCpi0_by_numuCC        = 0;// 4
-  bool flag_nueCC_PC_by_numuCC_pi0 = 0;// 5
-  bool flag_nueCC_HghE_FC_by_numuCC_pi0_nueFC = 0;// 6, HghE>800 MeV
-  bool flag_nueCC_LowE_FC_by_all   = 0;// 7
-  bool flag_nueCC_FC_by_all        = 0;// 8
+  bool flag_both_numuCC            = config_Lee::flag_both_numuCC;// 1
+  bool flag_CCpi0_FC_by_numuCC     = config_Lee::flag_CCpi0_FC_by_numuCC;// 2
+  bool flag_CCpi0_PC_by_numuCC     = config_Lee::flag_CCpi0_PC_by_numuCC;// 3
+  bool flag_NCpi0_by_numuCC        = config_Lee::flag_NCpi0_by_numuCC;// 4
+  bool flag_nueCC_PC_by_numuCC_pi0 = config_Lee::flag_nueCC_PC_by_numuCC_pi0;// 5
+  bool flag_nueCC_HghE_FC_by_numuCC_pi0_nueFC = config_Lee::flag_nueCC_HghE_FC_by_numuCC_pi0_nueFC;// 6, HghE>800 MeV
+  bool flag_nueCC_LowE_FC_by_all   = config_Lee::flag_nueCC_LowE_FC_by_all;// 7
+  bool flag_nueCC_FC_by_all        = config_Lee::flag_nueCC_FC_by_all;// 8
   
   ///////////////////////// gof
   
@@ -227,9 +244,7 @@ int main(int argc, char** argv)
 
   //////////////////////////////////////////////////////////////////////////////////////// LEE strength fitting
 
-  if( 1 ) {
-    Lee_test->scaleF_Lee = 1;
-    Lee_test->Set_Collapse();
+  if( config_Lee::flag_Lee_strength_data ) {
 
     Lee_test->Set_measured_data();
 
@@ -251,7 +266,8 @@ int main(int argc, char** argv)
     double val_max_dchi2 = 0;
     double step = (shgh-slow)/nscan;
     for(int idx=1; idx<=nscan; idx++) {
-      cout<<" ---> scan "<<idx<<endl;
+      //cout<<" ---> scan "<<idx<<endl;
+      if( idx%(max(1, nscan/10))==0 ) cout<<Form(" ---> scan %4.2f, %3d", idx*1./nscan, idx)<<endl;
       double val_s = slow + (idx-1)*step;
       Lee_test->Minimization_Lee_strength_FullCov(val_s, 1);
       double val_chi2 = Lee_test->minimization_chi2;
@@ -339,6 +355,23 @@ int main(int argc, char** argv)
     
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+  if( 0 ) {
+    
+    Lee_test->Set_measured_data();
+
+    Lee_test->Minimization_Lee_strength_FullCov(1, 1);
+    double val_chi2_Lee = Lee_test->minimization_chi2;
+
+    Lee_test->Minimization_Lee_strength_FullCov(0, 1);
+    double val_chi2_sm = Lee_test->minimization_chi2;
+
+    double val_dchi2 = val_chi2_Lee - val_chi2_sm;
+    
+    cout<<endl<<TString::Format(" ---> dchi2 = Lee - sm: %4.2f", val_dchi2)<<endl<<endl;
+  }
+
   //////////////////////////////////////////////////////////////////////////////////////// test
 
   if( 0 ) {
@@ -356,7 +389,7 @@ int main(int argc, char** argv)
 				)<<endl<<endl;
   }
   
-  ////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////// test
 
   if( 0 ) {
     Lee_test->scaleF_Lee = 1;
@@ -372,6 +405,30 @@ int main(int argc, char** argv)
 				Lee_test->minimization_Lee_strength_val,
 				Lee_test->minimization_Lee_strength_err
 				)<<endl<<endl;
+  }
+  
+  //////////////////////////////////////////////////////////////////////////////////////// Feldman-Cousins approach
+
+  if( 1 ) {
+    Lee_test->scaleF_Lee = 2;
+    Lee_test->Set_Collapse();    
+    Lee_test->Set_toy_Asimov();
+
+    Lee_test->Minimization_Lee_strength_FullCov(1, 0);
+
+    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
+				Lee_test->minimization_chi2,
+				Lee_test->minimization_Lee_strength_val,
+				Lee_test->minimization_Lee_strength_err
+				)<<endl<<endl;
+
+    ///////////////
+    double Lee_true_low = 0;
+    double Lee_true_hgh = 4;
+    double Lee_step = 0.01;
+    int num_toy = 2;
+    
+    Lee_test->Exe_Feldman_Cousins(Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);   
   }
   
   ////////////////////////////////////////////////////////////////////////////////////////

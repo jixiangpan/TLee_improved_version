@@ -42,6 +42,85 @@ namespace DataBase {
 
 ///////////////////////////////////////////////////////// ccc
 
+void TLee::Exe_Feldman_Cousins(double Lee_true_low, double Lee_true_hgh, double step, int num_toy, int ifile)
+{
+  cout<<endl<<" ---> Exe_Feldman_Cousins"<<endl<<endl;
+
+  ///////////////////////
+
+  int Lee_strength_scaled100  = 0;
+  double chi2_null_data       = 0;
+  double chi2_gmin_data       = 0;
+  vector<double>chi2_null_toy;
+  vector<double>chi2_gmin_toy;
+  
+  TFile *file_FC = new TFile(Form("file_FC_%06d.root", ifile), "recreate");
+  TTree *tree = new TTree("tree", "Feldman-Cousins");
+
+  tree->Branch( "Lee_strength_scaled100", &Lee_strength_scaled100, "Lee_strength_scaled100/I" );
+  tree->Branch( "chi2_null_data", &chi2_null_data, "chi2_null_data/D" );
+  tree->Branch( "chi2_gmin_data", &chi2_gmin_data, "chi2_gmin_data/D" );
+  tree->Branch( "chi2_null_toy", &chi2_null_toy );
+  tree->Branch( "chi2_gmin_toy", &chi2_gmin_toy );
+
+  ///// ttt
+  scaleF_Lee = 2;
+  Set_Collapse();    
+  Set_toy_Asimov();// replace it with data
+  Minimization_Lee_strength_FullCov(1.5, 0);
+  chi2_gmin_data = minimization_chi2;
+  if( minimization_status!=0 ) { cerr<<" Error: cannot minimization on data"<<endl; exit(1); };
+  
+  int num_idx = int(((Lee_true_hgh-Lee_true_low)/step)+0.5) + 1;
+  
+  for(int idx=1; idx<=num_idx; idx++ ) {
+    if( idx%(max(1, num_idx/10))==0 ) cout<<Form(" ---> scan %4.2f, %3d", idx*1./num_idx, idx)<<endl;
+
+    ///// ttt
+    scaleF_Lee = 2;
+    Set_Collapse();    
+    Set_toy_Asimov();// replace it with data
+    double Lee_strength = Lee_true_low + (idx-1)*step;
+    Minimization_Lee_strength_FullCov(Lee_strength, 1);
+    chi2_null_data = minimization_chi2;
+
+    /////
+    scaleF_Lee = Lee_strength;
+    Set_Variations( num_toy );
+
+    Lee_strength_scaled100 = (int)(Lee_strength*100 + 0.5);
+    
+    chi2_null_toy.clear();
+    chi2_gmin_toy.clear();    
+    
+    for(int itoy=1; itoy<=num_toy; itoy++) {
+      Set_toy_Variation( itoy );
+
+      Minimization_Lee_strength_FullCov(Lee_strength, 1);
+      double val_chi2_null = minimization_chi2;
+      
+      Minimization_Lee_strength_FullCov(Lee_strength, 0);
+      double val_chi2_gmin = minimization_chi2;
+      if( minimization_status!=0 ) continue;
+
+      chi2_null_toy.push_back( val_chi2_null );
+      chi2_gmin_toy.push_back( val_chi2_gmin );      
+    }// itoy
+
+    tree->Fill();
+    
+  }// idx
+  
+  ///////////////////////
+
+  file_FC->cd();
+  tree->Write();
+  file_FC->Close();
+  
+}
+
+///////////////////////////////////////////////////////// ccc
+
 void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag_fixed)
 {
   TString roostr = "";
@@ -975,6 +1054,22 @@ void TLee::Set_POT_implement()
 
 ///////////////////////////////////////////////////////// ccc
 
+void TLee::Set_config_file_directory(TString spectra_file_, TString flux_Xs_directory_, TString detector_directory_, TString mc_directory_)
+{
+  cout<<endl<<" ---> Set_config_file_directory"<<endl<<endl;
+
+  spectra_file       = spectra_file_;
+  flux_Xs_directory  = flux_Xs_directory_;
+  detector_directory = detector_directory_;
+  mc_directory       = mc_directory_;
+
+  cout<<Form(" spectra_file       %-10s", spectra_file.Data() )<<endl;
+  cout<<Form(" flux_Xs_directory  %-10s", flux_Xs_directory.Data() )<<endl;
+  cout<<Form(" detector_directory %-10s", detector_directory.Data() )<<endl;
+  cout<<Form(" mc_directory       %-10s", mc_directory.Data() )<<endl;  
+}
+
+
 void TLee::Set_Spectra_MatrixCov()
 {
   /// spectra should be consist with matrix-cov order
@@ -1008,7 +1103,7 @@ void TLee::Set_Spectra_MatrixCov()
   //////////////////
   //////////////////
   
-  roostr = "./data_framework/merge_all_new_weights.root";
+  roostr = spectra_file;
   TFile *file_spectra = new TFile(roostr, "read");
 
   ///
@@ -1018,7 +1113,7 @@ void TLee::Set_Spectra_MatrixCov()
   matrix_transform = (*mat_collapse);
 
   ///
-  for(int ich=1; ich<=16; ich++) {
+  for(int ich=1; ich<=(int)map_input_spectrum_ch_str.size(); ich++) {
     roostr = TString::Format("histo_%d", ich);
     TH1F *h1_spectrum = (TH1F*)file_spectra->Get(roostr);
     int bins = h1_spectrum->GetNbinsX() + 1;    
@@ -1063,7 +1158,7 @@ void TLee::Set_Spectra_MatrixCov()
   TMatrixD matrix_flux_Xs_frac(bins_oldworld, bins_oldworld);
 
   for(int idx=1; idx<=17; idx++) {
-    roostr = TString::Format("./data_framework/flux_Xs/cov_%d.root", idx);
+    roostr = TString::Format(flux_Xs_directory+"cov_%d.root", idx);
     map_file_flux_Xs_frac[idx] = new TFile(roostr, "read");
     map_matrix_flux_Xs_frac[idx] = (TMatrixD*)map_file_flux_Xs_frac[idx]->Get(TString::Format("frac_cov_xf_mat_%d", idx));
     // cout<<TString::Format(" ---> check: flux and Xs, %2d  ", idx)<<roostr<<endl;
@@ -1074,16 +1169,16 @@ void TLee::Set_Spectra_MatrixCov()
   ////////////////////////////////////////// detector
   
   map<int, TString>map_detectorfile_str;
-  map_detectorfile_str[1] = "./data_framework/det/cov_LYDown.root";
-  map_detectorfile_str[2] = "./data_framework/det/cov_LYRayleigh.root";
-  map_detectorfile_str[3] = "./data_framework/det/cov_Recomb2.root";
-  map_detectorfile_str[4] = "./data_framework/det/cov_SCE.root";
-  map_detectorfile_str[5] = "./data_framework/det/cov_WMdEdx.root";
-  map_detectorfile_str[6] = "./data_framework/det/cov_WMThetaXZ.root";
-  map_detectorfile_str[7] = "./data_framework/det/cov_WMThetaYZ.root";
-  map_detectorfile_str[8] = "./data_framework/det/cov_WMX.root";
-  map_detectorfile_str[9] = "./data_framework/det/cov_WMYZ.root";
-  map_detectorfile_str[10]= "./data_framework/det/cov_LYatt.root";
+  map_detectorfile_str[1] = detector_directory+"cov_LYDown.root";
+  map_detectorfile_str[2] = detector_directory+"cov_LYRayleigh.root";
+  map_detectorfile_str[3] = detector_directory+"cov_Recomb2.root";
+  map_detectorfile_str[4] = detector_directory+"cov_SCE.root";
+  map_detectorfile_str[5] = detector_directory+"cov_WMdEdx.root";
+  map_detectorfile_str[6] = detector_directory+"cov_WMThetaXZ.root";
+  map_detectorfile_str[7] = detector_directory+"cov_WMThetaYZ.root";
+  map_detectorfile_str[8] = detector_directory+"cov_WMX.root";
+  map_detectorfile_str[9] = detector_directory+"cov_WMYZ.root";
+  map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
   
   map<int, TFile*>map_file_detector_frac;
   map<int, TMatrixD*>map_matrix_detector_frac;
@@ -1139,7 +1234,7 @@ void TLee::Set_Spectra_MatrixCov()
   int gbins_mc_stat = 137;
   
   for(int ifile=0; ifile<=99; ifile++) {
-    roostr = TString::Format("./data_framework/mc_stat/%d.log", ifile);
+    roostr = TString::Format(mc_directory+"%d.log", ifile);
     ifstream InputFile_aa(roostr, ios::in);
     if(!InputFile_aa) { cerr<<" No input-list"<<endl; exit(1); }
 

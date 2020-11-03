@@ -29,6 +29,8 @@ void plot_null_true()
   
   roostr = "file_null8Lee_true8Lee.root";
   roostr = "file_null8Lee_true8sm.root";
+  roostr = "file_null8sm_Lee2sm.root";
+  
   TFile *file_out = new TFile(roostr, "read");
   TTree *tree = (TTree*)file_out->Get("tree");
 
@@ -67,7 +69,7 @@ void plot_null_true()
   int size_vc = vc_dchi2_null8Lee_true8Lee.size();
   sort( vc_dchi2_null8Lee_true8Lee.begin(), vc_dchi2_null8Lee_true8Lee.end() );
 
-  double dchi2_data = 5.46;
+  double dchi2_data = 5.35;
   int line_eff = 0;
 
   for(int idx=0; idx<size_vc; idx++) {
@@ -77,11 +79,14 @@ void plot_null_true()
 
   double pValue = line_eff*1./size_vc;// double side pValue
   double val_sigma = sqrt( TMath::ChisquareQuantile( 1-pValue, 1 ) );
+  val_sigma = sqrt( TMath::ChisquareQuantile( 1-pValue*2, 1 ) );
+
+  
   cout<<endl<<TString::Format(" ---> pValue %6.4f, #sigma %4.2f, chi2 %4.2f", pValue, val_sigma, val_sigma*val_sigma)<<endl<<endl;
   
   ////////////////////////////////////////////
 
-  TH1D *h1_dchi2 = new TH1D("h1_dchi2", "", 100, 0, vc_dchi2_null8Lee_true8Lee.at(size_vc*0.99) );
+  TH1D *h1_dchi2 = new TH1D("h1_dchi2", "", 100, vc_dchi2_null8Lee_true8Lee.at(int(size_vc*0.01)), vc_dchi2_null8Lee_true8Lee.at(int(size_vc*1)-1) + 5 );
 
   for(int idx=0; idx<size_vc; idx++) {
     double val_dchi2 = vc_dchi2_null8Lee_true8Lee.at(idx);
@@ -95,7 +100,7 @@ void plot_null_true()
   canv_h1_dchi2->SetLeftMargin(0.15); canv_h1_dchi2->SetRightMargin(0.1);
   canv_h1_dchi2->SetTopMargin(0.1); canv_h1_dchi2->SetBottomMargin(0.15);    
   h1_dchi2->Draw("hist f");
-  h1_dchi2->GetYaxis()->SetTitle("PDF"); h1_dchi2->GetXaxis()->SetTitle("#Delta#chi^{2} = #chi^{2}_{Null} - #chi^{2}_{min}");
+  h1_dchi2->GetYaxis()->SetTitle("PDF"); h1_dchi2->GetXaxis()->SetTitle("#Delta#chi^{2} = #chi^{2}_{LEE} - #chi^{2}_{SM}");
   h1_dchi2->GetXaxis()->SetLabelSize(0.05); h1_dchi2->GetXaxis()->SetTitleSize(0.05);
   h1_dchi2->GetYaxis()->SetLabelSize(0.05); h1_dchi2->GetYaxis()->SetTitleSize(0.05);
   h1_dchi2->GetXaxis()->CenterTitle(); h1_dchi2->GetYaxis()->CenterTitle();
@@ -120,7 +125,10 @@ void plot_null_true()
   // tt_text_data->SetTextAlign(11); tt_text_data->SetTextSize(0.05); tt_text_data->SetTextAngle(0);
   // tt_text_data->SetTextFont(42);  tt_text_data->Draw(); tt_text_data->SetTextColor(kBlack);
   
-  TPaveText *pt = new TPaveText( x2*0.1, y2*0.35, x2*0.1, y2*0.6,"l");
+  
+  //TPaveText *pt = new TPaveText( dchi2_data+0.5, y2*0.35, dchi2_data+0.5, y2*0.6,"l");
+  TPaveText *pt = new TPaveText( x2*0.3, y2*0.35, x2*0.3, y2*0.6,"l");
+  
   pt->SetTextSize(0.05);
   pt->SetTextFont(42);
   pt->SetTextAlign(11);
@@ -134,7 +142,9 @@ void plot_null_true()
   pt->Draw();
 
   h1_dchi2->Draw("same axis");
-  canv_h1_dchi2->SaveAs("canv_h1_null8Lee_true8Lee.png");
+  //canv_h1_dchi2->SaveAs("canv_h1_null8Lee_true8Lee.png");
+  //canv_h1_dchi2->SaveAs("canv_h1_null8Lee_true8sm.png");
+  canv_h1_dchi2->SaveAs("canv_h1_true8sm_Lee2sm.png");
   
   ////////////////////////////////////////////
   
