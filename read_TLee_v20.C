@@ -92,6 +92,10 @@ int main(int argc, char** argv)
   
   Lee_test->scaleF_Lee = 0;
   Lee_test->Set_Collapse();
+
+  TFile *file_collapsed_covariance_matrix = new TFile("file_collapsed_covariance_matrix.root", "recreate");
+  Lee_test->matrix_absolute_cov_newworld.Write("matrix_absolute_cov_newworld");
+  file_collapsed_covariance_matrix->Close();
   
   //////////////////////////////////////////////////////////////////////////////////////// Goodness of fit
   
@@ -412,8 +416,7 @@ int main(int argc, char** argv)
   if( 0 ) {
     Lee_test->scaleF_Lee = 2;
     Lee_test->Set_Collapse();    
-    Lee_test->Set_toy_Asimov();
-
+    Lee_test->Set_toy_Asimov();// replace it with data
     Lee_test->Minimization_Lee_strength_FullCov(1, 0);
 
     cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
