@@ -112,7 +112,9 @@ int main(int argc, char** argv)
   tree_config->Write();
 
   file_collapsed_covariance_matrix->cd();
-  Lee_test->matrix_absolute_cov_newworld.Write("matrix_absolute_cov_newworld");
+  Lee_test->matrix_absolute_cov_newworld.Write("matrix_absolute_cov_newworld");// (bins, bins)
+  Lee_test->matrix_pred_newworld.Write("matrix_pred_newworld");// (1, bins)
+  Lee_test->matrix_data_newworld.Write("matrix_data_newworld");// (1, bins)
   file_collapsed_covariance_matrix->Close();
   
   //////////////////////////////////////////////////////////////////////////////////////// Goodness of fit
