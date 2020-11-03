@@ -90,7 +90,7 @@ int main(int argc, char** argv)
   Lee_test->flag_syst_additional = config_Lee::flag_syst_additional;
   Lee_test->flag_syst_mc_stat    = config_Lee::flag_syst_mc_stat;
   
-  Lee_test->scaleF_Lee = 0;
+  Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_output_covariance_matrix;
   Lee_test->Set_Collapse();
 
   TFile *file_collapsed_covariance_matrix = new TFile("file_collapsed_covariance_matrix.root", "recreate");

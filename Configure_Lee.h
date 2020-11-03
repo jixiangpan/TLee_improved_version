@@ -28,6 +28,8 @@ namespace config_Lee
   bool flag_syst_additional = 1;
   bool flag_syst_mc_stat    = 1;
 
+  double Lee_strength_for_output_covariance_matrix = 0;
+  
   ////////// goodness of fit
  
   bool flag_both_numuCC            = 0;// 1
