@@ -409,7 +409,7 @@ int main(int argc, char** argv)
   
   //////////////////////////////////////////////////////////////////////////////////////// Feldman-Cousins approach
 
-  if( 1 ) {
+  if( 0 ) {
     Lee_test->scaleF_Lee = 2;
     Lee_test->Set_Collapse();    
     Lee_test->Set_toy_Asimov();
