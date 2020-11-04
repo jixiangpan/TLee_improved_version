@@ -397,7 +397,7 @@ int main(int argc, char** argv)
     
     cout<<endl<<TString::Format(" ---> dchi2 = Lee - sm: %4.2f", val_dchi2)<<endl<<endl;
   }
-
+  
   //////////////////////////////////////////////////////////////////////////////////////// test
 
   if( 0 ) {
@@ -414,7 +414,7 @@ int main(int argc, char** argv)
 				Lee_test->minimization_Lee_strength_err
 				)<<endl<<endl;
   }
-  
+
   //////////////////////////////////////////////////////////////////////////////////////// test
 
   if( 0 ) {
