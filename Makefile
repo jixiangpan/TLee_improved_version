@@ -3,8 +3,8 @@ CC+=-DDEBUG -g
 CFLAGS=-c -Wall -m64
 LDFLAGS=-fPIC
 DIR_SRC = ./src
-SOURCES=read_TLee_v20.C $(wildcard $(DIR_SRC)/*.C)
-OBJECTS=$(SOURCES:.C=.o)
+SOURCES=read_TLee_v20.cxx $(wildcard $(DIR_SRC)/*.cxx)
+OBJECTS=$(SOURCES:.cxx=.o)
 EXECUTABLE=read_TLee_v20
 
 ROOTSYS=/home/xji/data0/software/root_build
@@ -19,7 +19,8 @@ all: $(SOURCES) $(EXECUTABLE)
 $(EXECUTABLE):$(OBJECTS)
 	$(CC) -o $@ $(OBJECTS) $(LDFLAGS) -lMinuit2
 
-.C.o:
+#.C.o:
+%.o:%.cxx
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
