@@ -143,12 +143,14 @@ public:
   void Set_toy_Asimov();
   void Set_toy_Variation(int itoy);
   void Set_measured_data();
+  void Set_fakedata(TMatrixD matrix_fakedata);// 1, bins
   
   // minimization
   void Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag_fixed);
   
   // Feldman-Cousins approach
-  void Exe_Feldman_Cousins(double Lee_true_low, double Lee_true_hgh, double step, int num_toy, int ifile);
+  void Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_low, double Lee_true_hgh, double step, int num_toy, int ifile);
+
 };
 
 #endif

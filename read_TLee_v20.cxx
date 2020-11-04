@@ -7,9 +7,9 @@ using namespace std;
 
 #include<map>
 
-#include "TLee.h"
+#include "WCPLEEANA/TLee.h"
 
-#include "Configure_Lee.h"
+#include "WCPLEEANA/Configure_Lee.h"
 
 #include "TApplication.h"
 
@@ -436,24 +436,27 @@ int main(int argc, char** argv)
   //////////////////////////////////////////////////////////////////////////////////////// Feldman-Cousins approach
 
   if( 0 ) {
-    Lee_test->scaleF_Lee = 2;
-    Lee_test->Set_Collapse();    
-    Lee_test->Set_toy_Asimov();// replace it with data
+    
+    Lee_test->Set_measured_data();
+    
     Lee_test->Minimization_Lee_strength_FullCov(1, 0);
-
+    
     cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
 				Lee_test->minimization_chi2,
 				Lee_test->minimization_Lee_strength_val,
 				Lee_test->minimization_Lee_strength_err
 				)<<endl<<endl;
 
+    
+    TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
+    
     ///////////////
     double Lee_true_low = 0;
-    double Lee_true_hgh = 4;
+    double Lee_true_hgh = 3;
     double Lee_step = 0.01;
     int num_toy = 2;
     
-    Lee_test->Exe_Feldman_Cousins(Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);   
+    Lee_test->Exe_Feldman_Cousins(matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);   
   }
   
   ////////////////////////////////////////////////////////////////////////////////////////

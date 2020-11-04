@@ -42,7 +42,7 @@ namespace DataBase {
 
 ///////////////////////////////////////////////////////// ccc
 
-void TLee::Exe_Feldman_Cousins(double Lee_true_low, double Lee_true_hgh, double step, int num_toy, int ifile)
+void TLee::Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_low, double Lee_true_hgh, double step, int num_toy, int ifile)
 {
   cout<<endl<<" ---> Exe_Feldman_Cousins"<<endl<<endl;
 
@@ -64,9 +64,7 @@ void TLee::Exe_Feldman_Cousins(double Lee_true_low, double Lee_true_hgh, double 
   tree->Branch( "chi2_gmin_toy", &chi2_gmin_toy );
 
   ///// ttt
-  scaleF_Lee = 2;
-  Set_Collapse();    
-  Set_toy_Asimov();// replace it with data
+  Set_fakedata( matrix_data_input_fc );
   Minimization_Lee_strength_FullCov(1.5, 0);
   chi2_gmin_data = minimization_chi2;
   if( minimization_status!=0 ) { cerr<<" Error: cannot minimization on data"<<endl; exit(1); };
@@ -77,9 +75,7 @@ void TLee::Exe_Feldman_Cousins(double Lee_true_low, double Lee_true_hgh, double 
     if( idx%(max(1, num_idx/10))==0 ) cout<<Form(" ---> scan %4.2f, %3d", idx*1./num_idx, idx)<<endl;
 
     ///// ttt
-    scaleF_Lee = 2;
-    Set_Collapse();    
-    Set_toy_Asimov();// replace it with data
+    Set_fakedata( matrix_data_input_fc );
     double Lee_strength = Lee_true_low + (idx-1)*step;
     Minimization_Lee_strength_FullCov(Lee_strength, 1);
     chi2_null_data = minimization_chi2;
@@ -243,25 +239,25 @@ void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag
 
 void TLee::Set_toy_Asimov()
 {
-  for(int ibin=0; ibin<bins_newworld; ibin++) {
-    map_fake_data[ibin] = matrix_pred_newworld(0, ibin);
-  }
+  for(int ibin=0; ibin<bins_newworld; ibin++) map_fake_data[ibin] = matrix_pred_newworld(0, ibin);
 }
 
 void TLee::Set_toy_Variation(int itoy)
 {
-  for(int ibin=0; ibin<bins_newworld; ibin++) {
-    map_fake_data[ibin] = map_toy_variation[itoy][ibin];
-  } 
+  for(int ibin=0; ibin<bins_newworld; ibin++) map_fake_data[ibin] = map_toy_variation[itoy][ibin];
 }
 
 void TLee::Set_measured_data()
 {
-  for(int ibin=0; ibin<bins_newworld; ibin++) {
-    map_fake_data[ibin] = matrix_data_newworld(0, ibin);
-  }
+  for(int ibin=0; ibin<bins_newworld; ibin++) map_fake_data[ibin] = matrix_data_newworld(0, ibin);
 }
   
+void TLee::Set_fakedata(TMatrixD matrix_fakedata)
+{
+  int cols = matrix_fakedata.GetNcols();
+  for(int ibin=0; ibin<cols; ibin++) map_fake_data[ibin] = matrix_fakedata(0, ibin);    
+}
+
 ///////////////////////////////////////////////////////// ccc
 
 void TLee::Set_Variations(int num_toy)
