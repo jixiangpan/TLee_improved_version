@@ -53,6 +53,7 @@ void TLee::Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_lo
   double chi2_gmin_data       = 0;
   vector<double>chi2_null_toy;
   vector<double>chi2_gmin_toy;
+  vector<double>LeeF_gmin_toy;
   
   TFile *file_FC = new TFile(Form("file_FC_%06d.root", ifile), "recreate");
   TTree *tree = new TTree("tree", "Feldman-Cousins");
@@ -62,6 +63,7 @@ void TLee::Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_lo
   tree->Branch( "chi2_gmin_data", &chi2_gmin_data, "chi2_gmin_data/D" );
   tree->Branch( "chi2_null_toy", &chi2_null_toy );
   tree->Branch( "chi2_gmin_toy", &chi2_gmin_toy );
+  tree->Branch( "LeeF_gmin_toy", &LeeF_gmin_toy );
 
   ///// ttt
   Set_fakedata( matrix_data_input_fc );
@@ -88,7 +90,8 @@ void TLee::Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_lo
     
     chi2_null_toy.clear();
     chi2_gmin_toy.clear();    
-    
+    LeeF_gmin_toy.clear();
+      
     for(int itoy=1; itoy<=num_toy; itoy++) {
       Set_toy_Variation( itoy );
 
@@ -100,7 +103,9 @@ void TLee::Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_lo
       if( minimization_status!=0 ) continue;
 
       chi2_null_toy.push_back( val_chi2_null );
-      chi2_gmin_toy.push_back( val_chi2_gmin );      
+      chi2_gmin_toy.push_back( val_chi2_gmin );
+      LeeF_gmin_toy.push_back( minimization_Lee_strength_val );
+      
     }// itoy
 
     tree->Fill();
