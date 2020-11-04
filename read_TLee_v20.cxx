@@ -439,20 +439,20 @@ int main(int argc, char** argv)
     
     Lee_test->Set_measured_data();
     
-    Lee_test->Minimization_Lee_strength_FullCov(1, 0);
+    // Lee_test->Minimization_Lee_strength_FullCov(1, 0);
     
-    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
-				Lee_test->minimization_chi2,
-				Lee_test->minimization_Lee_strength_val,
-				Lee_test->minimization_Lee_strength_err
-				)<<endl<<endl;
+    // cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
+    // 				Lee_test->minimization_chi2,
+    // 				Lee_test->minimization_Lee_strength_val,
+    // 				Lee_test->minimization_Lee_strength_err
+    // 				)<<endl<<endl;
 
     
     TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
     
     ///////////////
     double Lee_true_low = 0;
-    double Lee_true_hgh = 3;
+    double Lee_true_hgh = 6;
     double Lee_step = 0.01;
     int num_toy = 2;
     

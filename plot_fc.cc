@@ -190,6 +190,35 @@ void plot_fc()
   gh_val_CL_10->SetLineColor(kBlue);
   gh_val_CL_10->SetMarkerColor(kBlue);
 
+  //////////////////////////////////
 
+  {
+    int user_Lee_100 = 100;
+    
+    int size_vc = map_Lee_vector_dchi2[user_Lee_100].size();;
+    sort( map_Lee_vector_dchi2[user_Lee_100].begin(), map_Lee_vector_dchi2[user_Lee_100].end() );
+    
+    TH1D *h1_dchi2_toy = new TH1D("h1_dchi2_toy", "h1_dchi2_toy",
+				 80, map_Lee_vector_dchi2[user_Lee_100].at(0), map_Lee_vector_dchi2[user_Lee_100].at(size_vc-1) );
+
+    for(int idx=0; idx<size_vc; idx++) {
+      double val_dchi2 = map_Lee_vector_dchi2[user_Lee_100].at(idx);
+      h1_dchi2_toy->Fill( val_dchi2 );      
+    }// idx
+
+    
+    TCanvas *canv_h1_dchi2_toy = new TCanvas("canv_h1_dchi2_toy", "", 900, 650);
+    func_canv_margin(canv_h1_dchi2_toy, 0.15, 0.1, 0.1, 0.15);
+    h1_dchi2_toy->Draw("hist");
+    h1_dchi2_toy->SetLineColor(kBlue);
+    func_title_size(h1_dchi2_toy, 0.05, 0.05, 0.05, 0.05);
+    func_xy_title(h1_dchi2_toy, "#Delta#chi^{2} = #chi^{2}_{null} - #chi^{2}_{min}", "Entries");
+    h1_dchi2_toy->GetXaxis()->CenterTitle();
+    h1_dchi2_toy->GetYaxis()->CenterTitle();
+    h1_dchi2_toy->Draw("same axis");
+    
+  }
+
+  
 }
 
