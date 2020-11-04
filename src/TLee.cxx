@@ -218,7 +218,7 @@ void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag
   //   double minosError_hgh = 0;
   //   min_Lee.GetMinosError(0, minosError_low, minosError_hgh);
   //   cout<<TString::Format(" ---> Best fit of Lee strength: %5.2f, (1 sigma) from MinosError: %5.2f %5.2f",
-  // 			  minimization_Lee_strength_val, minosError_low, minosError_hgh)<<endl;
+  //  			  minimization_Lee_strength_val, minosError_low, minosError_hgh)<<endl;
   // }
   // {
   //   min_Lee.SetErrorDef(4);
