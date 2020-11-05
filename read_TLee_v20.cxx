@@ -453,9 +453,9 @@ int main(int argc, char** argv)
     ///////////////
     
     double Lee_true_low = 0;
-    double Lee_true_hgh = 6;
-    double Lee_step = 0.01;
-    int num_toy = 2;
+    double Lee_true_hgh = 5;
+    double Lee_step = 0.02;
+    int num_toy = 1;
     
     Lee_test->Exe_Feldman_Cousins(matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);   
   }
