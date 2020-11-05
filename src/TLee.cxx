@@ -52,8 +52,7 @@ void TLee::Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_lo
   vector<double>chi2_null_toy;
   vector<double>chi2_gmin_toy;
   vector<double>LeeF_gmin_toy;
-  
-  TFile *file_FC = new TFile(Form("file_FC_%06d.root", ifile), "recreate");
+    
   TTree *tree = new TTree("tree", "Feldman-Cousins");
 
   tree->Branch( "Lee_strength_scaled100", &Lee_strength_scaled100, "Lee_strength_scaled100/I" );
@@ -101,7 +100,8 @@ void TLee::Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_lo
   }// idx
   
   ///////////////////////
-
+  
+  TFile *file_FC = new TFile(Form("file_FC_%06d.root", ifile), "recreate");
   file_FC->cd();
   tree->Write();
   file_FC->Close();

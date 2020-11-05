@@ -437,7 +437,7 @@ int main(int argc, char** argv)
   
   //////////////////////////////////////////////////////////////////////////////////////// Feldman-Cousins approach
 
-  if( 0 ) {
+  if( 1 ) {
     
     Lee_test->Set_measured_data();    
     TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
