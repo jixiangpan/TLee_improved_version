@@ -150,7 +150,7 @@ public:
   
   // Feldman-Cousins approach
   void Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_low, double Lee_true_hgh, double step, int num_toy, int ifile);
-
+  void Exe_Fledman_Cousins_Asimov(double Lee_true_low, double Lee_true_hgh, double step);
 };
 
 #endif

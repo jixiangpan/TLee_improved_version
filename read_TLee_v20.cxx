@@ -437,7 +437,7 @@ int main(int argc, char** argv)
   
   //////////////////////////////////////////////////////////////////////////////////////// Feldman-Cousins approach
 
-  if( 0 ) {
+  if( 1 ) {
     
     Lee_test->Set_measured_data();    
     TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
@@ -450,14 +450,23 @@ int main(int argc, char** argv)
     // 				Lee_test->minimization_Lee_strength_err
     // 				)<<endl<<endl;
     
-    ///////////////
+    /////////////// Feldman-Cousins
     
     double Lee_true_low = 0;
     double Lee_true_hgh = 5;
-    double Lee_step = 0.02;
-    int num_toy = 1;
+    double Lee_step     = 0.02;
     
-    Lee_test->Exe_Feldman_Cousins(matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);   
+    //int num_toy = 2;    
+    //Lee_test->Exe_Feldman_Cousins(matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);
+
+    /////////////// Asimov
+    
+    //Lee_test->Exe_Fledman_Cousins_Asimov(Lee_true_low, Lee_true_hgh, Lee_step);
+
+    /////////////// measured data
+    
+    
+    
   }
   
   ////////////////////////////////////////////////////////////////////////////////////////

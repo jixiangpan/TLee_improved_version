@@ -42,6 +42,59 @@ namespace DataBase {
 
 ///////////////////////////////////////////////////////// ccc
 
+void TLee::Exe_Fledman_Cousins_Asimov(double Lee_true_low, double Lee_true_hgh, double step)
+{
+  cout<<endl<<" ---> Exe_Feldman_Cousins_Asimov"<<endl<<endl;
+  
+  ///////////////////////
+
+  int Lee_strength_scaled100  = 0;  
+  vector<double>Lee_scan100;
+  vector<double>chi2_null_toy;
+  
+  TTree *tree_Asimov = new TTree("tree_Asimov", "Feldman-Cousins");
+
+  tree_Asimov->Branch( "Lee_strength_scaled100", &Lee_strength_scaled100, "Lee_strength_scaled100/I" );
+  tree_Asimov->Branch( "Lee_scan100", &Lee_scan100 );
+  tree_Asimov->Branch( "chi2_null_toy", &chi2_null_toy );
+
+  int num_scan = int(((Lee_true_hgh-Lee_true_low)/step)+0.5) + 1;
+  
+  for(int idx=1; idx<=num_scan; idx++ ) {
+    if( idx%(max(1, num_scan/10))==0 ) cout<<Form(" ---> scan %4.2f, %3d", idx*1./num_scan, idx)<<endl;
+
+    double Lee_strength = Lee_true_low + (idx-1)*step;
+    Lee_strength_scaled100 = (int)(Lee_strength*100 + 0.5);
+    
+    Lee_scan100.clear();
+    chi2_null_toy.clear();
+
+    scaleF_Lee = Lee_strength;
+    Set_Collapse();
+    Set_toy_Asimov();
+
+    for(int jdx=1; jdx<=num_scan; jdx++) {
+      double val_Lee_scan = Lee_true_low + (jdx-1)*step;
+      double val_Lee_scan100 = (int)(val_Lee_scan*100 + 0.5);
+      
+      Minimization_Lee_strength_FullCov(val_Lee_scan, 1);
+      double val_chi2_null = minimization_chi2;
+
+      Lee_scan100.push_back( val_Lee_scan100 );
+      chi2_null_toy.push_back( val_chi2_null );
+    }
+
+    tree_Asimov->Fill();
+    
+  }// idx
+
+  TFile *file_Asimov = new TFile("file_Asimov.root", "recreate");
+  file_Asimov->cd();
+  tree_Asimov->Write();
+  file_Asimov->Close();
+  
+}
+
 void TLee::Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_low, double Lee_true_hgh, double step, int num_toy, int ifile)
 {
   cout<<endl<<" ---> Exe_Feldman_Cousins"<<endl<<endl;
