@@ -27,7 +27,8 @@ void plot_FC_new()
   
   //////////////////////////////////////////////////////////////////////////////////////// file_fc
 
-  bool flag_file_fc = 1;
+  bool flag_file_fc = 0;
+  int user_val_Lee100 = 200;
   
   roostr = "file_FC_toy_Lee0to5.root";
   TFile *file_fc = new TFile(roostr, "read");
@@ -88,7 +89,7 @@ void plot_FC_new()
   cout<<endl<<" ---> min/max Lee100: "<<min_Lee100<<", "<<max_Lee100<<endl<<endl;
   
   if( flag_file_fc ) {
-    int user_val_Lee100 = 100;
+    
     if( user_val_Lee100<min_Lee100 || user_val_Lee100>max_Lee100 ) exit(1);
     
     sort( map_fc_Lee_dchi2[user_val_Lee100].begin(), map_fc_Lee_dchi2[user_val_Lee100].end() );
@@ -132,11 +133,36 @@ void plot_FC_new()
     func_xy_title(h1_user_gmin, "Best fit of LEE strength", "Entries");
     h1_user_gmin->GetXaxis()->CenterTitle();
     h1_user_gmin->GetYaxis()->CenterTitle();
-    h1_user_gmin->Draw("same axis");
-            
+    h1_user_gmin->Draw("same axis");            
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////// 
+
+  roostr = "file_Asimov.root";
+  TFile *file_Asimov = new TFile(roostr, "read");
+  TTree *tree_Asimov = (TTree*)file_Asimov->Get("tree_Asimov");
   
+  // Declaration of leaf types
+  // Int_t           Lee_strength_scaled100;
+  vector<double>  *Lee_scan100;
+  //vector<double>  *chi2_null_toy;
+
+  // List of branches
+  // TBranch        *b_Lee_strength_scaled100;   //!
+  TBranch        *b_Lee_scan100;   //!
+  //TBranch        *b_chi2_null_toy;   //!
+
+  // Set object pointer
+  Lee_scan100 = 0;
+  //chi2_null_toy = 0;
+  
+  // Set branch addresses and branch pointers
+  if (!tree) return;
+  tree_Asimov->SetBranchAddress("Lee_strength_scaled100", &Lee_strength_scaled100, &b_Lee_strength_scaled100);
+  tree_Asimov->SetBranchAddress("Lee_scan100", &Lee_scan100, &b_Lee_scan100);
+  tree_Asimov->SetBranchAddress("chi2_null_toy", &chi2_null_toy, &b_chi2_null_toy);
+
+  int entries_Asimov = tree_Asimov->GetEntries();
   
 }
 

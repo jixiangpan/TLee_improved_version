@@ -502,7 +502,7 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     gh_data->SetLineColor(kBlue);
     gh_data->SetLineWidth(3);
  
-    h1_pred_clone->Draw("same axis");
+    h1_pred->Draw("same axis");
    
     TLegend *lg_top = new TLegend(0.2, 0.7, 0.45, 0.85);
     lg_top->AddEntry(gh_data, "Data", "lep");
@@ -574,7 +574,7 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     gh_ratio->SetMarkerColor(kBlue);
     gh_ratio->SetLineColor(kBlue);
     
-    h1_pred_rel_error->Draw("same axis");
+    h1_ratio_basic->Draw("same axis");
  
     roostr = TString::Format("canv_spectra_cmp_%02d.png", index);
     canv_spectra_cmp->SaveAs(roostr);
@@ -857,7 +857,7 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     gh_data->SetLineColor(kBlack);
     gh_data->SetLineWidth(3);
 
-    h1_pred_Y_noConstraint_clone->Draw("same axis");
+    h1_pred_Y_noConstraint->Draw("same axis");
 
     TLegend *lg_top = new TLegend(0.5, 0.65, 0.85, 0.85);
     lg_top->AddEntry(gh_data, "Data", "lep");
