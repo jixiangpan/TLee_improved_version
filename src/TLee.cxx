@@ -49,8 +49,6 @@ void TLee::Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_lo
   ///////////////////////
 
   int Lee_strength_scaled100  = 0;
-  double chi2_null_data       = 0;
-  double chi2_gmin_data       = 0;
   vector<double>chi2_null_toy;
   vector<double>chi2_gmin_toy;
   vector<double>LeeF_gmin_toy;
@@ -59,32 +57,21 @@ void TLee::Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_lo
   TTree *tree = new TTree("tree", "Feldman-Cousins");
 
   tree->Branch( "Lee_strength_scaled100", &Lee_strength_scaled100, "Lee_strength_scaled100/I" );
-  tree->Branch( "chi2_null_data", &chi2_null_data, "chi2_null_data/D" );
-  tree->Branch( "chi2_gmin_data", &chi2_gmin_data, "chi2_gmin_data/D" );
   tree->Branch( "chi2_null_toy", &chi2_null_toy );
   tree->Branch( "chi2_gmin_toy", &chi2_gmin_toy );
   tree->Branch( "LeeF_gmin_toy", &LeeF_gmin_toy );
 
-  ///// ttt
-  // Set_fakedata( matrix_data_input_fc );
-  // Minimization_Lee_strength_FullCov(1.5, 0);
-  // chi2_gmin_data = minimization_chi2;
-  // if( minimization_status!=0 ) { cerr<<" Error: cannot minimization on data"<<endl; exit(1); };
-  
   int num_idx = int(((Lee_true_hgh-Lee_true_low)/step)+0.5) + 1;
   
   for(int idx=1; idx<=num_idx; idx++ ) {
     if( idx%(max(1, num_idx/10))==0 ) cout<<Form(" ---> scan %4.2f, %3d", idx*1./num_idx, idx)<<endl;
 
     double Lee_strength = Lee_true_low + (idx-1)*step;
-    
-    ///// ttt
-    // Set_fakedata( matrix_data_input_fc );
-    // Minimization_Lee_strength_FullCov(Lee_strength, 1);
-    // chi2_null_data = minimization_chi2;
 
     /////
     scaleF_Lee = Lee_strength;
+    Set_Collapse();
+    
     Set_Variations( num_toy );
 
     Lee_strength_scaled100 = (int)(Lee_strength*100 + 0.5);

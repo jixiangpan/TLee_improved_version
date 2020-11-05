@@ -103,12 +103,14 @@ int main(int argc, char** argv)
   int flag_syst_additional = config_Lee::flag_syst_additional;
   int flag_syst_mc_stat = config_Lee::flag_syst_mc_stat;
   double user_Lee_strength_for_output_covariance_matrix = config_Lee::Lee_strength_for_output_covariance_matrix;
+  double user_scaleF_POT = scaleF_POT;
   tree_config->Branch("flag_syst_flux_Xs", &flag_syst_flux_Xs, "flag_syst_flux_Xs/I" );
   tree_config->Branch("flag_syst_detector", &flag_syst_detector, "flag_syst_detector/I" );
   tree_config->Branch("flag_syst_additional", &flag_syst_additional, "flag_syst_additional/I" );
   tree_config->Branch("flag_syst_mc_stat", &flag_syst_mc_stat, "flag_syst_mc_stat/I" );
   tree_config->Branch("user_Lee_strength_for_output_covariance_matrix", &user_Lee_strength_for_output_covariance_matrix,
 		      "user_Lee_strength_for_output_covariance_matrix/D" );
+  tree_config->Branch("user_scaleF_POT", &user_scaleF_POT, "user_scaleF_POT/D" );
   tree_config->Fill();
   file_collapsed_covariance_matrix->cd();
   tree_config->Write();
@@ -351,6 +353,7 @@ int main(int argc, char** argv)
         
     Lee_test->scaleF_Lee = 1;
     Lee_test->Set_Collapse();
+    
     Lee_test->Set_Variations(N_toy);
     
     for(int itoy=1; itoy<=N_toy; itoy++) {
@@ -383,8 +386,7 @@ int main(int argc, char** argv)
 
   ////////////////////////////////////////////////////////////////////////////////////////
 
-  if( 0 ) {
-    
+  if( 0 ) {    
     Lee_test->Set_measured_data();
 
     Lee_test->Minimization_Lee_strength_FullCov(1, 1);
@@ -398,7 +400,7 @@ int main(int argc, char** argv)
     cout<<endl<<TString::Format(" ---> dchi2 = Lee - sm: %4.2f", val_dchi2)<<endl<<endl;
   }
   
-  //////////////////////////////////////////////////////////////////////////////////////// test
+  //////////////////////////////////////////////////////////////////////////////////////// test, Asimov
 
   if( 0 ) {
     Lee_test->scaleF_Lee = 1;
@@ -415,7 +417,7 @@ int main(int argc, char** argv)
 				)<<endl<<endl;
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////// test
+  //////////////////////////////////////////////////////////////////////////////////////// test, variation
 
   if( 0 ) {
     Lee_test->scaleF_Lee = 1;
@@ -437,7 +439,8 @@ int main(int argc, char** argv)
 
   if( 0 ) {
     
-    Lee_test->Set_measured_data();
+    Lee_test->Set_measured_data();    
+    TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
     
     // Lee_test->Minimization_Lee_strength_FullCov(1, 0);
     
@@ -446,11 +449,9 @@ int main(int argc, char** argv)
     // 				Lee_test->minimization_Lee_strength_val,
     // 				Lee_test->minimization_Lee_strength_err
     // 				)<<endl<<endl;
-
-    
-    TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
     
     ///////////////
+    
     double Lee_true_low = 0;
     double Lee_true_hgh = 6;
     double Lee_step = 0.01;
