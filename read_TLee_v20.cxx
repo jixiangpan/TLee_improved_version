@@ -456,8 +456,8 @@ int main(int argc, char** argv)
     double Lee_true_hgh = 5;
     double Lee_step     = 0.02;
     
-    //int num_toy = 2;    
-    //Lee_test->Exe_Feldman_Cousins(matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);
+    //int num_toy = 1;    
+    //Lee_test->Exe_Feldman_Cousins(Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);
 
     /////////////// Asimov
     
@@ -465,7 +465,7 @@ int main(int argc, char** argv)
 
     /////////////// measured data
     
-    
+    Lee_test->Exe_Fiedman_Cousins_Data( matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step );
     
   }
   

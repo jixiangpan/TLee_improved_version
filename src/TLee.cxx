@@ -41,7 +41,60 @@ namespace DataBase {
 
 
 ///////////////////////////////////////////////////////// ccc
+void TLee::Exe_Fiedman_Cousins_Data(TMatrixD matrix_fakedata, double Lee_true_low, double Lee_true_hgh, double step)
+{
+  cout<<endl<<" ---> Exe_Feldman_Cousins_Data"<<endl;
+  
+  Set_fakedata( matrix_fakedata );
+  
+  //////////////////
+  
+  Minimization_Lee_strength_FullCov(1, 0);
+  
+  cout<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
+			minimization_chi2,
+			minimization_Lee_strength_val,
+			minimization_Lee_strength_err
+			)<<endl;
+  
+  //////////////////
 
+  double Lee_bestFit_data = minimization_Lee_strength_val;
+  double Lee_bestFit_err = minimization_Lee_strength_err;
+  double chi2_gmin_data = minimization_chi2;
+  vector<double>Lee_scan100_data;
+  vector<double>chi2_null_scan_data;
+  
+  TTree *tree_data = new TTree("tree_data", "Feldman-Cousins");
+
+  tree_data->Branch( "Lee_bestFit_data", &Lee_bestFit_data, "Lee_bestFit_data/D" );
+  tree_data->Branch( "Lee_bestFit_err", &Lee_bestFit_err, "Lee_bestFit_err/D" );
+  tree_data->Branch( "chi2_gmin_data", &chi2_gmin_data, "chi2_gmin_data/D");
+  tree_data->Branch( "Lee_scan100_data", &Lee_scan100_data );
+  tree_data->Branch( "chi2_null_scan_data", &chi2_null_scan_data );
+
+  int num_scan = int(((Lee_true_hgh-Lee_true_low)/step)+0.5) + 1;
+  
+  for(int idx=1; idx<=num_scan; idx++ ) {
+    if( idx%(max(1, num_scan/10))==0 ) cout<<Form(" ---> scan %4.2f, %3d", idx*1./num_scan, idx)<<endl;
+
+    double Lee_strength = Lee_true_low + (idx-1)*step;
+    double Lee_strength_scaled100 = (int)(Lee_strength*100 + 0.5);
+    
+    Minimization_Lee_strength_FullCov(Lee_strength, 1);
+    chi2_null_scan_data.push_back( minimization_Lee_strength_val );
+    Lee_scan100_data.push_back( Lee_strength_scaled100 );
+  }
+  cout<<endl;
+  
+  tree_data->Fill();
+  
+  TFile *file_data = new TFile("file_data.root", "recreate");
+  file_data->cd();
+  tree_data->Write();
+  file_data->Close();      
+}
+  
 void TLee::Exe_Fledman_Cousins_Asimov(double Lee_true_low, double Lee_true_hgh, double step)
 {
   cout<<endl<<" ---> Exe_Feldman_Cousins_Asimov"<<endl<<endl;
@@ -95,7 +148,7 @@ void TLee::Exe_Fledman_Cousins_Asimov(double Lee_true_low, double Lee_true_hgh, 
   
 }
 
-void TLee::Exe_Feldman_Cousins(TMatrixD matrix_data_input_fc, double Lee_true_low, double Lee_true_hgh, double step, int num_toy, int ifile)
+void TLee::Exe_Feldman_Cousins(double Lee_true_low, double Lee_true_hgh, double step, int num_toy, int ifile)
 {
   cout<<endl<<" ---> Exe_Feldman_Cousins"<<endl<<endl;
 

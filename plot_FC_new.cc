@@ -68,10 +68,10 @@ void plot_FC_new()
 
   //////////////////////////
   
-  bool flag_file_fc = 0;
+  bool flag_file_fc = 1;
   int user_val_Lee100 = 200;
 
-  bool flag_file_Asimov = 0;
+  bool flag_file_Asimov = 1;
   
   //////////////////////////////////////////////////////////////////////////////////////// file_fc
 
@@ -160,7 +160,7 @@ void plot_FC_new()
       h1_user_gmin->Fill( val_gmin );
     }
 
-    TCanvas *canv_h1_user_dchi2 = new TCanvas("canv_h1_user_dchi2", "", 900, 650);
+    TCanvas *canv_h1_user_dchi2 = new TCanvas("canv_h1_user_dchi2", "canv_h1_user_dchi2", 900, 650);
     func_canv_margin(canv_h1_user_dchi2, 0.15, 0.1, 0.1, 0.15);
     h1_user_dchi2->Draw("hist");
     h1_user_dchi2->SetLineColor(kBlue);
@@ -170,7 +170,7 @@ void plot_FC_new()
     h1_user_dchi2->GetYaxis()->CenterTitle();
     h1_user_dchi2->Draw("same axis");
           
-    TCanvas *canv_h1_user_gmin = new TCanvas("canv_h1_user_gmin", "", 900, 650);
+    TCanvas *canv_h1_user_gmin = new TCanvas("canv_h1_user_gmin", "canv_h1_user_gmin", 900, 650);
     func_canv_margin(canv_h1_user_gmin, 0.15, 0.1, 0.1, 0.15);
     h1_user_gmin->Draw("hist");
     h1_user_gmin->SetLineColor(kBlue);
@@ -181,7 +181,7 @@ void plot_FC_new()
     h1_user_gmin->Draw("same axis");            
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////// 
+  //////////////////////////////////////////////////////////////////////////////////////// file_Asimov
 
   roostr = "file_Asimov.root";
   TFile *file_Asimov = new TFile(roostr, "read");
@@ -288,7 +288,7 @@ void plot_FC_new()
   }// ientry
 
   if( flag_file_Asimov ) {    
-    TCanvas *canv_toy_Asimov = new TCanvas("canv_toy_Asimov", "", 900, 650);
+    TCanvas *canv_toy_Asimov = new TCanvas("canv_toy_Asimov", "canv_toy_Asimov", 900, 650);
     func_canv_margin(canv_toy_Asimov, 0.15, 0.1, 0.1, 0.15);
     map_graph_Asimov[user_val_Lee100]->Draw("al");
     map_graph_Asimov[user_val_Lee100]->SetLineColor(kBlue);
@@ -300,8 +300,8 @@ void plot_FC_new()
 
   //////////////////////////
   
-  TCanvas *canv_gh_CI68_Asimov = new TCanvas("canv_gh_CI68_Asimov", "", 900, 650);
-  func_canv_margin(canv_gh_CI68_Asimov, 0.15, 0.2, 0.1, 0.15);
+  TCanvas *canv_gh_CI68_Asimov = new TCanvas("canv_gh_CI68_Asimov", "canv_gh_CI68_Asimov", 690, 650);
+  func_canv_margin(canv_gh_CI68_Asimov, 0.15, 0.1, 0.1, 0.15);
   TH1D *h1_CI_Asimov = new TH1D("h1_CI_Asimov", "", 100, min_Lee100/100, max_Lee100/100);
   h1_CI_Asimov->Draw();
   h1_CI_Asimov->SetMinimum(min_Lee100/100);
@@ -310,6 +310,8 @@ void plot_FC_new()
   func_xy_title(h1_CI_Asimov, "True LEE strength", "LEE strength");  
   h1_CI_Asimov->GetXaxis()->CenterTitle();
   h1_CI_Asimov->GetYaxis()->CenterTitle();
+  h1_CI_Asimov->GetXaxis()->SetNdivisions(509);
+  h1_CI_Asimov->GetYaxis()->SetNdivisions(509);  
   h1_CI_Asimov->GetXaxis()->SetTitleOffset(1.2);
   
   gh_CI95_Asimov->Draw("same 3");
