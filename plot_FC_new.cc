@@ -1,3 +1,44 @@
+#include<iostream>
+#include<fstream>
+#include<sstream>
+#include<cmath>
+#include "stdlib.h"
+using namespace std;
+
+#include<map>
+
+#include "TROOT.h"
+#include "TH1.h"
+#include "TH2.h"
+#include "TH3.h"
+#include "TF1.h"
+#include "TLine.h"
+#include "TMath.h"
+#include "TGraph.h"
+#include "TGraph2D.h"
+#include "TGraphErrors.h"
+#include "TGraphAsymmErrors.h"
+#include "THStack.h"
+
+#include "TFile.h"
+#include "TTree.h"
+#include "TChain.h"
+#include "TBranch.h"
+
+#include "TRandom3.h"
+#include "TGaxis.h"
+#include "TStyle.h"
+#include "TPaveText.h"
+#include "TText.h"
+#include "TLatex.h"
+
+#include "TCanvas.h"
+#include "TVirtualPad.h"
+#include "TPad.h"
+#include "TLegend.h"
+#include "TString.h"
+#include "TColor.h"
+
 #include "draw.icc"
 
 void plot_FC_new()
@@ -24,12 +65,16 @@ void plot_FC_new()
   ////////////////////////////////////////////////////////////////////////////////////////
   
   TString roostr = "";
+
+  //////////////////////////
+  
+  bool flag_file_fc = 0;
+  int user_val_Lee100 = 200;
+
+  bool flag_file_Asimov = 0;
   
   //////////////////////////////////////////////////////////////////////////////////////// file_fc
 
-  bool flag_file_fc = 0;
-  int user_val_Lee100 = 200;
-  
   roostr = "file_FC_toy_Lee0to5.root";
   TFile *file_fc = new TFile(roostr, "read");
   TTree *tree = (TTree*)file_fc->Get("tree");
@@ -163,6 +208,122 @@ void plot_FC_new()
   tree_Asimov->SetBranchAddress("chi2_null_toy", &chi2_null_toy, &b_chi2_null_toy);
 
   int entries_Asimov = tree_Asimov->GetEntries();
+
+  map<int, TGraph*>map_graph_Asimov;
+
+  TGraphAsymmErrors *gh_CI68_Asimov = new TGraphAsymmErrors();
+  TGraphAsymmErrors *gh_CI95_Asimov = new TGraphAsymmErrors();
+  
+  
+  for( int ientry=0; ientry<entries_Asimov; ientry++ ) {
+    if( ientry%max(1, entries_Asimov/10)==0 ) cout<<Form(" ---> processing Asimov %5.2f, %4d", ientry*1./entries_Asimov, ientry)<<endl;
+    tree_Asimov->GetEntry( ientry );
+    
+    map_graph_Asimov[Lee_strength_scaled100] = new TGraph();
+    roostr = TString::Format("map_graph_Asimov_%06d", Lee_strength_scaled100);
+    map_graph_Asimov[Lee_strength_scaled100]->SetName(roostr);
+
+    int size_vc = Lee_scan100->size();
+    for(int idx=0; idx<size_vc; idx++) {
+      double val_Lee_scan100 = Lee_scan100->at(idx);
+      double val_dchi2_Asimov = chi2_null_toy->at(idx);
+      int line_eff = 0;
+      
+      int size_toy = map_fc_Lee_dchi2[val_Lee_scan100].size();
+      for(int itoy=0; itoy<size_toy; itoy++) {
+	double val_dchi2_toy = map_fc_Lee_dchi2[val_Lee_scan100].at(itoy);
+	if( val_dchi2_toy<=val_dchi2_Asimov ) line_eff++;
+      }// itoy
+
+      double val_CL = line_eff*100./size_toy;
+      map_graph_Asimov[Lee_strength_scaled100]->SetPoint( map_graph_Asimov[Lee_strength_scaled100]->GetN(), val_Lee_scan100/100, val_CL );      
+    }// idx
+
+    ///////////////////// confidence level
+
+    double CI68_low = 0;
+    double CI68_hgh = 1e6;    
+    double CI68     = 68;
+    for(int iscan=min_Lee100; iscan<Lee_strength_scaled100; iscan++) {
+      double val_at_low = map_graph_Asimov[Lee_strength_scaled100]->Eval( iscan*1./100 );
+      double val_at_hgh = map_graph_Asimov[Lee_strength_scaled100]->Eval( (iscan+1)*1./100 );
+      if( val_at_low>=CI68 && val_at_hgh<=CI68 ) {
+	CI68_low = iscan*1./100;
+	break;
+      }
+    }
+    for(int iscan=max_Lee100; iscan>Lee_strength_scaled100; iscan--) {
+      double val_at_low = map_graph_Asimov[Lee_strength_scaled100]->Eval( (iscan-1)*1./100 );
+      double val_at_hgh = map_graph_Asimov[Lee_strength_scaled100]->Eval( iscan*1./100 );
+      if( val_at_hgh>=CI68 && val_at_low<=CI68 ) {
+	CI68_hgh = iscan*1./100;
+      }
+    }    
+    int npoint_CI68 = gh_CI68_Asimov->GetN();
+    gh_CI68_Asimov->SetPoint( npoint_CI68, Lee_strength_scaled100*1./100, Lee_strength_scaled100*1./100 );
+    gh_CI68_Asimov->SetPointError( npoint_CI68, 0, 0, Lee_strength_scaled100*1./100-CI68_low, CI68_hgh-Lee_strength_scaled100*1./100);
+    
+    double CI95_low = 0;
+    double CI95_hgh = 1e6;    
+    double CI95     = 95;
+    for(int iscan=min_Lee100; iscan<Lee_strength_scaled100; iscan++) {
+      double val_at_low = map_graph_Asimov[Lee_strength_scaled100]->Eval( iscan*1./100 );
+      double val_at_hgh = map_graph_Asimov[Lee_strength_scaled100]->Eval( (iscan+1)*1./100 );
+      if( val_at_low>=CI95 && val_at_hgh<=CI95 ) {
+	CI95_low = iscan*1./100;
+	break;
+      }
+    }
+    for(int iscan=max_Lee100; iscan>Lee_strength_scaled100; iscan--) {
+      double val_at_low = map_graph_Asimov[Lee_strength_scaled100]->Eval( (iscan-1)*1./100 );
+      double val_at_hgh = map_graph_Asimov[Lee_strength_scaled100]->Eval( iscan*1./100 );
+      if( val_at_hgh>=CI95 && val_at_low<=CI95 ) {
+	CI95_hgh = iscan*1./100;
+      }
+    }    
+    int npoint_CI95 = gh_CI95_Asimov->GetN();
+    gh_CI95_Asimov->SetPoint( npoint_CI95, Lee_strength_scaled100*1./100, Lee_strength_scaled100*1./100 );
+    gh_CI95_Asimov->SetPointError( npoint_CI95, 0, 0, Lee_strength_scaled100*1./100-CI95_low, CI95_hgh-Lee_strength_scaled100*1./100);
+    
+  }// ientry
+
+  if( flag_file_Asimov ) {    
+    TCanvas *canv_toy_Asimov = new TCanvas("canv_toy_Asimov", "", 900, 650);
+    func_canv_margin(canv_toy_Asimov, 0.15, 0.1, 0.1, 0.15);
+    map_graph_Asimov[user_val_Lee100]->Draw("al");
+    map_graph_Asimov[user_val_Lee100]->SetLineColor(kBlue);
+    func_title_size(map_graph_Asimov[user_val_Lee100], 0.05, 0.05, 0.05, 0.05);
+    func_xy_title(map_graph_Asimov[user_val_Lee100], "True LEE strength", "Confidence Level (%)");
+    map_graph_Asimov[user_val_Lee100]->GetXaxis()->CenterTitle();
+    map_graph_Asimov[user_val_Lee100]->GetYaxis()->CenterTitle();          
+  }
+
+  //////////////////////////
+  
+  TCanvas *canv_gh_CI68_Asimov = new TCanvas("canv_gh_CI68_Asimov", "", 900, 650);
+  func_canv_margin(canv_gh_CI68_Asimov, 0.15, 0.2, 0.1, 0.15);
+  TH1D *h1_CI_Asimov = new TH1D("h1_CI_Asimov", "", 100, min_Lee100/100, max_Lee100/100);
+  h1_CI_Asimov->Draw();
+  h1_CI_Asimov->SetMinimum(min_Lee100/100);
+  h1_CI_Asimov->SetMaximum(max_Lee100/100);
+  func_title_size(h1_CI_Asimov, 0.05, 0.05, 0.05, 0.05);
+  func_xy_title(h1_CI_Asimov, "True LEE strength", "LEE strength");  
+  h1_CI_Asimov->GetXaxis()->CenterTitle();
+  h1_CI_Asimov->GetYaxis()->CenterTitle();
+  h1_CI_Asimov->GetXaxis()->SetTitleOffset(1.2);
+  
+  gh_CI95_Asimov->Draw("same 3");
+  gh_CI95_Asimov->SetFillColor(kYellow);
+
+  gh_CI68_Asimov->Draw("same 3");
+  gh_CI68_Asimov->SetFillColor(kGreen+2);
+
+  TF1 *f1_y2x = new TF1("f1_y2x", "x", 0, 1e6);
+  f1_y2x->Draw("same");
+  f1_y2x->SetLineColor(kBlack);
+  f1_y2x->SetLineStyle(7);
+  
+  h1_CI_Asimov->Draw("same axis");
   
 }
 
