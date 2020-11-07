@@ -62,7 +62,7 @@ void TLee::Exe_Fiedman_Cousins_Data(TMatrixD matrix_fakedata, double Lee_true_lo
   double Lee_bestFit_data = minimization_Lee_strength_val;
   double Lee_bestFit_err = minimization_Lee_strength_err;
   double chi2_gmin_data = minimization_chi2;
-  vector<double>Lee_scan100_data;
+  vector<int>Lee_scan100_data;
   vector<double>chi2_null_scan_data;
   
   TTree *tree_data = new TTree("tree_data", "Feldman-Cousins");
@@ -79,10 +79,10 @@ void TLee::Exe_Fiedman_Cousins_Data(TMatrixD matrix_fakedata, double Lee_true_lo
     if( idx%(max(1, num_scan/10))==0 ) cout<<Form(" ---> scan %4.2f, %3d", idx*1./num_scan, idx)<<endl;
 
     double Lee_strength = Lee_true_low + (idx-1)*step;
-    double Lee_strength_scaled100 = (int)(Lee_strength*100 + 0.5);
+    int Lee_strength_scaled100 = (int)(Lee_strength*100 + 0.5);
     
     Minimization_Lee_strength_FullCov(Lee_strength, 1);
-    chi2_null_scan_data.push_back( minimization_Lee_strength_val );
+    chi2_null_scan_data.push_back( minimization_chi2 );
     Lee_scan100_data.push_back( Lee_strength_scaled100 );
   }
   cout<<endl;
@@ -527,21 +527,15 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     TH1D *h1_pred_clone = (TH1D*)h1_pred->Clone("h1_pred_clone");
     
     h1_pred->Draw("same e2");
-    h1_pred->SetMarkerStyle(1);
-    h1_pred->SetMarkerColor(kRed);
-    h1_pred->SetLineColor(kRed);
-    h1_pred->SetLineWidth(2);
-    h1_pred->SetFillColor(kRed);
-    h1_pred->SetFillStyle(3005);
+    h1_pred->SetMarkerStyle(1); h1_pred->SetMarkerColor(kRed);
+    h1_pred->SetLineColor(kRed); h1_pred->SetLineWidth(2);
+    h1_pred->SetFillColor(kRed); h1_pred->SetFillStyle(3005);
     h1_pred->SetTitle("");
     func_title_size(h1_pred, 0.065, 0.065, 0.065, 0.065);
     func_xy_title(h1_pred, "Bin index", "Entries");
-    h1_pred->GetXaxis()->SetNdivisions(506);
-    h1_pred->GetYaxis()->SetNdivisions(506);
-    h1_pred->GetYaxis()->CenterTitle();
-    h1_pred->GetXaxis()->CenterTitle();
-    h1_pred->GetXaxis()->SetLabelColor(10);
-    h1_pred->GetXaxis()->SetTitleColor(10);
+    h1_pred->GetXaxis()->SetNdivisions(506); h1_pred->GetYaxis()->SetNdivisions(506);
+    h1_pred->GetXaxis()->CenterTitle(); h1_pred->GetYaxis()->CenterTitle();
+    h1_pred->GetXaxis()->SetLabelColor(10); h1_pred->GetXaxis()->SetTitleColor(10);
     h1_pred->GetYaxis()->SetTitleOffset(1.1);
     
     h1_pred_clone->Draw("same hist");
@@ -549,11 +543,8 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     h1_pred_clone->SetLineWidth(3);
 
     gh_data->Draw("same pe");
-    gh_data->SetMarkerStyle(20);
-    gh_data->SetMarkerSize(1.2);
-    gh_data->SetMarkerColor(kBlue);
-    gh_data->SetLineColor(kBlue);
-    gh_data->SetLineWidth(3);
+    gh_data->SetMarkerStyle(20); gh_data->SetMarkerSize(1.2); gh_data->SetMarkerColor(kBlue);
+    gh_data->SetLineColor(kBlue); gh_data->SetLineWidth(3);
  
     h1_pred->Draw("same axis");
    
@@ -590,15 +581,13 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     pad_bot->cd();
   
     h1_ratio_basic->Draw();
-    h1_ratio_basic->SetMinimum(0);
-    h1_ratio_basic->SetMaximum(2);
+    h1_ratio_basic->SetMinimum(0); h1_ratio_basic->SetMaximum(2);
     //h1_ratio_basic->SetLineColor(kRed);
     //h1_ratio_basic->SetLineStyle(7);
     func_title_size(h1_ratio_basic, 0.078, 0.078, 0.078, 0.078);
     func_xy_title(h1_ratio_basic, "Bin index", "Data / Pred");
     h1_ratio_basic->GetXaxis()->SetTickLength(0.05);
-    h1_ratio_basic->GetXaxis()->CenterTitle();
-    h1_ratio_basic->GetYaxis()->CenterTitle(); 
+    h1_ratio_basic->GetXaxis()->CenterTitle(); h1_ratio_basic->GetYaxis()->CenterTitle(); 
     h1_ratio_basic->GetYaxis()->SetTitleOffset(0.92);
     h1_ratio_basic->GetYaxis()->SetNdivisions(509);
     h1_ratio_basic->Draw("same axis");
@@ -866,19 +855,14 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     TH1D *h1_pred_Y_noConstraint_clone = (TH1D*)h1_pred_Y_noConstraint->Clone("h1_pred_Y_noConstraint_clone");
     
     h1_pred_Y_noConstraint->Draw("same e2");
-    h1_pred_Y_noConstraint->SetMarkerStyle(1);
-    h1_pred_Y_noConstraint->SetMarkerColor(color_no);
-    h1_pred_Y_noConstraint->SetLineColor(color_no);
-    h1_pred_Y_noConstraint->SetLineWidth(2);
-    h1_pred_Y_noConstraint->SetFillColor(color_no);
-    h1_pred_Y_noConstraint->SetFillStyle(3005);
+    h1_pred_Y_noConstraint->SetMarkerStyle(1); h1_pred_Y_noConstraint->SetMarkerColor(color_no);
+    h1_pred_Y_noConstraint->SetLineColor(color_no); h1_pred_Y_noConstraint->SetLineWidth(2);
+    h1_pred_Y_noConstraint->SetFillColor(color_no); h1_pred_Y_noConstraint->SetFillStyle(3005);
     h1_pred_Y_noConstraint->SetTitle("");
     func_title_size(h1_pred_Y_noConstraint, 0.065, 0.065, 0.065, 0.065);
     func_xy_title(h1_pred_Y_noConstraint, "Bin index", "Entries");
-    h1_pred_Y_noConstraint->GetXaxis()->SetNdivisions(506);
-    h1_pred_Y_noConstraint->GetYaxis()->SetNdivisions(506);
-    h1_pred_Y_noConstraint->GetYaxis()->CenterTitle();
-    h1_pred_Y_noConstraint->GetXaxis()->CenterTitle();
+    h1_pred_Y_noConstraint->GetXaxis()->SetNdivisions(506); h1_pred_Y_noConstraint->GetYaxis()->SetNdivisions(506);
+    h1_pred_Y_noConstraint->GetYaxis()->CenterTitle(); h1_pred_Y_noConstraint->GetXaxis()->CenterTitle();
     h1_pred_Y_noConstraint->GetXaxis()->SetLabelColor(10);
     h1_pred_Y_noConstraint->GetXaxis()->SetTitleColor(10);
     h1_pred_Y_noConstraint->GetYaxis()->SetTitleOffset(1.1);
@@ -891,12 +875,9 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     TH1D *h1_pred_Y_wiConstraint_clone = (TH1D*)h1_pred_Y_wiConstraint->Clone("h1_pred_Y_wiConstraint_clone");
     
     h1_pred_Y_wiConstraint->Draw("same e2");
-    h1_pred_Y_wiConstraint->SetMarkerStyle(1);
-    h1_pred_Y_wiConstraint->SetMarkerColor(color_wi);
-    h1_pred_Y_wiConstraint->SetLineColor(color_wi);
-    h1_pred_Y_wiConstraint->SetLineWidth(2);
-    h1_pred_Y_wiConstraint->SetFillColor(color_wi);
-    h1_pred_Y_wiConstraint->SetFillStyle(3004);
+    h1_pred_Y_wiConstraint->SetMarkerStyle(1); h1_pred_Y_wiConstraint->SetMarkerColor(color_wi);
+    h1_pred_Y_wiConstraint->SetLineColor(color_wi); h1_pred_Y_wiConstraint->SetLineWidth(2);
+    h1_pred_Y_wiConstraint->SetFillColor(color_wi); h1_pred_Y_wiConstraint->SetFillStyle(3004);
 
     h1_pred_Y_noConstraint_clone->Draw("same hist");
     h1_pred_Y_wiConstraint_clone->Draw("same hist");
@@ -904,11 +885,8 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     h1_pred_Y_wiConstraint_clone->SetLineWidth(3);
 
     gh_data->Draw("same pe");
-    gh_data->SetMarkerStyle(20);
-    gh_data->SetMarkerSize(1.2);
-    gh_data->SetMarkerColor(kBlack);
-    gh_data->SetLineColor(kBlack);
-    gh_data->SetLineWidth(3);
+    gh_data->SetMarkerStyle(20); gh_data->SetMarkerSize(1.2); gh_data->SetMarkerColor(kBlack);
+    gh_data->SetLineColor(kBlack); gh_data->SetLineWidth(3);
 
     h1_pred_Y_noConstraint->Draw("same axis");
 
@@ -949,13 +927,11 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     pad_bot->cd();
 
     h1_ratio_basic->Draw();
-    h1_ratio_basic->SetMinimum(0);
-    h1_ratio_basic->SetMaximum(2);  
+    h1_ratio_basic->SetMinimum(0); h1_ratio_basic->SetMaximum(2);  
     func_title_size(h1_ratio_basic, 0.078, 0.078, 0.078, 0.078);
     func_xy_title(h1_ratio_basic, "Bin index", "Data / Pred");
     h1_ratio_basic->GetXaxis()->SetTickLength(0.05);
-    h1_ratio_basic->GetXaxis()->CenterTitle();
-    h1_ratio_basic->GetYaxis()->CenterTitle(); 
+    h1_ratio_basic->GetXaxis()->CenterTitle(); h1_ratio_basic->GetYaxis()->CenterTitle(); 
     h1_ratio_basic->GetYaxis()->SetTitleOffset(0.92);
     h1_ratio_basic->GetYaxis()->SetNdivisions(509);
     
@@ -1009,18 +985,14 @@ void TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatr
     axis->CenterTitle();
       
     gh_ratio_noConstraint->Draw("pe");
-    gh_ratio_noConstraint->SetMarkerStyle(20);
-    gh_ratio_noConstraint->SetMarkerSize(1.2);
+    gh_ratio_noConstraint->SetMarkerStyle(20); gh_ratio_noConstraint->SetMarkerSize(1.2);
     gh_ratio_noConstraint->SetMarkerColor(color_no);
-    gh_ratio_noConstraint->SetLineColor(color_no);
-    gh_ratio_noConstraint->SetLineWidth(3);
+    gh_ratio_noConstraint->SetLineColor(color_no); gh_ratio_noConstraint->SetLineWidth(3);
     
     gh_ratio_wiConstraint->Draw("pe");
-    gh_ratio_wiConstraint->SetMarkerStyle(20);
-    gh_ratio_wiConstraint->SetMarkerSize(1.2);
+    gh_ratio_wiConstraint->SetMarkerStyle(20); gh_ratio_wiConstraint->SetMarkerSize(1.2);
     gh_ratio_wiConstraint->SetMarkerColor(color_wi);
-    gh_ratio_wiConstraint->SetLineColor(color_wi);
-    gh_ratio_wiConstraint->SetLineWidth(3);
+    gh_ratio_wiConstraint->SetLineColor(color_wi); gh_ratio_wiConstraint->SetLineWidth(3);
     
     h1_ratio_basic->Draw("same axis");
      

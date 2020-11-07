@@ -68,10 +68,10 @@ void plot_FC_new()
 
   //////////////////////////
   
-  bool flag_file_fc = 1;
+  bool flag_file_fc = 0;
   int user_val_Lee100 = 200;
 
-  bool flag_file_Asimov = 1;
+  bool flag_file_Asimov = 0;
   
   //////////////////////////////////////////////////////////////////////////////////////// file_fc
 
@@ -244,7 +244,7 @@ void plot_FC_new()
     double CI68_low = 0;
     double CI68_hgh = 1e6;    
     double CI68     = 68;
-    for(int iscan=min_Lee100; iscan<Lee_strength_scaled100; iscan++) {
+    for(int iscan=min_Lee100; iscan<=Lee_strength_scaled100; iscan++) {
       double val_at_low = map_graph_Asimov[Lee_strength_scaled100]->Eval( iscan*1./100 );
       double val_at_hgh = map_graph_Asimov[Lee_strength_scaled100]->Eval( (iscan+1)*1./100 );
       if( val_at_low>=CI68 && val_at_hgh<=CI68 ) {
@@ -252,7 +252,7 @@ void plot_FC_new()
 	break;
       }
     }
-    for(int iscan=max_Lee100; iscan>Lee_strength_scaled100; iscan--) {
+    for(int iscan=max_Lee100; iscan>=Lee_strength_scaled100; iscan--) {
       double val_at_low = map_graph_Asimov[Lee_strength_scaled100]->Eval( (iscan-1)*1./100 );
       double val_at_hgh = map_graph_Asimov[Lee_strength_scaled100]->Eval( iscan*1./100 );
       if( val_at_hgh>=CI68 && val_at_low<=CI68 ) {
@@ -266,7 +266,7 @@ void plot_FC_new()
     double CI95_low = 0;
     double CI95_hgh = 1e6;    
     double CI95     = 95;
-    for(int iscan=min_Lee100; iscan<Lee_strength_scaled100; iscan++) {
+    for(int iscan=min_Lee100; iscan<=Lee_strength_scaled100; iscan++) {
       double val_at_low = map_graph_Asimov[Lee_strength_scaled100]->Eval( iscan*1./100 );
       double val_at_hgh = map_graph_Asimov[Lee_strength_scaled100]->Eval( (iscan+1)*1./100 );
       if( val_at_low>=CI95 && val_at_hgh<=CI95 ) {
@@ -274,7 +274,7 @@ void plot_FC_new()
 	break;
       }
     }
-    for(int iscan=max_Lee100; iscan>Lee_strength_scaled100; iscan--) {
+    for(int iscan=max_Lee100; iscan>=Lee_strength_scaled100; iscan--) {
       double val_at_low = map_graph_Asimov[Lee_strength_scaled100]->Eval( (iscan-1)*1./100 );
       double val_at_hgh = map_graph_Asimov[Lee_strength_scaled100]->Eval( iscan*1./100 );
       if( val_at_hgh>=CI95 && val_at_low<=CI95 ) {
@@ -327,5 +327,186 @@ void plot_FC_new()
   
   h1_CI_Asimov->Draw("same axis");
   
+  //////////////////////////////////////////////////////////////////////////////////////// file_data
+
+  roostr = "file_data.root";
+  TFile *file_data = new TFile(roostr, "read");
+  TTree *tree_data = (TTree*)file_data->Get("tree_data");
+
+  // Declaration of leaf types
+  Double_t        Lee_bestFit_data;
+  Double_t        Lee_bestFit_err;
+  Double_t        chi2_gmin_data;
+  vector<int>     *Lee_scan100_data;
+  vector<double>  *chi2_null_scan_data;
+
+  // List of branches
+  TBranch        *b_Lee_bestFit_data;   //!
+  TBranch        *b_Lee_bestFit_err;   //!
+  TBranch        *b_chi2_gmin_data;   //!
+  TBranch        *b_Lee_scan100_data;   //!
+  TBranch        *b_chi2_null_scan_data;   //!
+
+  // Set object pointer
+  Lee_scan100_data = 0;
+  chi2_null_scan_data = 0;
+  
+  // Set branch addresses and branch pointers
+  if (!tree_data) return;
+  tree_data->SetBranchAddress("Lee_bestFit_data", &Lee_bestFit_data, &b_Lee_bestFit_data);
+  tree_data->SetBranchAddress("Lee_bestFit_err", &Lee_bestFit_err, &b_Lee_bestFit_err);
+  tree_data->SetBranchAddress("chi2_gmin_data", &chi2_gmin_data, &b_chi2_gmin_data);
+  tree_data->SetBranchAddress("Lee_scan100_data", &Lee_scan100_data, &b_Lee_scan100_data);
+  tree_data->SetBranchAddress("chi2_null_scan_data", &chi2_null_scan_data, &b_chi2_null_scan_data);
+
+  TGraph *gh_CL_data = new TGraph();
+  TGraph *gh_scan_dchi2_data = new TGraph();
+  
+  double CI68_low = 0;
+  double CI68_hgh = 1e6;    
+  double CI68     = 68;
+    
+  double CI95_low = 0;
+  double CI95_hgh = 1e6;    
+  double CI95     = 95;
+    
+  for(int ientry=0; ientry<tree_data->GetEntries(); ientry++ ) {
+    tree_data->GetEntry( ientry );
+
+    int size_vc = Lee_scan100_data->size();
+    for(int idx=0; idx<size_vc; idx++) {
+      double val_chi2_null_scan_data = chi2_null_scan_data->at(idx);
+      double val_dchi2_data = val_chi2_null_scan_data - chi2_gmin_data;
+      if( fabs(val_dchi2_data)<1e-6 ) val_dchi2_data = 0;      
+      int val_Lee100 = Lee_scan100_data->at(idx);      
+      
+      int line_eff = 0;
+      int size_toy = map_fc_Lee_dchi2[val_Lee100].size();
+      for(int itoy=0; itoy<size_toy; itoy++) {
+	double val_dchi2_toy = map_fc_Lee_dchi2[val_Lee100].at(itoy);
+	if( val_dchi2_toy<=val_dchi2_data ) line_eff++;	
+      }// itoy
+
+      double val_CL = line_eff*100./size_toy;
+      gh_CL_data->SetPoint( gh_CL_data->GetN(), val_Lee100*1./100, val_CL );
+
+      gh_scan_dchi2_data->SetPoint( gh_scan_dchi2_data->GetN(), val_Lee100*1./100, val_dchi2_data );
+      
+    }// idx
+
+    //////////////////////////
+    
+    for(int iscan=min_Lee100; iscan<=(int)(Lee_bestFit_data*100+0.5); iscan++) {
+      double val_at_low = gh_CL_data->Eval( iscan*1./100 );
+      double val_at_hgh = gh_CL_data->Eval( (iscan+1)*1./100 );
+      if( val_at_low>=CI68 && val_at_hgh<=CI68 ) {
+	CI68_low = iscan*1./100;
+	break;
+      }
+    }
+    for(int iscan=max_Lee100; iscan>(int)(Lee_bestFit_data*100+0.5); iscan--) {
+      double val_at_low = gh_CL_data->Eval( (iscan-1)*1./100 );
+      double val_at_hgh = gh_CL_data->Eval( iscan*1./100 );
+      if( val_at_hgh>=CI68 && val_at_low<=CI68 ) {
+	CI68_hgh = iscan*1./100;
+      }
+    }   
+    cout<<Form(" ---> data CI68, %4.2f %4.2f", CI68_low, CI68_hgh)<<endl;
+    
+    for(int iscan=min_Lee100; iscan<=(int)(Lee_bestFit_data*100+0.5); iscan++) {
+      double val_at_low = gh_CL_data->Eval( iscan*1./100 );
+      double val_at_hgh = gh_CL_data->Eval( (iscan+1)*1./100 );
+      if( val_at_low>=CI95 && val_at_hgh<=CI95 ) {
+	CI95_low = iscan*1./100;
+	break;
+      }
+    }
+    for(int iscan=max_Lee100; iscan>(int)(Lee_bestFit_data*100+0.5); iscan--) {
+      double val_at_low = gh_CL_data->Eval( (iscan-1)*1./100 );
+      double val_at_hgh = gh_CL_data->Eval( iscan*1./100 );
+      if( val_at_hgh>=CI95 && val_at_low<=CI95 ) {
+	CI95_hgh = iscan*1./100;
+      }
+    }   
+    cout<<Form(" ---> data CI95, %4.2f %4.2f", CI95_low, CI95_hgh)<<endl;
+    
+  }// ientry
+  
+  //////////////////////
+  
+  TCanvas *canv_gh_CL_data = new TCanvas("canv_gh_CL_data", "canv_gh_CL_data", 900, 650);
+  func_canv_margin(canv_gh_CL_data, 0.15, 0.1, 0.1, 0.15);
+  gh_CL_data->Draw("al");
+  func_title_size(gh_CL_data, 0.05, 0.05, 0.05, 0.05);
+  func_xy_title(gh_CL_data, "LEE strength", "Confidence Level (%)");  
+  gh_CL_data->GetXaxis()->CenterTitle(); gh_CL_data->GetYaxis()->CenterTitle();
+  gh_CL_data->GetXaxis()->SetNdivisions(509); gh_CL_data->GetYaxis()->SetNdivisions(509);  
+  gh_CL_data->GetXaxis()->SetTitleOffset(1.2);  
+  TF1 *f1_CL68 = new TF1("f1_CL68", "68", 0, 1e6);
+  f1_CL68->Draw("same"); f1_CL68->SetLineColor(kRed); f1_CL68->SetLineStyle(7);  
+  TF1 *f1_CL95 = new TF1("f1_CL95", "95", 0, 1e6);
+  f1_CL95->Draw("same"); f1_CL95->SetLineColor(kRed); f1_CL95->SetLineStyle(7);
+
+  //////////////////////
+  
+  TCanvas *canv_gh_scan_dchi2_data = new TCanvas("canv_gh_scan_dchi2_data", "canv_gh_scan_dchi2_data", 900, 650);
+  func_canv_margin(canv_gh_scan_dchi2_data, 0.15, 0.1, 0.1, 0.15);
+  gh_scan_dchi2_data->Draw("al");
+  func_title_size(gh_scan_dchi2_data, 0.05, 0.05, 0.05, 0.05);
+  func_xy_title(gh_scan_dchi2_data, "LEE strength", "#Delta#chi^{2} = #chi^{2}_{null} - #chi^{2}_{min}");  
+  gh_scan_dchi2_data->GetXaxis()->CenterTitle(); gh_scan_dchi2_data->GetYaxis()->CenterTitle();
+  gh_scan_dchi2_data->GetXaxis()->SetNdivisions(509); gh_scan_dchi2_data->GetYaxis()->SetNdivisions(509);  
+  gh_scan_dchi2_data->GetXaxis()->SetTitleOffset(1.2);  
+
+  TGraphAsymmErrors *gh_CI95_data = new TGraphAsymmErrors();
+  for(int idx=(int)(CI95_low*100+0.5); idx<=(int)(CI95_hgh*100+0.5); idx++) {
+    double val_Lee = idx*1./100;
+    double val_dchi2 = gh_scan_dchi2_data->Eval( val_Lee );
+
+    int ipoint = gh_CI95_data->GetN();
+    gh_CI95_data->SetPoint( ipoint, val_Lee, val_dchi2 );
+    gh_CI95_data->SetPointError( ipoint, 0, 0, 1e6, 0 );
+  }
+
+  TGraphAsymmErrors *gh_CI68_data = new TGraphAsymmErrors();
+  for(int idx=(int)(CI68_low*100+0.5); idx<=(int)(CI68_hgh*100+0.5); idx++) {
+    double val_Lee = idx*1./100;
+    double val_dchi2 = gh_scan_dchi2_data->Eval( val_Lee );
+
+    int ipoint = gh_CI68_data->GetN();
+    gh_CI68_data->SetPoint( ipoint, val_Lee, val_dchi2 );
+    gh_CI68_data->SetPointError( ipoint, 0, 0, 1e6, 0 );
+  }
+
+  gh_CI95_data->Draw("same 3");
+  gh_CI95_data->SetFillColor(kYellow);
+
+  gh_CI68_data->Draw("same 3");
+  gh_CI68_data->SetFillColor(kGreen+2);
+
+  gh_scan_dchi2_data->Draw("same l");
+  
+  canv_gh_scan_dchi2_data->cd();
+  canv_gh_scan_dchi2_data->Update();
+  double xmin = canv_gh_scan_dchi2_data->GetUxmin();
+  double ymin = canv_gh_scan_dchi2_data->GetUymin();
+  double xmax = canv_gh_scan_dchi2_data->GetUxmax();
+  double ymax = canv_gh_scan_dchi2_data->GetUymax();
+  
+  roostr = "h2_basic_scan_dchi2";
+  TH2D *h2_basic_scan_dchi2 = new TH2D(roostr, "", 100, xmin, xmax, 100, ymin, ymax);
+  h2_basic_scan_dchi2->Draw("same axis");
+  h2_basic_scan_dchi2->GetXaxis()->SetNdivisions(509);// same as gh_scan_dchi2_data
+  h2_basic_scan_dchi2->GetYaxis()->SetNdivisions(509);
+
+  TLegend *lg_scan_dchi2_data = new TLegend(0.65, 0.46, 0.94, 0.67);
+  lg_scan_dchi2_data->AddEntry( gh_CI68_data, "68% CL", "f");
+  lg_scan_dchi2_data->AddEntry( gh_CI95_data, "95% CL", "f");
+  lg_scan_dchi2_data->Draw();
+  lg_scan_dchi2_data->SetBorderSize(0);
+  lg_scan_dchi2_data->SetFillStyle(0);
+  lg_scan_dchi2_data->SetTextSize(0.05);
+  
+  canv_gh_scan_dchi2_data->SaveAs("canv_gh_scan_dchi2_data.png");
 }
 
