@@ -1048,6 +1048,35 @@ void TLee::Set_Collapse()
     }
   }
   
+  ////////////////////////////////////////
+
+  if( flag_individual_cov_newworld ) {
+    cout<<" ---> flag_individual_cov_newworld"<<endl;
+    
+    flag_individual_cov_newworld = false;
+
+    matrix_absolute_flux_cov_newworld.Clear();
+    matrix_absolute_Xs_cov_newworld.Clear();
+    matrix_absolute_detector_cov_newworld.Clear();
+    matrix_absolute_mc_stat_cov_newworld.Clear();
+    matrix_absolute_additional_cov_newworld.Clear();
+    
+    matrix_absolute_flux_cov_newworld.ResizeTo( bins_newworld, bins_newworld );
+    matrix_absolute_Xs_cov_newworld.ResizeTo( bins_newworld, bins_newworld );
+    matrix_absolute_detector_cov_newworld.ResizeTo( bins_newworld, bins_newworld );
+    matrix_absolute_mc_stat_cov_newworld.ResizeTo( bins_newworld, bins_newworld );
+    matrix_absolute_additional_cov_newworld.ResizeTo( bins_newworld, bins_newworld );
+
+    matrix_absolute_flux_cov_newworld = matrix_transform_Lee_T * matrix_input_cov_flux * matrix_transform_Lee;
+    matrix_absolute_Xs_cov_newworld = matrix_transform_Lee_T * matrix_input_cov_Xs * matrix_transform_Lee;
+    matrix_absolute_detector_cov_newworld = matrix_transform_Lee_T * matrix_input_cov_detector * matrix_transform_Lee;
+    matrix_absolute_additional_cov_newworld = matrix_transform_Lee_T * matrix_input_cov_additional * matrix_transform_Lee;
+    for(int ibin=0; ibin<bins_newworld; ibin++) {
+      double val_mc_stat_cov = gh_mc_stat_bin[ibin]->Eval( scaleF_Lee );
+      matrix_absolute_mc_stat_cov_newworld(ibin, ibin) = val_mc_stat_cov;
+    }// ibin    
+  }
+  
 }
 
 ///////////////////////////////////////////////////////// ccc
@@ -1103,6 +1132,8 @@ void TLee::Set_POT_implement()
   for(int ibin=0; ibin<bins_oldworld; ibin++) {
     for(int jbin=0; jbin<bins_oldworld; jbin++) {      
       matrix_input_cov_flux_Xs(ibin, jbin) *= scaleF_POT2;
+      matrix_input_cov_flux(ibin, jbin) *= scaleF_POT2;
+      matrix_input_cov_Xs(ibin, jbin) *= scaleF_POT2;      
       matrix_input_cov_detector(ibin, jbin) *= scaleF_POT2;
       matrix_input_cov_additional(ibin, jbin) *= scaleF_POT2;      
     }// jbin
@@ -1218,20 +1249,30 @@ void TLee::Set_Spectra_MatrixCov()
   }// ich
 
   ////////////////////////////////////////// flux_Xs
-
+  
+  //https://www.phy.bnl.gov/xqian/talks/wire-cell/Leeana/configurations/cov_input.txt  
   map<int, TFile*>map_file_flux_Xs_frac;  
   map<int, TMatrixD*>map_matrix_flux_Xs_frac;
   
   TMatrixD matrix_flux_Xs_frac(bins_oldworld, bins_oldworld);
-
+  TMatrixD matrix_flux_frac(bins_oldworld, bins_oldworld);
+  TMatrixD matrix_Xs_frac(bins_oldworld, bins_oldworld);
+  
   for(int idx=1; idx<=17; idx++) {
     roostr = TString::Format(flux_Xs_directory+"cov_%d.root", idx);
     map_file_flux_Xs_frac[idx] = new TFile(roostr, "read");
     map_matrix_flux_Xs_frac[idx] = (TMatrixD*)map_file_flux_Xs_frac[idx]->Get(TString::Format("frac_cov_xf_mat_%d", idx));
     // cout<<TString::Format(" ---> check: flux and Xs, %2d  ", idx)<<roostr<<endl;
     matrix_flux_Xs_frac += (*map_matrix_flux_Xs_frac[idx]);
+
+    if( idx<=13 ) {// flux
+      matrix_flux_frac += (*map_matrix_flux_Xs_frac[idx]);
+    }
+    else {// interaction
+      matrix_Xs_frac += (*map_matrix_flux_Xs_frac[idx]);
+    }    
   }
-  // cout<<endl;
+  // cout<<endl;  
   
   ////////////////////////////////////////// detector
   
@@ -1271,10 +1312,14 @@ void TLee::Set_Spectra_MatrixCov()
   //////////////////////////////////////////
 
   matrix_input_cov_flux_Xs.Clear();
+  matrix_input_cov_flux.Clear();
+  matrix_input_cov_Xs.Clear();
   matrix_input_cov_detector.Clear();
   matrix_input_cov_additional.Clear();
   
   matrix_input_cov_flux_Xs.ResizeTo( bins_oldworld, bins_oldworld );
+  matrix_input_cov_flux.ResizeTo( bins_oldworld, bins_oldworld );
+  matrix_input_cov_Xs.ResizeTo( bins_oldworld, bins_oldworld );  
   matrix_input_cov_detector.ResizeTo( bins_oldworld, bins_oldworld );
   matrix_input_cov_additional.ResizeTo( bins_oldworld, bins_oldworld );
 
@@ -1286,6 +1331,12 @@ void TLee::Set_Spectra_MatrixCov()
       
       val_cov = matrix_flux_Xs_frac(ibin, jbin);
       matrix_input_cov_flux_Xs(ibin, jbin) = val_cov * val_i * val_j;
+
+      val_cov = matrix_flux_frac(ibin, jbin);
+      matrix_input_cov_flux(ibin, jbin) = val_cov * val_i * val_j;
+
+      val_cov = matrix_Xs_frac(ibin, jbin);
+      matrix_input_cov_Xs(ibin, jbin) = val_cov * val_i * val_j;      
       
       val_cov = matrix_detector_frac(ibin, jbin);
       matrix_input_cov_detector(ibin, jbin) = val_cov * val_i * val_j;

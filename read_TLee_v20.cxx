@@ -115,10 +115,15 @@ int main(int argc, char** argv)
   file_collapsed_covariance_matrix->cd();
   tree_config->Write();
 
-  file_collapsed_covariance_matrix->cd();
   Lee_test->matrix_absolute_cov_newworld.Write("matrix_absolute_cov_newworld");// (bins, bins)
+  Lee_test->matrix_absolute_flux_cov_newworld.Write("matrix_absolute_flux_cov_newworld");
+  Lee_test->matrix_absolute_Xs_cov_newworld.Write("matrix_absolute_Xs_cov_newworld");
+  Lee_test->matrix_absolute_detector_cov_newworld.Write("matrix_absolute_detector_cov_newworld");
+  Lee_test->matrix_absolute_mc_stat_cov_newworld.Write("matrix_absolute_mc_stat_cov_newworld");
+  Lee_test->matrix_absolute_additional_cov_newworld.Write("matrix_absolute_additional_cov_newworld");
+ 
   Lee_test->matrix_pred_newworld.Write("matrix_pred_newworld");// (1, bins)
-  Lee_test->matrix_data_newworld.Write("matrix_data_newworld");// (1, bins)
+  Lee_test->matrix_data_newworld.Write("matrix_data_newworld");// (1, bins)  
   file_collapsed_covariance_matrix->Close();
   
   //////////////////////////////////////////////////////////////////////////////////////// Goodness of fit
@@ -437,7 +442,7 @@ int main(int argc, char** argv)
   
   //////////////////////////////////////////////////////////////////////////////////////// Feldman-Cousins approach
 
-  if( 1 ) {
+  if( 0 ) {
     
     Lee_test->Set_measured_data();    
     TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
@@ -465,7 +470,7 @@ int main(int argc, char** argv)
 
     /////////////// measured data
     
-    Lee_test->Exe_Fiedman_Cousins_Data( matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step );
+    //Lee_test->Exe_Fiedman_Cousins_Data( matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step );
     
   }
   
