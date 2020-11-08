@@ -478,7 +478,7 @@ int main(int argc, char** argv)
   
   cout<<endl<<" Entrer Ctrl+c to end the program"<<endl<<endl;
   
-  //theApp.Run();
+  theApp.Run();
 
   return 0;
 }
