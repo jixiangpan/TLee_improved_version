@@ -107,6 +107,7 @@ public:
   TMatrixD matrix_input_cov_flux;
   TMatrixD matrix_input_cov_Xs;
   TMatrixD matrix_input_cov_detector;
+  map<int, TMatrixD>matrix_input_cov_detector_sub;
   TMatrixD matrix_input_cov_additional;
 
   map<int, TGraph*>gh_mc_stat_bin;
@@ -123,6 +124,7 @@ public:
   TMatrixD matrix_absolute_flux_cov_newworld;
   TMatrixD matrix_absolute_Xs_cov_newworld;
   TMatrixD matrix_absolute_detector_cov_newworld;
+  map<int, TMatrixD>matrix_absolute_detector_sub_cov_newworld;
   TMatrixD matrix_absolute_mc_stat_cov_newworld;
   TMatrixD matrix_absolute_additional_cov_newworld;
 

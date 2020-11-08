@@ -1066,7 +1066,14 @@ void TLee::Set_Collapse()
     matrix_absolute_detector_cov_newworld.ResizeTo( bins_newworld, bins_newworld );
     matrix_absolute_mc_stat_cov_newworld.ResizeTo( bins_newworld, bins_newworld );
     matrix_absolute_additional_cov_newworld.ResizeTo( bins_newworld, bins_newworld );
-
+                
+    for(auto it=matrix_input_cov_detector_sub.begin(); it!=matrix_input_cov_detector_sub.end(); it++) {
+      int idx = it->first;
+      matrix_absolute_detector_sub_cov_newworld[idx].Clear();
+      matrix_absolute_detector_sub_cov_newworld[idx].ResizeTo( bins_newworld, bins_newworld );
+      matrix_absolute_detector_sub_cov_newworld[idx] = matrix_transform_Lee_T * matrix_input_cov_detector_sub[idx] * matrix_transform_Lee;
+    }
+      
     matrix_absolute_flux_cov_newworld = matrix_transform_Lee_T * matrix_input_cov_flux * matrix_transform_Lee;
     matrix_absolute_Xs_cov_newworld = matrix_transform_Lee_T * matrix_input_cov_Xs * matrix_transform_Lee;
     matrix_absolute_detector_cov_newworld = matrix_transform_Lee_T * matrix_input_cov_detector * matrix_transform_Lee;
@@ -1135,7 +1142,13 @@ void TLee::Set_POT_implement()
       matrix_input_cov_flux(ibin, jbin) *= scaleF_POT2;
       matrix_input_cov_Xs(ibin, jbin) *= scaleF_POT2;      
       matrix_input_cov_detector(ibin, jbin) *= scaleF_POT2;
-      matrix_input_cov_additional(ibin, jbin) *= scaleF_POT2;      
+      matrix_input_cov_additional(ibin, jbin) *= scaleF_POT2;
+            
+      for(auto it=matrix_input_cov_detector_sub.begin(); it!=matrix_input_cov_detector_sub.end(); it++) {
+	int idx = it->first;
+	matrix_input_cov_detector_sub[idx](ibin, jbin) *= scaleF_POT2;
+      }
+  
     }// jbin
   }// ibin
 
@@ -1286,12 +1299,13 @@ void TLee::Set_Spectra_MatrixCov()
   map_detectorfile_str[7] = detector_directory+"cov_WMThetaYZ.root";
   map_detectorfile_str[8] = detector_directory+"cov_WMX.root";
   map_detectorfile_str[9] = detector_directory+"cov_WMYZ.root";
-  //map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
+  map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
   
   map<int, TFile*>map_file_detector_frac;
   map<int, TMatrixD*>map_matrix_detector_frac;
   TMatrixD matrix_detector_frac(bins_oldworld, bins_oldworld);
-
+  map<int, TMatrixD>matrix_detector_sub_frac;
+  
   int size_map_detectorfile_str = map_detectorfile_str.size();
   for(int idx=1; idx<=size_map_detectorfile_str; idx++) {
     if(idx==5) continue;
@@ -1301,6 +1315,10 @@ void TLee::Set_Spectra_MatrixCov()
     // cout<<TString::Format(" ---> check: detector, %2d  ", idx)<<roostr<<endl;
 
     matrix_detector_frac += (*map_matrix_detector_frac[idx]);
+
+    matrix_detector_sub_frac[idx].Clear();
+    matrix_detector_sub_frac[idx].ResizeTo(bins_oldworld, bins_oldworld);
+    matrix_detector_sub_frac[idx] = (*map_matrix_detector_frac[idx]);
   }
   // cout<<endl;
 
@@ -1323,6 +1341,12 @@ void TLee::Set_Spectra_MatrixCov()
   matrix_input_cov_detector.ResizeTo( bins_oldworld, bins_oldworld );
   matrix_input_cov_additional.ResizeTo( bins_oldworld, bins_oldworld );
 
+  for(auto it=matrix_detector_sub_frac.begin(); it!=matrix_detector_sub_frac.end(); it++) {
+    int idx = it->first;
+    matrix_input_cov_detector_sub[idx].Clear();
+    matrix_input_cov_detector_sub[idx].ResizeTo( bins_oldworld, bins_oldworld );
+  }
+  
   for(int ibin=0; ibin<bins_oldworld; ibin++) {
     for(int jbin=0; jbin<bins_oldworld; jbin++) {
       double val_i = map_input_spectrum_oldworld_bin[ibin];
@@ -1340,6 +1364,13 @@ void TLee::Set_Spectra_MatrixCov()
       
       val_cov = matrix_detector_frac(ibin, jbin);
       matrix_input_cov_detector(ibin, jbin) = val_cov * val_i * val_j;
+      
+      for(auto it=matrix_input_cov_detector_sub.begin(); it!=matrix_input_cov_detector_sub.end(); it++) {
+	int idx = it->first;
+	val_cov = matrix_detector_sub_frac[idx](ibin, jbin);
+	matrix_input_cov_detector_sub[idx](ibin, jbin) = val_cov * val_i * val_j;
+      }
+  
     }
   }
 

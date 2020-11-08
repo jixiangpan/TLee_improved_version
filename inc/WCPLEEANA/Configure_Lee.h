@@ -1,17 +1,20 @@
 namespace config_Lee
 {
   ////////// 
-  /*
+  
   TString spectra_file = "./data_framework/merge_all_new_weights.root";
   TString flux_Xs_directory = "./data_framework/flux_Xs/";
   TString detector_directory = "./data_framework/det/";
   TString mc_directory = "./data_framework/mc_stat/";
-  */
   
+  /*
   TString spectra_file = "./data_framework_Doc33131/merge_all.root";
   TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/";
   TString detector_directory = "./data_framework_Doc33131/det_both/";
+  //TString detector_directory = "./data_framework_Doc33131/det_11stat/";
+  //TString detector_directory = "./data_framework_Doc33131/det_norandom/";
   TString mc_directory = "./data_framework_Doc33131/mc_stat/";
+  */
 
   /*
     void TLee::Set_Spectra_MatrixCov()

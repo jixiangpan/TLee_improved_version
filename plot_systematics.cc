@@ -25,7 +25,8 @@ void plot_systematics()
   
   TString roostr = "";
 
-  roostr = "file_collapsed_covariance_matrix.root";
+  //roostr = "file_collapsed_covariance_matrix_wiRandom.root";
+  roostr = "file_collapsed_covariance_matrix_DetNoRandom.root";
   TFile *roofile_syst = new TFile(roostr, "read");
 
   TMatrixD* matrix_absolute_flux_cov_newworld = (TMatrixD*)roofile_syst->Get("matrix_absolute_flux_cov_newworld");
@@ -37,6 +38,13 @@ void plot_systematics()
 
   TMatrixD* matrix_pred_newworld = (TMatrixD*)roofile_syst->Get("matrix_pred_newworld");
   TMatrixD* matrix_data_newworld = (TMatrixD*)roofile_syst->Get("matrix_data_newworld");
+
+  map<int, TMatrixD*>matrix_absolute_detector_sub_cov_newworld;
+  for(int idx=1; idx<=9; idx++) {
+    if( idx==5 ) continue;
+    roostr = TString::Format("matrix_absolute_detector_sub_cov_newworld_%02d", idx);
+    matrix_absolute_detector_sub_cov_newworld[idx] = (TMatrixD*)roofile_syst->Get(roostr);
+  }
   
   int rows = matrix_absolute_total_cov_newworld->GetNrows();
 
@@ -216,7 +224,7 @@ void plot_systematics()
 
       double val_correlation = cov_ij/sqrt(cov_i*cov_j);
       if( cov_i==0 || cov_j==0 ) val_correlation = 0;
-      
+   
       h2_covariance_flux->SetBinContent(ibin, jbin, cov_ij);
       h2_correlation_flux->SetBinContent(ibin, jbin, val_correlation);
 
@@ -288,7 +296,7 @@ void plot_systematics()
 
       double val_correlation = cov_ij/sqrt(cov_i*cov_j);
       if( cov_i==0 || cov_j==0 ) val_correlation = 0;
-
+  
       h2_covariance_Xs->SetBinContent(ibin, jbin, cov_ij);
       h2_correlation_Xs->SetBinContent(ibin, jbin, val_correlation);
 
@@ -360,7 +368,11 @@ void plot_systematics()
 
       double val_correlation = cov_ij/sqrt(cov_i*cov_j);
       if( cov_i==0 || cov_j==0 ) val_correlation = 0;
-
+      // if( fabs(val_correlation)-1<1e-4 ) {
+      // 	if( val_correlation>0 ) val_correlation = 0.999;
+      // 	if( val_correlation<0 ) val_correlation = -0.999;
+      // }
+      
       h2_covariance_detector->SetBinContent(ibin, jbin, cov_ij);
       h2_correlation_detector->SetBinContent(ibin, jbin, val_correlation);
 
@@ -402,6 +414,103 @@ void plot_systematics()
   }
 
   canv_h2_correlation_detector->SaveAs("canv_h2_correlation_detector.png");
+
+
+  ///////////////////////////////////////////////////
+
+  map<int, TH2D*>h2_covariance_detector_sub;
+  map<int, TH2D*>h2_correlation_detector_sub;
+  map<int, TH1D*>h1_detector_relerr_sub;
+  map<int, TCanvas*>canv_h2_correlation_detector_sub;
+    
+  for(auto it=matrix_absolute_detector_sub_cov_newworld.begin(); it!=matrix_absolute_detector_sub_cov_newworld.end(); it++) {
+    int idx = it->first;
+
+    
+    roostr = "h2_covariance_detector_sub";
+    roostr = TString::Format("h2_covariance_detector_sub_%02d", idx);
+    h2_covariance_detector_sub[idx] = new TH2D(roostr, "", rows, 0, rows, rows, 0, rows);
+    for(int ibin=1; ibin<=rows; ibin++) {
+      h2_covariance_detector_sub[idx]->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+      h2_covariance_detector_sub[idx]->GetYaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+    }
+
+    roostr = "h2_correlation_detector";
+    roostr = TString::Format("h2_correlation_detector_sub_%02d", idx);
+    h2_correlation_detector_sub[idx] = new TH2D(roostr, "", rows, 0, rows, rows, 0, rows);
+    for(int ibin=1; ibin<=rows; ibin++) {
+      h2_correlation_detector_sub[idx]->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+      h2_correlation_detector_sub[idx]->GetYaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+    }
+
+    roostr = TString::Format("h1_detector_relerr_sub_%02d", idx);
+    h1_detector_relerr_sub[idx] = new TH1D(roostr, "", rows, 0, rows);
+    for(int ibin=1; ibin<=rows; ibin++) {
+      h1_detector_relerr_sub[idx]->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+    }
+  
+    for(int ibin=1; ibin<=rows; ibin++) {
+      for(int jbin=1; jbin<=rows; jbin++) {
+	double cov_ij = (*matrix_absolute_detector_sub_cov_newworld[idx])(ibin-1,jbin-1);      
+	double cov_i = (*matrix_absolute_detector_sub_cov_newworld[idx])(ibin-1,ibin-1);
+	double cov_j = (*matrix_absolute_detector_sub_cov_newworld[idx])(jbin-1,jbin-1);      
+
+	double val_correlation = cov_ij/sqrt(cov_i*cov_j);
+	if( cov_i==0 || cov_j==0 ) val_correlation = 0;
+
+	if( val_correlation+1>-1e-4 && val_correlation+1<1e-4 ) val_correlation = -0.999;
+	if( val_correlation-1>-1e-4 && val_correlation-1<1e-4 ) val_correlation = 0.999;
+	
+	if( cov_i==0 || cov_j==0 ) val_correlation = 0;
+
+	h2_covariance_detector_sub[idx]->SetBinContent(ibin, jbin, cov_ij);
+	h2_correlation_detector_sub[idx]->SetBinContent(ibin, jbin, val_correlation);
+
+	if( ibin==jbin ) {
+	  double val_cv = (*matrix_pred_newworld)(0, ibin-1);
+	  double val_relerr = sqrt(cov_ij)/val_cv;
+	  h1_detector_relerr_sub[idx]->SetBinContent(ibin, val_relerr);
+	}
+      
+      }// jbin
+    }// ibin
+
+    roostr = TString::Format("canv_h2_correlation_detector_sub_%02d", idx);
+    canv_h2_correlation_detector_sub[idx] = new TCanvas(roostr, roostr, 800, 700);
+    func_canv_margin(canv_h2_correlation_detector_sub[idx], 0.15, 0.15, 0.1, 0.15);
+    h2_correlation_detector_sub[idx]->Draw("colz");
+    func_title_size(h2_correlation_detector_sub[idx], 0.05, 0.033, 0.05, 0.033);
+    h2_correlation_detector_sub[idx]->GetZaxis()->SetLabelSize(0.033);
+    h2_correlation_detector_sub[idx]->GetZaxis()->SetRangeUser(-1, 1);
+    h2_correlation_detector_sub[idx]->GetXaxis()->LabelsOption("v R");
+    h2_correlation_detector_sub[idx]->GetXaxis()->SetTickLength(0);
+    h2_correlation_detector_sub[idx]->GetYaxis()->SetTickLength(0);
+    func_xy_title(h2_correlation_detector_sub[idx], "Reco energy [MeV]", "Reco energy [MeV]");
+    h2_correlation_detector_sub[idx]->GetXaxis()->CenterTitle(); h2_correlation_detector_sub[idx]->GetYaxis()->CenterTitle();
+    h2_correlation_detector_sub[idx]->GetXaxis()->SetTitleOffset(2.2); h2_correlation_detector_sub[idx]->GetYaxis()->SetTitleOffset(1.9);
+  
+    for(int idx=0; idx<num_ch-1; idx++) {
+      line_root_xx[idx]->Draw("same");
+      line_root_yy[idx]->Draw("same");
+      line_root_xx[idx]->SetLineColor(kRed);
+      line_root_yy[idx]->SetLineColor(kRed);
+    }
+
+    for(auto it=map_line_axis_xy.begin(); it!=map_line_axis_xy.end(); it++) {
+      int line_eff = it->first;    
+      map_root_line_axis_xx[line_eff]->Draw("same");
+      map_root_line_axis_yy[line_eff]->Draw("same");
+    }
+
+    for(int idx=0; idx<num_ch; idx++) {
+      pt_text_ch[idx]->Draw();
+    }
+
+    roostr = TString::Format("canv_h2_correlation_detector_sub_%02d.png", idx);
+    canv_h2_correlation_detector_sub[idx]->SaveAs(roostr);
+
+  }
+  
             
   /////////////////////////////////////////////////////////////////////////////////////////////////////// mc_stat
 
@@ -432,7 +541,7 @@ void plot_systematics()
 
       double val_correlation = cov_ij/sqrt(cov_i*cov_j);
       if( cov_i==0 || cov_j==0 ) val_correlation = 0;
-
+   
       h2_covariance_mc_stat->SetBinContent(ibin, jbin, cov_ij);
       h2_correlation_mc_stat->SetBinContent(ibin, jbin, val_correlation);
 
@@ -461,12 +570,16 @@ void plot_systematics()
   for(int idx=0; idx<num_ch-1; idx++) {
     line_root_xx[idx]->Draw("same");
     line_root_yy[idx]->Draw("same");
+    line_root_xx[idx]->SetLineColor(kBlack);
+    line_root_yy[idx]->SetLineColor(kBlack);
   }
 
   for(auto it=map_line_axis_xy.begin(); it!=map_line_axis_xy.end(); it++) {
     int line_eff = it->first;    
     map_root_line_axis_xx[line_eff]->Draw("same");
     map_root_line_axis_yy[line_eff]->Draw("same");
+    map_root_line_axis_xx[line_eff]->SetLineColor(kBlack);
+    map_root_line_axis_yy[line_eff]->SetLineColor(kBlack);
   }
 
   for(int idx=0; idx<num_ch; idx++) {
@@ -504,7 +617,7 @@ void plot_systematics()
 
       double val_correlation = cov_ij/sqrt(cov_i*cov_j);
       if( cov_i==0 || cov_j==0 ) val_correlation = 0;
-
+ 
       h2_covariance_additional->SetBinContent(ibin, jbin, cov_ij);
       h2_correlation_additional->SetBinContent(ibin, jbin, val_correlation);
 
@@ -533,6 +646,8 @@ void plot_systematics()
   for(int idx=0; idx<num_ch-1; idx++) {
     line_root_xx[idx]->Draw("same");
     line_root_yy[idx]->Draw("same");
+    line_root_xx[idx]->SetLineColor(kBlack);
+    line_root_yy[idx]->SetLineColor(kBlack);
   }
 
   for(auto it=map_line_axis_xy.begin(); it!=map_line_axis_xy.end(); it++) {
@@ -576,7 +691,7 @@ void plot_systematics()
 
       double val_correlation = cov_ij/sqrt(cov_i*cov_j);
       if( cov_i==0 || cov_j==0 ) val_correlation = 0;
-
+   
       h2_covariance_total->SetBinContent(ibin, jbin, cov_ij);
       h2_correlation_total->SetBinContent(ibin, jbin, val_correlation);
 
@@ -676,6 +791,61 @@ void plot_systematics()
     
   h2_relerr_flux_Xs->Draw("same axis");
   canv_h2_relerr_flux_Xs->SaveAs("canv_h2_relerr_flux_Xs.png");
+  
+  /////////////////////////////////////////////////////////////////////////////////////////////////////// detector
+  
+  roostr = "h2_relerr_detector";
+  TH2D *h2_relerr_detector = new TH2D(roostr, "", rows, 0, rows, 100, 0, 2.5);
+  for(int ibin=1; ibin<=rows; ibin++) {
+    h2_relerr_detector->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+  }
+
+  TCanvas *canv_h2_relerr_detector = new TCanvas("canv_h2_relerr_detector", "canv_h2_relerr_detector", 1300, 700);
+  func_canv_margin(canv_h2_relerr_detector, 0.15, 0.2, 0.11, 0.15);
+  h2_relerr_detector->Draw();
+  func_title_size(h2_relerr_detector, 0.06, 0.042, 0.04, 0.04);
+  h2_relerr_detector->GetXaxis()->LabelsOption("v R");
+  h2_relerr_detector->GetXaxis()->SetTickLength(0);
+  func_xy_title(h2_relerr_detector, "Reco energy [MeV]", "Relative error");
+  h2_relerr_detector->GetXaxis()->CenterTitle(); h2_relerr_detector->GetYaxis()->CenterTitle();
+  h2_relerr_detector->GetXaxis()->SetTitleOffset(1.9); h2_relerr_detector->GetYaxis()->SetTitleOffset(1.);
+   
+  for(auto it=map_line_axis_xy.begin(); it!=map_line_axis_xy.end(); it++) {
+    int line_eff = it->first;    
+    map_root_line_axis_xx[line_eff]->Draw();
+    map_root_line_axis_xx[line_eff]->SetY2(0.04);
+  }
+  
+  h1_detector_relerr->Draw("same hist");
+  h1_detector_relerr->SetLineColor(color_detector);
+  
+  for(int idx=0; idx<num_ch-1; idx++) {
+    line_root_xx[idx]->Draw();
+    line_root_xx[idx]->SetLineStyle(7);
+    line_root_xx[idx]->SetY2(2.5);
+  }
+
+  canv_h2_relerr_detector->cd();
+  canv_h2_relerr_detector->Update();
+  for(int idx=0; idx<num_ch; idx++) {    
+    pt_text_ch[idx]->Draw();
+    pt_text_ch[idx]->SetTextSize(0.037);
+    pt_text_ch[idx]->SetY1(2.55);
+    pt_text_ch[idx]->SetY2(2.55);
+    int line_eff = 0;
+    for(int jdx=0; jdx<idx; jdx++) line_eff += nbins_ch[jdx];
+    pt_text_ch[idx]->SetX1(line_eff+4);
+    pt_text_ch[idx]->SetX2(line_eff+4+1);
+  }
+  
+  // TLegend *lg_relerr_detector = new TLegend(0.82, 0.75, 0.93, 0.89);
+  // lg_relerr_detector->AddEntry(h1_flux_relerr, "Flux", "l");
+  // lg_relerr_detector->AddEntry(h1_Xs_relerr, "Xs", "l");
+  // lg_relerr_detector->Draw();
+  // lg_relerr_detector->SetTextSize(0.04);
+    
+  h2_relerr_detector->Draw("same axis");
+  canv_h2_relerr_detector->SaveAs("canv_h2_relerr_detector.png");
   
   /////////////////////////////////////////////////////////////////////////////////////////////////////// total
   
@@ -870,5 +1040,110 @@ void plot_systematics()
 
   h2_basic_fraction->Draw("same axis");
   canv_h2_basic_fraction->SaveAs("canv_h2_basic_fraction.png");
+
+  
+  /////////////////////////////////////////////////////////////////////////////////////////////////////// fraction_detector
+  
+  THStack *h1_stack_fraction_detector = new THStack("h1_stack_fraction_detector", "");
+
+  map<int, int>color_sub;
+  color_sub[1] = 2;
+  color_sub[2] = 3;
+  color_sub[3] = 4;
+  color_sub[4] = 5;
+  //color_sub[5] = ;
+  color_sub[6] = 6;
+  color_sub[7] = 7;
+  color_sub[8] = 8;
+  color_sub[9] = 9;
+
+  
+  map<int, TString>str_sub;
+  str_sub[1] = "LY Down";
+  str_sub[2] = "LY Rayleigh";
+  str_sub[3] = "Recomb2";
+  str_sub[4] = "SCE";
+  //str_sub[5] = ;
+  str_sub[6] = "WireMod #theta_{xz}";
+  str_sub[7] = "WireMod #theta_{yz}";
+  str_sub[8] = "WireMod x";
+  str_sub[9] = "WireMod y";
+
+  
+  map<int, TH1D*>h1_fraction_detecor_sub;
+  for(auto it=h1_detector_relerr_sub.begin(); it!=h1_detector_relerr_sub.end(); it++) {
+    int idx = it->first;
+
+    roostr = TString::Format("h1_fraction_detecor_sub_%02d", idx);
+    h1_fraction_detecor_sub[idx] = new TH1D(roostr, "", rows, 0, rows);
+    for(int ibin=1; ibin<=rows; ibin++) {
+      h1_fraction_detecor_sub[idx]->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+      double val_cc = h1_detector_relerr_sub[idx]->GetBinContent(ibin);
+      double val_total = h1_detector_relerr->GetBinContent(ibin);
+      double val_frac = val_cc*val_cc*100./val_total/val_total;      
+    
+      if( val_cc==0 || val_total==0 ) val_frac = 0;
+
+      h1_fraction_detecor_sub[idx]->SetBinContent( ibin, val_frac );
+    }
+    h1_fraction_detecor_sub[idx]->SetFillColor(color_sub[idx]);
+    h1_fraction_detecor_sub[idx]->SetLineColor(kBlack);
+    h1_stack_fraction_detector->Add(h1_fraction_detecor_sub[idx]);
+  }
+  
+  ///////////////////////////////
+   
+  roostr = "h2_basic_fraction_detector";
+  TH2D *h2_basic_fraction_detector = new TH2D(roostr, "", rows, 0, rows, 110, 0, 110);
+  for(int ibin=1; ibin<=rows; ibin++) {
+    h2_basic_fraction_detector->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+  }
+  TCanvas *canv_h2_basic_fraction_detector = new TCanvas("canv_h2_basic_fraction_detector", "canv_h2_basic_fraction_detector", 1300, 700);
+  func_canv_margin(canv_h2_basic_fraction_detector, 0.15, 0.2, 0.11, 0.15);
+  h2_basic_fraction_detector->Draw();
+  func_title_size(h2_basic_fraction_detector, 0.06, 0.042, 0.04, 0.04);
+  h2_basic_fraction_detector->GetXaxis()->LabelsOption("v R");
+  h2_basic_fraction_detector->GetXaxis()->SetTickLength(0);
+  func_xy_title(h2_basic_fraction_detector, "Reco energy [MeV]", "Syst. percentage");
+  h2_basic_fraction_detector->GetXaxis()->CenterTitle(); h2_basic_fraction_detector->GetYaxis()->CenterTitle();
+  h2_basic_fraction_detector->GetXaxis()->SetTitleOffset(1.9); h2_basic_fraction_detector->GetYaxis()->SetTitleOffset(1.);
+   
+  h1_stack_fraction_detector->Draw("same");
+
+  
+  for(int idx=0; idx<num_ch-1; idx++) {
+    line_root_xx[idx]->Draw();
+    line_root_xx[idx]->SetLineStyle(7);
+    line_root_xx[idx]->SetY2(110);
+  }
+
+  canv_h2_basic_fraction_detector->cd();
+  canv_h2_basic_fraction_detector->Update();
+  for(int idx=0; idx<num_ch; idx++) {
+    pt_text_ch[idx]->Draw();
+    pt_text_ch[idx]->SetY1(112);
+    pt_text_ch[idx]->SetY2(112);
+    int line_eff = 0;
+    for(int jdx=0; jdx<idx; jdx++) line_eff += nbins_ch[jdx];
+    pt_text_ch[idx]->SetX1(line_eff+4);
+    pt_text_ch[idx]->SetX2(line_eff+4+1);
+  }
+  
+  TLegend *lg_fraction_detector_total = new TLegend(0.82, 0.15, 0.97, 0.89);
+  lg_fraction_detector_total->Draw();
+  lg_fraction_detector_total->SetTextSize(0.04);
+  for(auto it=h1_detector_relerr_sub.begin(); it!=h1_detector_relerr_sub.end(); it++) {
+    int idx = it->first;
+    lg_fraction_detector_total->AddEntry(h1_fraction_detecor_sub[idx], str_sub[idx], "f");
+  }  
+  
+  for(auto it=map_line_axis_xy.begin(); it!=map_line_axis_xy.end(); it++) {
+    int line_eff = it->first;    
+    map_root_line_axis_xx[line_eff]->Draw();
+    map_root_line_axis_xx[line_eff]->SetY2(3);
+  }  
+  
+  h2_basic_fraction_detector->Draw("same axis");
+  canv_h2_basic_fraction_detector->SaveAs("canv_h2_basic_fraction_detector.png");
 }
 

@@ -169,7 +169,8 @@ void plot_FC_new()
     h1_user_dchi2->GetXaxis()->CenterTitle();
     h1_user_dchi2->GetYaxis()->CenterTitle();
     h1_user_dchi2->Draw("same axis");
-          
+    canv_h1_user_dchi2->SaveAs("canv_h1_user_dchi2.png");
+      
     TCanvas *canv_h1_user_gmin = new TCanvas("canv_h1_user_gmin", "canv_h1_user_gmin", 900, 650);
     func_canv_margin(canv_h1_user_gmin, 0.15, 0.1, 0.1, 0.15);
     h1_user_gmin->Draw("hist");
@@ -178,11 +179,12 @@ void plot_FC_new()
     func_xy_title(h1_user_gmin, "Best fit of LEE strength", "Entries");
     h1_user_gmin->GetXaxis()->CenterTitle();
     h1_user_gmin->GetYaxis()->CenterTitle();
-    h1_user_gmin->Draw("same axis");            
+    h1_user_gmin->Draw("same axis");
+    canv_h1_user_gmin->SaveAs("canv_h1_user_gmin.png");
   }
 
   //////////////////////////////////////////////////////////////////////////////////////// file_Asimov
-
+  
   roostr = "file_Asimov.root";
   TFile *file_Asimov = new TFile(roostr, "read");
   TTree *tree_Asimov = (TTree*)file_Asimov->Get("tree_Asimov");
@@ -295,7 +297,8 @@ void plot_FC_new()
     func_title_size(map_graph_Asimov[user_val_Lee100], 0.05, 0.05, 0.05, 0.05);
     func_xy_title(map_graph_Asimov[user_val_Lee100], "True LEE strength", "Confidence Level (%)");
     map_graph_Asimov[user_val_Lee100]->GetXaxis()->CenterTitle();
-    map_graph_Asimov[user_val_Lee100]->GetYaxis()->CenterTitle();          
+    map_graph_Asimov[user_val_Lee100]->GetYaxis()->CenterTitle();
+    canv_toy_Asimov->SaveAs("canv_toy_Asimov.png");
   }
 
   //////////////////////////
@@ -327,6 +330,8 @@ void plot_FC_new()
   
   h1_CI_Asimov->Draw("same axis");
   
+  canv_gh_CI68_Asimov->SaveAs("canv_gh_CI68_Asimov.png");
+    
   //////////////////////////////////////////////////////////////////////////////////////// file_data
 
   roostr = "file_data.root";
@@ -447,6 +452,8 @@ void plot_FC_new()
   TF1 *f1_CL95 = new TF1("f1_CL95", "95", 0, 1e6);
   f1_CL95->Draw("same"); f1_CL95->SetLineColor(kRed); f1_CL95->SetLineStyle(7);
 
+  canv_gh_CL_data->SaveAs("canv_gh_CL_data.png");
+  
   //////////////////////
   
   TCanvas *canv_gh_scan_dchi2_data = new TCanvas("canv_gh_scan_dchi2_data", "canv_gh_scan_dchi2_data", 900, 650);
@@ -508,5 +515,7 @@ void plot_FC_new()
   lg_scan_dchi2_data->SetTextSize(0.05);
   
   canv_gh_scan_dchi2_data->SaveAs("canv_gh_scan_dchi2_data.png");
+
+  //map_graph_Asimov[0]->Draw("al");
 }
 
