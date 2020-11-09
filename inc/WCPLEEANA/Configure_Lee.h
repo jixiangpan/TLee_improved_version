@@ -27,10 +27,9 @@ namespace config_Lee
     (*) double val_mc_stat_cov = gh_mc_stat_bin[ibin]->Eval( scaleF_Lee ); mc_stat
   */
 
-  ////////// 
+  ////////// set to batch mode -> do not display graphics
 
-  // set to batch mode -> do not display graphics
-  bool flag_batch_mode = 1;
+  bool flag_batch_mode      = 1;
   
   ////////// systematics flag
   
