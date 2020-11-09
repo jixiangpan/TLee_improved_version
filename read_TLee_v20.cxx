@@ -84,7 +84,7 @@ int main(int argc, char** argv)
   
   Lee_test->scaleF_POT = scaleF_POT;
   Lee_test->Set_config_file_directory(config_Lee::spectra_file, config_Lee::flux_Xs_directory,
-				      config_Lee::detector_directory, config_Lee::mc_directory);
+                                      config_Lee::detector_directory, config_Lee::mc_directory);
   Lee_test->Set_Spectra_MatrixCov();
   Lee_test->Set_POT_implement();
   Lee_test->Set_TransformMatrix();
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
   tree_config->Branch("flag_syst_additional", &flag_syst_additional, "flag_syst_additional/I" );
   tree_config->Branch("flag_syst_mc_stat", &flag_syst_mc_stat, "flag_syst_mc_stat/I" );
   tree_config->Branch("user_Lee_strength_for_output_covariance_matrix", &user_Lee_strength_for_output_covariance_matrix,
-		      "user_Lee_strength_for_output_covariance_matrix/D" );
+                      "user_Lee_strength_for_output_covariance_matrix/D" );
   tree_config->Branch("user_scaleF_POT", &user_scaleF_POT, "user_scaleF_POT/D" );
   tree_config->Fill();
   file_collapsed_covariance_matrix->cd();
@@ -289,15 +289,15 @@ int main(int argc, char** argv)
 
   if( config_Lee::flag_Lee_strength_data ) {
 
-    Lee_test->Set_measured_data();
+    Lee_test->Set_measured_data();// use the measured data as the input data for the fitting
 
-    Lee_test->Minimization_Lee_strength_FullCov(2, 0);
+    Lee_test->Minimization_Lee_strength_FullCov(2, 0);// (initial value, fix or not)
 
     cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
-				Lee_test->minimization_chi2,
-				Lee_test->minimization_Lee_strength_val,
-				Lee_test->minimization_Lee_strength_err
-				)<<endl<<endl;
+                                Lee_test->minimization_chi2,
+                                Lee_test->minimization_Lee_strength_val,
+                                Lee_test->minimization_Lee_strength_err
+                                )<<endl<<endl;
 
     /////////////////////////////////////////
     
@@ -311,7 +311,7 @@ int main(int argc, char** argv)
     for(int idx=1; idx<=nscan; idx++) {
       if( idx%(max(1, nscan/10))==0 ) cout<<Form(" ---> scan %4.2f, %3d", idx*1./nscan, idx)<<endl;
       double val_s = slow + (idx-1)*step;
-      Lee_test->Minimization_Lee_strength_FullCov(val_s, 1);
+      Lee_test->Minimization_Lee_strength_FullCov(val_s, 1);// (initial value, fix or not)
       double val_chi2 = Lee_test->minimization_chi2;
       gh_scan->SetPoint( gh_scan->GetN(), val_s, val_chi2 - gmin);
       if( val_max_dchi2<val_chi2 - gmin ) val_max_dchi2 = val_chi2 - gmin;
@@ -347,7 +347,79 @@ int main(int argc, char** argv)
   }
   
   ////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////// Advanced Statistics Analysis /////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////
+  //
+  // (*) Hypothesis test always reject the null
+  //
+  // [*] the realization of the functionality is a combination of the tools:
+  //
+  //         Lee_test->Set_measured_data();
+  //
+  //         Lee_test->scaleF_Lee = #;
+  //         Lee_test->Set_Collapse();
+  //
+  //         Lee_test->Set_toy_Asimov();
+  //
+  //         Lee_test->Set_Variations( # );
+  //         Lee_test->Set_toy_Variation( # );
+  //
+  //         Lee_test->Minimization_Lee_strength_FullCov(#, #);
+  //
+  
+  //////////////////////////////////////////////////////////////////////////////////////// example: do fitting on Asimov sample
 
+  if( 0 ) {
+    Lee_test->scaleF_Lee = 1;
+    Lee_test->Set_Collapse();
+  
+    Lee_test->Set_toy_Asimov();// use the Asimov sample as the input data for the fitting
+
+    Lee_test->Minimization_Lee_strength_FullCov(2, 0);// (initial value, fix or not)
+
+    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
+				Lee_test->minimization_chi2,
+				Lee_test->minimization_Lee_strength_val,
+				Lee_test->minimization_Lee_strength_err
+				)<<endl<<endl;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////// example: do fitting on variation sample
+
+  if( 0 ) {
+    Lee_test->scaleF_Lee = 1;
+    Lee_test->Set_Collapse();
+
+    Lee_test->Set_Variations( 10 );// generate 10 variation samples
+    Lee_test->Set_toy_Variation( 4 );// use the 4th sample as the input data for the fitting
+    
+    Lee_test->Minimization_Lee_strength_FullCov(2, 0);// (initial value, fix or not)
+
+    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
+				Lee_test->minimization_chi2,
+				Lee_test->minimization_Lee_strength_val,
+				Lee_test->minimization_Lee_strength_err
+				)<<endl<<endl;
+  }
+  
+  //////////////////////////////////////////////////////////////////////////////////////// example: simple versus simple likelihood ratio test
+
+  if( 0 ) {    
+    Lee_test->Set_measured_data();// use the measured data as the input data for the fitting
+
+    Lee_test->Minimization_Lee_strength_FullCov(1, 1);// (initial value, fix or not)
+    double val_chi2_Lee = Lee_test->minimization_chi2;
+
+    Lee_test->Minimization_Lee_strength_FullCov(0, 1);// (initial value, fix or not)
+    double val_chi2_sm = Lee_test->minimization_chi2;
+
+    double val_dchi2 = val_chi2_Lee - val_chi2_sm;
+    
+    cout<<endl<<TString::Format(" ---> dchi2 = Lee - sm: %4.2f", val_dchi2)<<endl<<endl;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////
+  
   if( 0 ) {
     double chi2_null_null8sm_true8sm  = 0;
     double chi2_gmin_null8sm_true8sm  = 0;
@@ -410,86 +482,29 @@ int main(int argc, char** argv)
     
   }
 
-  ////////////////////////////////////////////////////////////////////////////////////////
-
-  if( 0 ) {    
-    Lee_test->Set_measured_data();
-
-    Lee_test->Minimization_Lee_strength_FullCov(1, 1);
-    double val_chi2_Lee = Lee_test->minimization_chi2;
-
-    Lee_test->Minimization_Lee_strength_FullCov(0, 1);
-    double val_chi2_sm = Lee_test->minimization_chi2;
-
-    double val_dchi2 = val_chi2_Lee - val_chi2_sm;
-    
-    cout<<endl<<TString::Format(" ---> dchi2 = Lee - sm: %4.2f", val_dchi2)<<endl<<endl;
-  }
-  
-  //////////////////////////////////////////////////////////////////////////////////////// example: do fitting on Asimov sample
-
-  if( 0 ) {
-    Lee_test->scaleF_Lee = 1;
-    Lee_test->Set_Collapse();
-  
-    Lee_test->Set_toy_Asimov();
-
-    Lee_test->Minimization_Lee_strength_FullCov(2, 0);
-
-    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
-				Lee_test->minimization_chi2,
-				Lee_test->minimization_Lee_strength_val,
-				Lee_test->minimization_Lee_strength_err
-				)<<endl<<endl;
-  }
-
-  //////////////////////////////////////////////////////////////////////////////////////// example, do fitting on variation sample
-
-  if( 0 ) {
-    Lee_test->scaleF_Lee = 1;
-    Lee_test->Set_Collapse();
-
-    Lee_test->Set_Variations( 10 );
-    Lee_test->Set_toy_Variation( 4 );
-    
-    Lee_test->Minimization_Lee_strength_FullCov(2, 0);
-
-    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
-				Lee_test->minimization_chi2,
-				Lee_test->minimization_Lee_strength_val,
-				Lee_test->minimization_Lee_strength_err
-				)<<endl<<endl;
-  }
-  
-  //////////////////////////////////////////////////////////////////////////////////////// Feldman-Cousins approach
+  //////////////////////////////////////////////////////////////////////////////////////// Feldman-Cousins approach --> heavy computation cost
 
   if( 0 ) {
     
     Lee_test->Set_measured_data();    
     TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
     
-    // Lee_test->Minimization_Lee_strength_FullCov(1, 0);
-    
-    // cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
-    // 				Lee_test->minimization_chi2,
-    // 				Lee_test->minimization_Lee_strength_val,
-    // 				Lee_test->minimization_Lee_strength_err
-    // 				)<<endl<<endl;
-    
-    /////////////// Feldman-Cousins
+    /////////////// range: [low, hgh] with step
     
     double Lee_true_low = 0;
     double Lee_true_hgh = 5;
     double Lee_step     = 0.02;
     
+    /////////////// dchi2 distribution 
+    
     //int num_toy = 1;    
     //Lee_test->Exe_Feldman_Cousins(Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);
 
-    /////////////// Asimov
+    /////////////// dchi2 of Asimov sample
     
     //Lee_test->Exe_Fledman_Cousins_Asimov(Lee_true_low, Lee_true_hgh, Lee_step);
 
-    /////////////// measured data
+    /////////////// dchi2 of measured data
     
     //Lee_test->Exe_Fiedman_Cousins_Data( matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step );
     
