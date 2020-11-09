@@ -57,13 +57,6 @@ using namespace std;
 //#include "draw.icc"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////// TLee
-/*  
-  Set_Spectra_MatrixCov():
-      map_Lee_ch[8] = 1;
-      map_Lee_ch[9] = 1;  
-      if( map_Lee_ch.find(ich)!=map_Lee_ch.end() ) map_Lee_oldworld[index_oldworld] = 1;
-*/
-
 
 class TLee {
 public:
