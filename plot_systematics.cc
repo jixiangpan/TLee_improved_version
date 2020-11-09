@@ -25,8 +25,8 @@ void plot_systematics()
   
   TString roostr = "";
 
-  //roostr = "file_collapsed_covariance_matrix_wiRandom.root";
-  roostr = "file_collapsed_covariance_matrix_DetNoRandom.root";
+  roostr = "file_collapsed_covariance_matrix.root";
+  //roostr = "file_collapsed_covariance_matrix_DetNoRandom.root";
   TFile *roofile_syst = new TFile(roostr, "read");
 
   TMatrixD* matrix_absolute_flux_cov_newworld = (TMatrixD*)roofile_syst->Get("matrix_absolute_flux_cov_newworld");
@@ -97,8 +97,6 @@ void plot_systematics()
 
     for(int ibin=1; ibin<=nbins_ch[ich]; ibin++) {
       line_str++;
-      axis_label_str[line_str-1] = TString::Format("%3.1f", ibin*1./10);
-      if(ibin==nbins_ch[ich]) axis_label_str[line_str-1] = "inf";
       if(ibin==5 || ibin==10 || ibin==15 || ibin==20 || ibin==25) {
 	axis_label_str[line_str-1] = TString::Format("%d", ibin*100);
       }
@@ -1056,7 +1054,7 @@ void plot_systematics()
   color_sub[7] = 7;
   color_sub[8] = 8;
   color_sub[9] = 9;
-
+  color_sub[10] = kOrange-3;
   
   map<int, TString>str_sub;
   str_sub[1] = "LY Down";
@@ -1109,7 +1107,6 @@ void plot_systematics()
   h2_basic_fraction_detector->GetXaxis()->SetTitleOffset(1.9); h2_basic_fraction_detector->GetYaxis()->SetTitleOffset(1.);
    
   h1_stack_fraction_detector->Draw("same");
-
   
   for(int idx=0; idx<num_ch-1; idx++) {
     line_root_xx[idx]->Draw();

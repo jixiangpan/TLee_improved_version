@@ -1051,7 +1051,7 @@ void TLee::Set_Collapse()
   ////////////////////////////////////////
 
   if( flag_individual_cov_newworld ) {
-    cout<<" ---> flag_individual_cov_newworld"<<endl;
+    cout<<" ---> flag_individual_cov_newworld (should appear only one time)"<<endl<<endl;
     
     flag_individual_cov_newworld = false;
 
@@ -1224,6 +1224,7 @@ void TLee::Set_Spectra_MatrixCov()
   matrix_transform = (*mat_collapse);
 
   ///
+  cout<<" Predictions"<<endl;
   for(int ich=1; ich<=(int)map_input_spectrum_ch_str.size(); ich++) {
     roostr = TString::Format("histo_%d", ich);
     TH1F *h1_spectrum = (TH1F*)file_spectra->Get(roostr);
@@ -1288,7 +1289,9 @@ void TLee::Set_Spectra_MatrixCov()
   // cout<<endl;  
   
   ////////////////////////////////////////// detector
-  
+
+  cout<<" Detector systematics"<<endl;
+    
   map<int, TString>map_detectorfile_str;
   map_detectorfile_str[1] = detector_directory+"cov_LYDown.root";
   map_detectorfile_str[2] = detector_directory+"cov_LYRayleigh.root";
@@ -1299,7 +1302,7 @@ void TLee::Set_Spectra_MatrixCov()
   map_detectorfile_str[7] = detector_directory+"cov_WMThetaYZ.root";
   map_detectorfile_str[8] = detector_directory+"cov_WMX.root";
   map_detectorfile_str[9] = detector_directory+"cov_WMYZ.root";
-  map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
+  //map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
   
   map<int, TFile*>map_file_detector_frac;
   map<int, TMatrixD*>map_matrix_detector_frac;
@@ -1308,8 +1311,10 @@ void TLee::Set_Spectra_MatrixCov()
   
   int size_map_detectorfile_str = map_detectorfile_str.size();
   for(int idx=1; idx<=size_map_detectorfile_str; idx++) {
-    if(idx==5) continue;
+    if(idx==5) continue;    
     roostr = map_detectorfile_str[idx];
+    cout<<TString::Format(" %2d %s", idx, roostr.Data())<<endl;
+    
     map_file_detector_frac[idx] = new TFile(roostr, "read");
     map_matrix_detector_frac[idx] = (TMatrixD*)map_file_detector_frac[idx]->Get(TString::Format("frac_cov_det_mat_%d", idx));
     // cout<<TString::Format(" ---> check: detector, %2d  ", idx)<<roostr<<endl;
@@ -1320,7 +1325,7 @@ void TLee::Set_Spectra_MatrixCov()
     matrix_detector_sub_frac[idx].ResizeTo(bins_oldworld, bins_oldworld);
     matrix_detector_sub_frac[idx] = (*map_matrix_detector_frac[idx]);
   }
-  // cout<<endl;
+  cout<<endl;
 
   ////////////////////////////////////////// additional
 

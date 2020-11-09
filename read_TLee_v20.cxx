@@ -70,6 +70,10 @@ int main(int argc, char** argv)
   gStyle->SetEndErrorSize(4);
   gStyle->SetEndErrorSize(0);
 
+  if( config_Lee::flag_batch_mode ) {
+    gROOT->SetBatch( config_Lee::flag_batch_mode );
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////
   
   TApplication theApp("theApp",&argc,argv);
@@ -300,12 +304,11 @@ int main(int argc, char** argv)
     double gmin = Lee_test->minimization_chi2;
     TGraph *gh_scan = new TGraph();
     double slow = 0;
-    double shgh = 3;
-    int nscan = 50;
+    double shgh = 5;
+    int nscan = 100;
     double val_max_dchi2 = 0;
     double step = (shgh-slow)/nscan;
     for(int idx=1; idx<=nscan; idx++) {
-      //cout<<" ---> scan "<<idx<<endl;
       if( idx%(max(1, nscan/10))==0 ) cout<<Form(" ---> scan %4.2f, %3d", idx*1./nscan, idx)<<endl;
       double val_s = slow + (idx-1)*step;
       Lee_test->Minimization_Lee_strength_FullCov(val_s, 1);
@@ -319,15 +322,13 @@ int main(int argc, char** argv)
     canv_gh_scan->SetLeftMargin(0.15); canv_gh_scan->SetRightMargin(0.1);
     canv_gh_scan->SetTopMargin(0.1); canv_gh_scan->SetBottomMargin(0.15);    
     gh_scan->Draw("al");
-    gh_scan->GetXaxis()->SetTitle("LEE strength"); gh_scan->GetYaxis()->SetTitle("#Delta#chi^{2}");
+    gh_scan->GetXaxis()->SetTitle("LEE strength"); gh_scan->GetYaxis()->SetTitle("#Delta#chi^{2}");    
     gh_scan->GetXaxis()->SetLabelSize(0.05); gh_scan->GetXaxis()->SetTitleSize(0.05);
     gh_scan->GetYaxis()->SetLabelSize(0.05); gh_scan->GetYaxis()->SetTitleSize(0.05);
     gh_scan->GetXaxis()->CenterTitle(); gh_scan->GetYaxis()->CenterTitle();
     gh_scan->GetXaxis()->SetTitleOffset(1.2);
     gh_scan->GetYaxis()->SetRangeUser(0, val_max_dchi2*1.1);
-    // canv_gh_scan->cd(); canv_gh_scan->Update();
-    // double x1 = gPad->GetUxmin(); double y1 = gPad->GetUymin();
-    // double x2 = gPad->GetUxmax(); double y2 = gPad->GetUymax();    
+   
     TLine *lineA_dchi2at1 = new TLine(1, 0, 1, val_dchi2at1);    
     lineA_dchi2at1->Draw("same");
     lineA_dchi2at1->SetLineWidth(2);
@@ -362,29 +363,43 @@ int main(int argc, char** argv)
 
     int N_toy = 100;
         
-    Lee_test->scaleF_Lee = 1;
-    Lee_test->Set_Collapse();
-    
-    Lee_test->Set_Variations(N_toy);
-    
     for(int itoy=1; itoy<=N_toy; itoy++) {
       if( itoy%max(N_toy/10,1)==0 ) {
 	cout<<TString::Format(" ---> processing toy ( total cov ): %4.2f, %6d", itoy*1./N_toy, itoy)<<endl;
       }
-
+      
       int status_fit = 0;
+          
+      /////////////////////////////////// null8sm, true8sm
       
-      Lee_test->Set_toy_Variation( itoy );
+      Lee_test->scaleF_Lee = 0;
+      Lee_test->Set_Collapse();    
+      Lee_test->Set_Variations(1);
+      Lee_test->Set_toy_Variation(1);
+    
+      Lee_test->Minimization_Lee_strength_FullCov(0, 1);
+      chi2_null_null8sm_true8sm = Lee_test->minimization_chi2;
 
-      ///////////////////////////////////
+      Lee_test->Minimization_Lee_strength_FullCov(1, 0);
+      chi2_gmin_null8sm_true8sm = Lee_test->minimization_chi2;
+      status_fit += Lee_test->minimization_status;
+
+      /////////////////////////////////// null8Lee, true8Lee
       
+      Lee_test->scaleF_Lee = 1;
+      Lee_test->Set_Collapse();    
+      Lee_test->Set_Variations(1);
+      Lee_test->Set_toy_Variation(1);
+    
       Lee_test->Minimization_Lee_strength_FullCov(1, 1);
       chi2_null_null8Lee_true8Lee = Lee_test->minimization_chi2;
 
       Lee_test->Minimization_Lee_strength_FullCov(1, 0);
       chi2_gmin_null8Lee_true8Lee = Lee_test->minimization_chi2;
       status_fit += Lee_test->minimization_status;
-
+      
+      ///////////////////////////////////
+      
       if( status_fit!=0 ) continue;
       tree->Fill();
     }
@@ -411,7 +426,7 @@ int main(int argc, char** argv)
     cout<<endl<<TString::Format(" ---> dchi2 = Lee - sm: %4.2f", val_dchi2)<<endl<<endl;
   }
   
-  //////////////////////////////////////////////////////////////////////////////////////// test, Asimov
+  //////////////////////////////////////////////////////////////////////////////////////// example: do fitting on Asimov sample
 
   if( 0 ) {
     Lee_test->scaleF_Lee = 1;
@@ -428,7 +443,7 @@ int main(int argc, char** argv)
 				)<<endl<<endl;
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////// test, variation
+  //////////////////////////////////////////////////////////////////////////////////////// example, do fitting on variation sample
 
   if( 0 ) {
     Lee_test->scaleF_Lee = 1;
@@ -472,19 +487,22 @@ int main(int argc, char** argv)
 
     /////////////// Asimov
     
-    Lee_test->Exe_Fledman_Cousins_Asimov(Lee_true_low, Lee_true_hgh, Lee_step);
+    //Lee_test->Exe_Fledman_Cousins_Asimov(Lee_true_low, Lee_true_hgh, Lee_step);
 
     /////////////// measured data
     
-    Lee_test->Exe_Fiedman_Cousins_Data( matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step );
+    //Lee_test->Exe_Fiedman_Cousins_Data( matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step );
     
   }
   
   ////////////////////////////////////////////////////////////////////////////////////////
-  
-  cout<<endl<<" Entrer Ctrl+c to end the program"<<endl<<endl;
-  
-  theApp.Run();
+
+  if( !config_Lee::flag_batch_mode ) {
+    cout<<endl<<" Entrer Ctrl+c to end the program"<<endl;
+    cout<<" Entrer Ctrl+c to end the program"<<endl<<endl;
+    
+    theApp.Run();
+  }
 
   return 0;
 }
