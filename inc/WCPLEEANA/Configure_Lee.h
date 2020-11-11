@@ -26,7 +26,7 @@ namespace config_Lee
   (*) for(int ifile=0; ifile<=99; ifile++) ----->  mc_stat files
   */
   
-  ////////// set to batch mode: do not display graphics
+  ////////// display graphics flag
 
   bool flag_display_graphics = 0;
   
