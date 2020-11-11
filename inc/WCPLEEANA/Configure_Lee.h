@@ -11,6 +11,7 @@ namespace config_Lee
   TString spectra_file = "./data_framework_Doc33131/merge_all.root";
   TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/";
   TString detector_directory = "./data_framework_Doc33131/det_both/";
+  //TString detector_directory = "./data_framework_Doc33131/det_norandom/";
   TString mc_directory = "./data_framework_Doc33131/mc_stat/";
   
   /*
@@ -20,7 +21,7 @@ namespace config_Lee
     (*) for(int ich=1; ich<=7; ich++), data
     (*) for(int idx=1; idx<=17; idx++), flux_Xs
     (*) map_detectorfile_str
-    (*) int gbins_mc_stat = 137;
+    (*) int gbins_mc_stat;
     (*) for(int ifile=0; ifile<=99; ifile++), mc_sat
     
     void TLee::Set_Collapse()
@@ -29,7 +30,7 @@ namespace config_Lee
 
   ////////// set to batch mode -> do not display graphics
 
-  bool flag_batch_mode      = 1;
+  bool flag_batch_mode      = 0;
   
   ////////// systematics flag
   
@@ -39,6 +40,8 @@ namespace config_Lee
   bool flag_syst_mc_stat    = 1;
 
   double Lee_strength_for_output_covariance_matrix = 0;
+  
+  bool flag_plotting_systematics   = 1;
   
   ////////// goodness of fit
  

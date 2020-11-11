@@ -99,6 +99,8 @@ int main(int argc, char** argv)
   Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_output_covariance_matrix;
   Lee_test->Set_Collapse();
 
+  //////////
+  
   TFile *file_collapsed_covariance_matrix = new TFile("file_collapsed_covariance_matrix.root", "recreate");
   
   TTree *tree_config = new TTree("tree", "configure information");
@@ -135,6 +137,10 @@ int main(int argc, char** argv)
   Lee_test->matrix_pred_newworld.Write("matrix_pred_newworld");// (1, bins)
   Lee_test->matrix_data_newworld.Write("matrix_data_newworld");// (1, bins)  
   file_collapsed_covariance_matrix->Close();
+  
+  //////////
+
+  if( config_Lee::flag_plotting_systematics ) Lee_test->Plotting_systematics();
   
   //////////////////////////////////////////////////////////////////////////////////////// Goodness of fit
   
