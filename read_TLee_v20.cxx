@@ -503,7 +503,7 @@ int main(int argc, char** argv)
     Lee_test->Minimization_Lee_strength_FullCov(0, 1);// (initial value, fix or not)
 
     double sigma_SM = sqrt( Lee_test->minimization_chi2 );
-    cout<<endl<<" Sigma excluding SM "<<sigma_SM<<endl<<endl;
+    cout<<TString::Format(" ---> Excluding  SM: %5.2f sigma", sigma_SM)<<endl;
     
     ///////////////////////// reject 1*LEE
     
@@ -513,9 +513,9 @@ int main(int argc, char** argv)
     Lee_test->Set_toy_Asimov();// use the Asimov sample as the input data for the fitting
     Lee_test->Minimization_Lee_strength_FullCov(1, 1);// (initial value, fix or not)
 
-    double sigma_LEE = sqrt( Lee_test->minimization_chi2 );
-    cout<<endl<<" Sigma excluding LEE "<<sigma_LEE<<endl<<endl;
-       
+    double sigma_Lee = sqrt( Lee_test->minimization_chi2 );
+    cout<<TString::Format(" ---> Excluding LEE: %5.2f sigma", sigma_Lee)<<endl<<endl;;
+    
   }
 
   ////////////////////////////////////////////////  Feldman-Cousins approach --> heavy computation cost
