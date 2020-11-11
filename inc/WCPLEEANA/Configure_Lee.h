@@ -28,7 +28,7 @@ namespace config_Lee
   
   ////////// set to batch mode: do not display graphics
 
-  bool flag_display_graphics = 1;
+  bool flag_display_graphics = 0;
   
   ////////// systematics flag
   

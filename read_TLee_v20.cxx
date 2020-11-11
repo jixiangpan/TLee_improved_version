@@ -70,8 +70,8 @@ int main(int argc, char** argv)
   gStyle->SetEndErrorSize(4);
   gStyle->SetEndErrorSize(0);
 
-  if( config_Lee::flag_display_graphics ) {
-    gROOT->SetBatch( config_Lee::flag_display_graphics );
+  if( !config_Lee::flag_display_graphics ) {
+    gROOT->SetBatch( 1 );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -520,7 +520,7 @@ int main(int argc, char** argv)
   
   ////////////////////////////////////////////////////////////////////////////////////////
 
-  if( !config_Lee::flag_display_graphics ) {
+  if( config_Lee::flag_display_graphics ) {
     cout<<endl<<" Entrer Ctrl+c to end the program"<<endl;
     cout<<" Entrer Ctrl+c to end the program"<<endl<<endl;
     
