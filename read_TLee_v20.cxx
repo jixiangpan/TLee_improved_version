@@ -424,7 +424,7 @@ int main(int argc, char** argv)
     cout<<endl<<TString::Format(" ---> dchi2 = Lee - sm: %4.2f", val_dchi2)<<endl<<endl;
   }
 
-  ////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////// sensitivity calcualtion by FC
   
   if( 0 ) {
     double chi2_null_null8sm_true8sm  = 0;
@@ -490,7 +490,7 @@ int main(int argc, char** argv)
     
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////// Feldman-Cousins approach --> heavy computation cost
+  ////////////////////////////////////////////////  Feldman-Cousins approach --> heavy computation cost
 
   if( 0 ) {
     
