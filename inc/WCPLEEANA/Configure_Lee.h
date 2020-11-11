@@ -30,7 +30,7 @@ namespace config_Lee
 
   ////////// set to batch mode -> do not display graphics
 
-  bool flag_batch_mode      = 0;
+  bool flag_batch_mode      = 1;
   
   ////////// systematics flag
   
@@ -41,7 +41,7 @@ namespace config_Lee
 
   double Lee_strength_for_output_covariance_matrix = 0;
   
-  bool flag_plotting_systematics   = 1;
+  bool flag_plotting_systematics   = 0;
   
   ////////// goodness of fit
  
@@ -56,7 +56,7 @@ namespace config_Lee
 
   ////////// Lee strength fitting -- data
 
-  bool flag_Lee_strength_data = 0;
+  bool flag_Lee_strength_data = 1;
 
   //////////
 }

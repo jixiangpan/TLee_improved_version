@@ -297,7 +297,7 @@ void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag
   const double *par_Lee_err = min_Lee.Errors();
 
   if( status_Lee!=0 ) {
-    cerr<<endl<<" -----------> Lee strength fitting failed "<<endl<<endl;
+    cerr<<" -----------> Lee strength fitting failed "<<endl;
     minimization_status = status_Lee;
   }
 

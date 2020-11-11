@@ -442,9 +442,11 @@ int main(int argc, char** argv)
     int N_toy = 100;
         
     for(int itoy=1; itoy<=N_toy; itoy++) {
+            
       if( itoy%max(N_toy/10,1)==0 ) {
 	cout<<TString::Format(" ---> processing toy ( total cov ): %4.2f, %6d", itoy*1./N_toy, itoy)<<endl;
       }
+      cout<<Form(" running %6d", itoy)<<endl;
       
       int status_fit = 0;
           
