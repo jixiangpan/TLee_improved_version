@@ -490,6 +490,34 @@ int main(int argc, char** argv)
     
   }
 
+  //////////////////////////////////////////////// Sensitivity by Asimov sample
+
+  if( 0 ) {
+
+    ///////////////////////// reject SM
+    
+    Lee_test->scaleF_Lee = 1;
+    Lee_test->Set_Collapse();
+    
+    Lee_test->Set_toy_Asimov();// use the Asimov sample as the input data for the fitting
+    Lee_test->Minimization_Lee_strength_FullCov(0, 1);// (initial value, fix or not)
+
+    double sigma_SM = sqrt( Lee_test->minimization_chi2 );
+    cout<<endl<<" Sigma excluding SM "<<sigma_SM<<endl<<endl;
+    
+    ///////////////////////// reject 1*LEE
+    
+    Lee_test->scaleF_Lee = 0;
+    Lee_test->Set_Collapse();
+    
+    Lee_test->Set_toy_Asimov();// use the Asimov sample as the input data for the fitting
+    Lee_test->Minimization_Lee_strength_FullCov(1, 1);// (initial value, fix or not)
+
+    double sigma_LEE = sqrt( Lee_test->minimization_chi2 );
+    cout<<endl<<" Sigma excluding LEE "<<sigma_LEE<<endl<<endl;
+       
+  }
+
   ////////////////////////////////////////////////  Feldman-Cousins approach --> heavy computation cost
 
   if( 0 ) {
