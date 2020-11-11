@@ -1115,7 +1115,7 @@ void TLee::Set_Collapse()
 
   if( flag_individual_cov_newworld ) {
     cout<<" ---> Producing the systematics for plotting (should appear only one time)"<<endl;
-    cout<<" ---> The LEE strength used for the producing is corresponding to the one in Configure_LEE.h"<<endl<<endl;
+    cout<<" ---> The LEE strength used for the producing is corresponding to the one in the Configure_LEE.h"<<endl<<endl;
     
     flag_individual_cov_newworld = false;
 

@@ -1,36 +1,34 @@
 namespace config_Lee
 {
   ////////// 
-  /* 
-     TString spectra_file = "./data_framework/merge_all_new_weights.root";
-     TString flux_Xs_directory = "./data_framework/flux_Xs/";
-     TString detector_directory = "./data_framework/det/";
-     TString mc_directory = "./data_framework/mc_stat/";
-  */ 
   
   TString spectra_file = "./data_framework_Doc33131/merge_all.root";
   TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/";
   TString detector_directory = "./data_framework_Doc33131/det_both/";
-  //TString detector_directory = "./data_framework_Doc33131/det_norandom/";
   TString mc_directory = "./data_framework_Doc33131/mc_stat/";
   
   /*
-    void TLee::Set_Spectra_MatrixCov()
-    (*) map_input_spectrum_ch_str
-    (*) map_Lee_ch
-    (*) for(int ich=1; ich<=7; ich++), data
-    (*) for(int idx=1; idx<=17; idx++), flux_Xs
-    (*) map_detectorfile_str
-    (*) int gbins_mc_stat;
-    (*) for(int ifile=0; ifile<=99; ifile++), mc_sat
-    
-    void TLee::Set_Collapse()
-    (*) double val_mc_stat_cov = gh_mc_stat_bin[ibin]->Eval( scaleF_Lee ); mc_stat
+  TString spectra_file = "./data_tutorial/merge.root";
+  TString flux_Xs_directory = "./data_tutorial/flux_Xs/";
+  TString detector_directory = "./data_tutorial/det/";
+  TString mc_directory = "./data_tutorial/mc_stat/";
   */
+  
+  /*
+  /// some places may need to be changed when use different file-formats
+  void TLee::Set_Spectra_MatrixCov()
+  (*) map_input_spectrum_ch_str      -----> prediction channels before collapse
+  (*) map_Lee_ch                     -----> tag LEE channels
+  (*) for(int ich=1; ich<=7; ich++)  -----> data channels
+  (*) for(int idx=1; idx<=17; idx++) -----> flux_Xs files
+  (*) map_detectorfile_str           -----> detector files
+  (*) gbins_mc_stat                  -----> number of bins in mc_stat
+  (*) for(int ifile=0; ifile<=99; ifile++) ----->  mc_stat files
+  */
+  
+  ////////// set to batch mode: do not display graphics
 
-  ////////// set to batch mode -> do not display graphics
-
-  bool flag_batch_mode      = 1;
+  bool flag_display_graphics = 1;
   
   ////////// systematics flag
   

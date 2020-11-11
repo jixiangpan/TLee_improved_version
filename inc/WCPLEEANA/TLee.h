@@ -134,20 +134,25 @@ public:
   /////////////////////////////////////////////////////// function member
 
   void Set_config_file_directory(TString spectra_file_, TString flux_Xs_directory_, TString detector_directory_, TString mc_directory_);
-  
+
+  //
   void Set_Spectra_MatrixCov();
   void Set_POT_implement();
   void Set_TransformMatrix();
 
+  //
   void Set_Collapse();
 
+  //
   void Plotting_systematics();
 
   // Y constrained by X
   int Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatrixD matrix_data, TMatrixD matrix_syst, int index);
 
+  // produceing pseudo-experiments
   void Set_Variations(int num_toy);
-  
+
+  // set input sample in to the minimization procedure
   void Set_toy_Asimov();
   void Set_toy_Variation(int itoy);
   void Set_measured_data();
