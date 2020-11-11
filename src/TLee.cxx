@@ -1062,7 +1062,7 @@ void TLee::Plotting_systematics()
     line_root_xx[idx]->SetY1(1e-3);
   }
 
-  
+  canv_h1_pred_totalsyst->SaveAs("canv_h1_pred_totalsyst.png");
 }
 
 ///////////////////////////////////////////////////////// ccc

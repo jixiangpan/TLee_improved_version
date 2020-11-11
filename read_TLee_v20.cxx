@@ -96,7 +96,7 @@ int main(int argc, char** argv)
   Lee_test->flag_syst_additional = config_Lee::flag_syst_additional;
   Lee_test->flag_syst_mc_stat    = config_Lee::flag_syst_mc_stat;
   
-  Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_output_covariance_matrix;
+  Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_outputfile_covariance_matrix;
   Lee_test->Set_Collapse();
 
   //////////
@@ -108,7 +108,7 @@ int main(int argc, char** argv)
   int flag_syst_detector = config_Lee::flag_syst_detector;
   int flag_syst_additional = config_Lee::flag_syst_additional;
   int flag_syst_mc_stat = config_Lee::flag_syst_mc_stat;
-  double user_Lee_strength_for_output_covariance_matrix = config_Lee::Lee_strength_for_output_covariance_matrix;
+  double user_Lee_strength_for_output_covariance_matrix = config_Lee::Lee_strength_for_outputfile_covariance_matrix;
   double user_scaleF_POT = scaleF_POT;
   tree_config->Branch("flag_syst_flux_Xs", &flag_syst_flux_Xs, "flag_syst_flux_Xs/I" );
   tree_config->Branch("flag_syst_detector", &flag_syst_detector, "flag_syst_detector/I" );
@@ -144,7 +144,7 @@ int main(int argc, char** argv)
   
   //////////////////////////////////////////////////////////////////////////////////////// Goodness of fit
   
-  Lee_test->scaleF_Lee = 0;
+  Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_GoF;
   Lee_test->Set_Collapse();
  
   bool flag_both_numuCC            = config_Lee::flag_both_numuCC;// 1
@@ -373,7 +373,7 @@ int main(int argc, char** argv)
   //         Lee_test->Minimization_Lee_strength_FullCov(#, #);
   //
   
-  //////////////////////////////////////////////////////////////////////////////////////// example: do fitting on Asimov sample
+  /////////////////////////////////////////////////////// example: do fitting on Asimov sample
 
   if( 0 ) {
     Lee_test->scaleF_Lee = 1;
@@ -390,7 +390,7 @@ int main(int argc, char** argv)
 				)<<endl<<endl;
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////// example: do fitting on variation sample
+  ////////////////////////////////////////////////////// example: do fitting on variation sample
 
   if( 0 ) {
     Lee_test->scaleF_Lee = 1;

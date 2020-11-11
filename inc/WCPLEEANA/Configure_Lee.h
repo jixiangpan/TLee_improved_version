@@ -1,6 +1,6 @@
 namespace config_Lee
 {
-  ////////// 
+  ////////// input files for spectra and covariance matrixes
   
   TString spectra_file = "./data_framework_Doc33131/merge_all.root";
   TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/";
@@ -37,12 +37,14 @@ namespace config_Lee
   bool flag_syst_additional = 1;
   bool flag_syst_mc_stat    = 1;
 
-  double Lee_strength_for_output_covariance_matrix = 0;
+  double Lee_strength_for_outputfile_covariance_matrix = 0;
   
   bool flag_plotting_systematics   = 0;
   
   ////////// goodness of fit
- 
+  
+  double Lee_strength_for_GoF      = 0;
+    
   bool flag_both_numuCC            = 0;// 1
   bool flag_CCpi0_FC_by_numuCC     = 0;// 2
   bool flag_CCpi0_PC_by_numuCC     = 0;// 3
