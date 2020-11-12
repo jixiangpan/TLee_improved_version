@@ -8,10 +8,10 @@ namespace config_Lee
   TString mc_directory = "./data_framework_Doc33131/mc_stat/";
   
   /*
-  TString spectra_file = "./data_tutorial/merge.root";
-  TString flux_Xs_directory = "./data_tutorial/flux_Xs/";
-  TString detector_directory = "./data_tutorial/det/";
-  TString mc_directory = "./data_tutorial/mc_stat/";
+  TString spectra_file = "";
+  TString flux_Xs_directory = "";
+  TString detector_directory = "";
+  TString mc_directory = "";
   */
   
   /*
