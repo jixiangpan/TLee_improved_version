@@ -28,7 +28,7 @@ namespace config_Lee
   
   ////////// display graphics flag
 
-  bool flag_display_graphics = 1;
+  bool flag_display_graphics = 0;
   
   ////////// systematics flag
   
@@ -45,14 +45,14 @@ namespace config_Lee
   
   double Lee_strength_for_GoF      = 0;
     
-  bool flag_both_numuCC            = 0;// 1
+  bool flag_both_numuCC            = 1;// 1
   bool flag_CCpi0_FC_by_numuCC     = 1;// 2
-  bool flag_CCpi0_PC_by_numuCC     = 0;// 3
-  bool flag_NCpi0_by_numuCC        = 0;// 4
-  bool flag_nueCC_PC_by_numuCC_pi0 = 0;// 5
-  bool flag_nueCC_HghE_FC_by_numuCC_pi0_nueFC = 0;// 6, HghE>800 MeV
-  bool flag_nueCC_LowE_FC_by_all   = 0;// 7
-  bool flag_nueCC_FC_by_all        = 0;// 8
+  bool flag_CCpi0_PC_by_numuCC     = 1;// 3
+  bool flag_NCpi0_by_numuCC        = 1;// 4
+  bool flag_nueCC_PC_by_numuCC_pi0 = 1;// 5
+  bool flag_nueCC_HghE_FC_by_numuCC_pi0_nueFC = 1;// 6, HghE>800 MeV
+  bool flag_nueCC_LowE_FC_by_all   = 1;// 7
+  bool flag_nueCC_FC_by_all        = 1;// 8
 
   ////////// Lee strength fitting -- data
 

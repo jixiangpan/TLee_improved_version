@@ -150,7 +150,7 @@ public:
   int Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatrixD matrix_data, TMatrixD matrix_syst, int index);
 
   // target channels are constrained by support channels
-  int Exe_Goodness_of_fit(vector<int>vc_target_chs, vector<int>vc_suppot_chns, int index);
+  int Exe_Goodness_of_fit(vector<int>vc_target_chs, vector<int>vc_support_chs, int index);
   
   // produceing pseudo-experiments
   void Set_Variations(int num_toy);
