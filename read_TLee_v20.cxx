@@ -522,14 +522,14 @@ int main(int argc, char** argv)
 
   if( 0 ) {
     
-    Lee_test->Set_measured_data();    
-    TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
+    // Lee_test->Set_measured_data();    
+    // TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
     
     /////////////// range: [low, hgh] with step
     
-    double Lee_true_low = 0;
-    double Lee_true_hgh = 5;
-    double Lee_step     = 0.02;
+    // double Lee_true_low = 0;
+    // double Lee_true_hgh = 5;
+    // double Lee_step     = 0.02;
     
     /////////////// dchi2 distribution 
     

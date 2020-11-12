@@ -819,7 +819,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   canv_spectra_GoF_total->cd();
   TPad *pad_bot_total = new TPad("pad_bot_total", "pad_bot_total", 0, 0, 1, 0.45);
   func_canv_margin(pad_bot_total, 0.15, 0.1, 0.05, 0.3);
-  pad_bot_total->Draw(); pad_bot_total->cd();
+  pad_bot_total->Draw(); pad_bot_total->cd(); pad_bot_total->SetTicky();
 
   h1_pred_Y_noConstraint_rel_error->Draw("e2");
   h1_pred_Y_wiConstraint_rel_error->Draw("same e2");
@@ -830,8 +830,17 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   gh_ratio_noConstraint->Draw("same pe");
   gh_ratio_wiConstraint->Draw("same pe");
 
-  // h1_spectra_wi2no->Draw("same");
-  // h1_spectra_wi2no->SetLineColor(kGreen+1);
+  h1_spectra_wi2no->Draw("same");
+  h1_spectra_wi2no->SetLineColor(kGreen+1);
+  
+  // TLatex *latex = new TLatex(0.5, 0.5, TString::Format("#color[%d]{Predictioin wi/wo}", kGreen+1));
+  // latex->Draw("same"); latex->SetTextSize(0.078); //latex->SetTextAngle(90);
+
+  TLegend *lg_wi2no = new TLegend(0.92, 0.15, 0.94, 0.60);
+  lg_wi2no->SetHeader( TString::Format("#color[%d]{Prediction wi/wo}", kGreen+1) );
+  lg_wi2no->Draw("same"); lg_wi2no->SetTextSize(0.078); lg_wi2no->SetTextAngle(90);
+  lg_wi2no->SetBorderSize(0);
+  
   // h1_pred_Y_noConstraint_rel_error->Draw("same axis");  
   // TLegend *lg_bot_total = new TLegend(0.5, 0.85, 0.85, 0.93);
   // lg_bot_total->AddEntry(h1_pred_Y_noConstraint_rel_error, TString::Format("#color[%d]{Prediction wi/no}", kGreen+1), "l");
@@ -839,6 +848,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   // lg_bot_total->SetBorderSize(0); lg_bot_total->SetTextSize(0.078);
   // lg_bot_total->SetFillColor(10); 
 
+  h1_pred_Y_noConstraint_rel_error->Draw("same axis");
   roostr = TString::Format("canv_spectra_GoF_total_%02d.png", index); canv_spectra_GoF_total->SaveAs(roostr);
   
   return 1;
