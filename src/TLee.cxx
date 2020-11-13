@@ -646,6 +646,9 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   gh_data->Draw("same pe");
   gh_data->SetMarkerStyle(20); gh_data->SetMarkerSize(1.12);
   gh_data->SetMarkerColor(color_data); gh_data->SetLineColor(color_data);
+  if( num_X==0 ) {
+    gh_data->SetMarkerColor(kBlue); gh_data->SetLineColor(kBlue);
+  }
 
   h1_pred_Y_noConstraint->Draw("same axis");
 
@@ -690,6 +693,9 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   gh_ratio_noConstraint->Draw("same pe");
   gh_ratio_noConstraint->SetMarkerStyle(20); gh_ratio_noConstraint->SetMarkerSize(1.12);
   gh_ratio_noConstraint->SetMarkerColor(color_no); gh_ratio_noConstraint->SetLineColor(color_no);
+  if( num_X==0 ) {
+    gh_ratio_noConstraint->SetMarkerColor(kBlue); gh_ratio_noConstraint->SetLineColor(kBlue);
+  }
 
   if( num_X==0 ) {
     roostr = TString::Format("canv_spectra_GoF_no_%02d.png", index);
