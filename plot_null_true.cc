@@ -23,13 +23,13 @@ void plot_null_true()
 
   ////////////////////////////////////////////////////////////////////////////////////////
   
+  double dchi2_data = 5.35;
+  
   TString roostr = "";
 
   int color_fill = kRed;
   
   roostr = "file_null8Lee_true8Lee.root";
-  roostr = "file_null8Lee_true8sm.root";
-  roostr = "file_null8sm_Lee2sm.root";
   
   TFile *file_out = new TFile(roostr, "read");
   TTree *tree = (TTree*)file_out->Get("tree");
@@ -69,7 +69,6 @@ void plot_null_true()
   int size_vc = vc_dchi2_null8Lee_true8Lee.size();
   sort( vc_dchi2_null8Lee_true8Lee.begin(), vc_dchi2_null8Lee_true8Lee.end() );
 
-  double dchi2_data = 5.35;
   int line_eff = 0;
 
   for(int idx=0; idx<size_vc; idx++) {
@@ -77,9 +76,9 @@ void plot_null_true()
     if( val_dchi2>dchi2_data ) line_eff++;      
   }
 
-  double pValue = line_eff*1./size_vc;// double side pValue
-  double val_sigma = sqrt( TMath::ChisquareQuantile( 1-pValue, 1 ) );
-  val_sigma = sqrt( TMath::ChisquareQuantile( 1-pValue*2, 1 ) );
+  double pValue = line_eff*1./size_vc;
+  double val_sigma = sqrt( TMath::ChisquareQuantile( 1-pValue, 1 ) );// two sides
+  //double val_sigma = sqrt( TMath::ChisquareQuantile( 1-pValue*2, 1 ) );// one side --> two sides
 
   
   cout<<endl<<TString::Format(" ---> pValue %6.4f, #sigma %4.2f, chi2 %4.2f", pValue, val_sigma, val_sigma*val_sigma)<<endl<<endl;
@@ -100,7 +99,7 @@ void plot_null_true()
   canv_h1_dchi2->SetLeftMargin(0.15); canv_h1_dchi2->SetRightMargin(0.1);
   canv_h1_dchi2->SetTopMargin(0.1); canv_h1_dchi2->SetBottomMargin(0.15);    
   h1_dchi2->Draw("hist f");
-  h1_dchi2->GetYaxis()->SetTitle("PDF"); h1_dchi2->GetXaxis()->SetTitle("#Delta#chi^{2} = #chi^{2}_{LEE} - #chi^{2}_{SM}");
+  h1_dchi2->GetYaxis()->SetTitle("PDF"); h1_dchi2->GetXaxis()->SetTitle("#Delta#chi^{2}");
   h1_dchi2->GetXaxis()->SetLabelSize(0.05); h1_dchi2->GetXaxis()->SetTitleSize(0.05);
   h1_dchi2->GetYaxis()->SetLabelSize(0.05); h1_dchi2->GetYaxis()->SetTitleSize(0.05);
   h1_dchi2->GetXaxis()->CenterTitle(); h1_dchi2->GetYaxis()->CenterTitle();
