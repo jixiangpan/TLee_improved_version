@@ -17,8 +17,7 @@ using namespace std;
 ///////////////////////////////////////////////// MAIN //////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/*
-  
+/*  
   usage:
   
   make clean
@@ -81,6 +80,12 @@ int main(int argc, char** argv)
   TLee *Lee_test = new TLee();
     
   ////////// just do it one time in the whole procedure
+
+  Lee_test->channels_observation   = config_Lee::channels_observation;
+  Lee_test->syst_cov_flux_Xs_begin = config_Lee::syst_cov_flux_Xs_begin;
+  Lee_test->syst_cov_flux_Xs_end   = config_Lee::syst_cov_flux_Xs_end;
+  Lee_test->syst_cov_mc_stat_begin = config_Lee::syst_cov_mc_stat_begin;
+  Lee_test->syst_cov_mc_stat_end   = config_Lee::syst_cov_mc_stat_end;  
   
   Lee_test->scaleF_POT = scaleF_POT;
   Lee_test->Set_config_file_directory(config_Lee::spectra_file, config_Lee::flux_Xs_directory,

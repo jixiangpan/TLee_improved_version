@@ -6,24 +6,22 @@ namespace config_Lee
   TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/";
   TString detector_directory = "./data_framework_Doc33131/det_both/";
   TString mc_directory = "./data_framework_Doc33131/mc_stat/";
-  
-  /*
-  TString spectra_file = "";
-  TString flux_Xs_directory = "";
-  TString detector_directory = "";
-  TString mc_directory = "";
-  */
-  
+
+  int channels_observation = 7;// data channels (=hdata_obsch_# in spectra_file above)
+                               // which is equal to the channels after collapse
+
+  int syst_cov_flux_Xs_begin = 1;// files in flux_Xs_directory above
+  int syst_cov_flux_Xs_end   = 17;
+ 
+  int syst_cov_mc_stat_begin = 0;// files in mc_directory above
+  int syst_cov_mc_stat_end   = 99;
+   
   /*
   /// some places may need to be changed when use different file-formats
   void TLee::Set_Spectra_MatrixCov()
   (*) map_input_spectrum_ch_str      -----> prediction channels before collapse
   (*) map_Lee_ch                     -----> tag LEE channels
-  (*) for(int ich=1; ich<=7; ich++)  -----> data channels
-  (*) for(int idx=1; idx<=17; idx++) -----> flux_Xs files
   (*) map_detectorfile_str           -----> detector files
-  (*) gbins_mc_stat                  -----> number of bins in mc_stat
-  (*) for(int ifile=0; ifile<=99; ifile++) ----->  mc_stat files
   */
   
   ////////// display graphics flag

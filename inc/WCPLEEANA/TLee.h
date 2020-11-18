@@ -81,6 +81,12 @@ public:
   TString flux_Xs_directory;
   TString detector_directory;
   TString mc_directory;
+
+  int channels_observation;
+  int syst_cov_flux_Xs_begin;
+  int syst_cov_flux_Xs_end;
+  int syst_cov_mc_stat_begin;
+  int syst_cov_mc_stat_end;
   
   /// bin index starts from 0, channel index from 1
   map<int, map<int, double> >map_input_spectrum_ch_bin;
