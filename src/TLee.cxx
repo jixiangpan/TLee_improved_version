@@ -1506,7 +1506,7 @@ void TLee::Set_Spectra_MatrixCov()
   map_detectorfile_str[2] = detector_directory+"cov_LYRayleigh.root";
   map_detectorfile_str[3] = detector_directory+"cov_Recomb2.root";
   map_detectorfile_str[4] = detector_directory+"cov_SCE.root";
-  map_detectorfile_str[5] = detector_directory+"cov_WMdEdx.root";
+  //map_detectorfile_str[5] = detector_directory+"cov_WMdEdx.root";
   map_detectorfile_str[6] = detector_directory+"cov_WMThetaXZ.root";
   map_detectorfile_str[7] = detector_directory+"cov_WMThetaYZ.root";
   map_detectorfile_str[8] = detector_directory+"cov_WMX.root";
@@ -1518,8 +1518,8 @@ void TLee::Set_Spectra_MatrixCov()
   TMatrixD matrix_detector_frac(bins_oldworld, bins_oldworld);
   map<int, TMatrixD>matrix_detector_sub_frac;
   
-  int size_map_detectorfile_str = map_detectorfile_str.size();
-  for(int idx=1; idx<=size_map_detectorfile_str; idx++) {
+  for( auto it=map_detectorfile_str.begin(); it!=map_detectorfile_str.end(); it++ ) {
+    int idx = it->first;
     if(idx==5) continue;    
     roostr = map_detectorfile_str[idx];
     cout<<TString::Format(" %2d %s", idx, roostr.Data())<<endl;
