@@ -623,7 +623,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     double val_ratio_no = val_data/val_pred_noConstraint;
     double val_ratio_no_low = val_ratio_no - val_data_low/val_pred_noConstraint;
     double val_ratio_no_hgh = val_data_hgh/val_pred_noConstraint - val_ratio_no;
-    if( val_ratio_no!=val_ratio_no || isinf(val_ratio_no) ) val_ratio_no = 0;
+    if( val_ratio_no!=val_ratio_no || std::isinf(val_ratio_no) ) val_ratio_no = 0;
     gh_ratio_noConstraint->SetPoint( ibin-1, ibin-0.5, val_ratio_no );
     gh_ratio_noConstraint->SetPointError( ibin-1, 0.5, 0.5, val_ratio_no_low, val_ratio_no_hgh );    
   }
@@ -790,7 +790,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     double val_ratio_wi = val_data/val_pred_wiConstraint;
     double val_ratio_wi_low = val_ratio_wi - val_data_low/val_pred_wiConstraint;
     double val_ratio_wi_hgh = val_data_hgh/val_pred_wiConstraint - val_ratio_wi;
-    if( val_ratio_wi!=val_ratio_wi || isinf(val_ratio_wi) ) val_ratio_wi = 0;
+    if( val_ratio_wi!=val_ratio_wi || std::isinf(val_ratio_wi) ) val_ratio_wi = 0;
     gh_ratio_wiConstraint->SetPoint( ibin-1, ibin-0.5, val_ratio_wi );
     gh_ratio_wiConstraint->SetPointError( ibin-1, 0.5, 0.5, val_ratio_wi_low, val_ratio_wi_hgh );
   }
