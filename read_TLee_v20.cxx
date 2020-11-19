@@ -209,7 +209,7 @@ int main(int argc, char** argv)
 
     Lee_test->Exe_Goodness_of_fit( (26-8), matrix_gof_trans.GetNcols()-(26-8), matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 6);    
   }
-  
+
   ///////////////////////// gof
   
   if( flag_nueCC_PC_by_numuCC_pi0) {    
@@ -238,6 +238,42 @@ int main(int argc, char** argv)
     Lee_test->Exe_Goodness_of_fit( vc_target_chs, vc_support_chs, 1 );
   }
 
+  if( 0 ) {
+    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 11+15 );// oldworld, newworld
+    for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*2+15 +ibin-1, ibin-1) = 1;
+    for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*3+15 +ibin-1, ibin-1) = 1;
+
+    for( int ibin=1; ibin<=15; ibin++) matrix_gof_trans(26*2 +ibin-1, 11 +ibin-1) = 1;
+    for( int ibin=1; ibin<=15; ibin++) matrix_gof_trans(26*3 +ibin-1, 11 +ibin-1) = 1;
+    
+    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
+    matrix_gof_trans_T.Transpose( matrix_gof_trans );
+
+    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
+
+    Lee_test->Exe_Goodness_of_fit( 11, 15, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 21);
+  }
+  
+  if( 0 ) {
+    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 1+15 );// oldworld, newworld
+    for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*2+15 +ibin-1, 0) = 1;
+    for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*3+15 +ibin-1, 0) = 1;
+
+    for( int ibin=1; ibin<=15; ibin++) matrix_gof_trans(26*2 +ibin-1, 1 +ibin-1) = 1;
+    for( int ibin=1; ibin<=15; ibin++) matrix_gof_trans(26*3 +ibin-1, 1 +ibin-1) = 1;
+    
+    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
+    matrix_gof_trans_T.Transpose( matrix_gof_trans );
+
+    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
+
+    Lee_test->Exe_Goodness_of_fit( 1, 15, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 22);
+  }
+  
   ///////////////////////// gof
   
   if( flag_CCpi0_FC_by_numuCC ) { 
@@ -296,7 +332,7 @@ int main(int argc, char** argv)
     double gmin = Lee_test->minimization_chi2;
     TGraph *gh_scan = new TGraph();
     double slow = 0;
-    double shgh = 5;
+    double shgh = 3;
     int nscan = 100;
     double val_max_dchi2 = 0;
     double step = (shgh-slow)/nscan;
@@ -508,14 +544,14 @@ int main(int argc, char** argv)
 
   if( 0 ) {
     
-    // Lee_test->Set_measured_data();    
-    // TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
+    Lee_test->Set_measured_data();    
+    TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
     
     /////////////// range: [low, hgh] with step
     
-    // double Lee_true_low = 0;
-    // double Lee_true_hgh = 5;
-    // double Lee_step     = 0.02;
+    double Lee_true_low = 0;
+    double Lee_true_hgh = 3;
+    double Lee_step     = 0.02;
     
     /////////////// dchi2 distribution 
     

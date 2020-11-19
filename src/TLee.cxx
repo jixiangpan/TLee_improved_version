@@ -573,6 +573,15 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   cout<<endl<<TString::Format(" ---> GOF noConstraint: chi2 %6.2f, ndf %3d, chi2/ndf %6.2f, p-value %10.8f",
 			      val_chi2_noConstraint, num_Y, val_chi2_noConstraint/num_Y, p_value_noConstraint)<<endl;
 
+  // double sum_chi2 = 0;
+  // for(int ibin=1; ibin<=num_Y; ibin++) {
+  //   double val_pred = matrix_pred_Y(ibin-1, 0);      
+  //   double val_data = matrix_data_Y(ibin-1, 0);
+  //   double val_chi2 = pow(val_pred-val_data,2)/val_pred;
+  //   sum_chi2 += val_chi2;
+  //   cout<<" ---> ibin "<<ibin<<"\t"<<val_chi2<<"\t"<<sum_chi2<<endl;;
+  // }
+  
   /////////////////////////////
 
   roostr = TString::Format("h1_pred_Y_noConstraint_%02d", index);
@@ -1379,13 +1388,13 @@ void TLee::Set_Spectra_MatrixCov()
   map_input_spectrum_ch_str[7] = "NCpi0_norm";
   map_input_spectrum_ch_str[8] = "Lee_FC";
   map_input_spectrum_ch_str[9] = "Lee_PC";
-  map_input_spectrum_ch_str[10]= "nueCC_FC_ext";
-  map_input_spectrum_ch_str[11]= "nueCC_PC_ext";
-  map_input_spectrum_ch_str[12]= "numuCC_FC_ext";
-  map_input_spectrum_ch_str[13]= "numuCC_PC_ext";
-  map_input_spectrum_ch_str[14]= "CCpi0_FC_ext";
-  map_input_spectrum_ch_str[15]= "CCpi0_PC_ext";
-  map_input_spectrum_ch_str[16]= "NCpi0_ext";
+  // map_input_spectrum_ch_str[10]= "nueCC_FC_ext";
+  // map_input_spectrum_ch_str[11]= "nueCC_PC_ext";
+  // map_input_spectrum_ch_str[12]= "numuCC_FC_ext";
+  // map_input_spectrum_ch_str[13]= "numuCC_PC_ext";
+  // map_input_spectrum_ch_str[14]= "CCpi0_FC_ext";
+  // map_input_spectrum_ch_str[15]= "CCpi0_PC_ext";
+  // map_input_spectrum_ch_str[16]= "NCpi0_ext";
 
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
@@ -1414,6 +1423,21 @@ void TLee::Set_Spectra_MatrixCov()
     for(int ibin=1; ibin<=bins; ibin++) map_input_spectrum_ch_bin[ich][ibin-1] = h1_spectrum->GetBinContent(ibin);
   }
   cout<<endl;
+
+  
+  /// for fake data set, begin
+  for(int idx=10; idx<=13; idx++) {
+    for(int ibin=1; ibin<=26; ibin++) {
+      map_input_spectrum_ch_bin[idx][ibin-1] = 0;
+    }
+  }  
+  for(int idx=14; idx<=16; idx++) {
+    for(int ibin=1; ibin<=11; ibin++) {
+      map_input_spectrum_ch_bin[idx][ibin-1] = 0;
+    }
+  }
+  /// for fake data set, end
+  
 
   bins_oldworld = 0;
   for(auto it_ch=map_input_spectrum_ch_bin.begin(); it_ch!=map_input_spectrum_ch_bin.end(); it_ch++) {
@@ -1460,7 +1484,7 @@ void TLee::Set_Spectra_MatrixCov()
     map_matrix_flux_Xs_frac[idx] = (TMatrixD*)map_file_flux_Xs_frac[idx]->Get(TString::Format("frac_cov_xf_mat_%d", idx));
     cout<<TString::Format(" %2d %s", idx, roostr.Data())<<endl;
 
-    
+
     matrix_flux_Xs_frac += (*map_matrix_flux_Xs_frac[idx]);
     
     
