@@ -943,18 +943,19 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   
   gh_ratio_noConstraint->Draw("same pe");
   gh_ratio_wiConstraint->Draw("same pe");
-
+  /*
   h1_spectra_wi2no->Draw("same");
   h1_spectra_wi2no->SetLineColor(kGreen+1);
   
-  // TLatex *latex = new TLatex(0.5, 0.5, TString::Format("#color[%d]{Predictioin wi/wo}", kGreen+1));
-  // latex->Draw("same"); latex->SetTextSize(0.078); //latex->SetTextAngle(90);
-
   TLegend *lg_wi2no = new TLegend(0.92, 0.15, 0.94, 0.60);
   lg_wi2no->SetHeader( TString::Format("#color[%d]{Prediction wi/wo}", kGreen+1) );
   lg_wi2no->Draw("same"); lg_wi2no->SetTextSize(0.078); lg_wi2no->SetTextAngle(90);
   lg_wi2no->SetBorderSize(0);
+  */
   
+  // TLatex *latex = new TLatex(0.5, 0.5, TString::Format("#color[%d]{Predictioin wi/wo}", kGreen+1));
+  // latex->Draw("same"); latex->SetTextSize(0.078); //latex->SetTextAngle(90);
+
   // h1_pred_Y_noConstraint_rel_error->Draw("same axis");  
   // TLegend *lg_bot_total = new TLegend(0.5, 0.85, 0.85, 0.93);
   // lg_bot_total->AddEntry(h1_pred_Y_noConstraint_rel_error, TString::Format("#color[%d]{Prediction wi/no}", kGreen+1), "l");
@@ -1388,13 +1389,13 @@ void TLee::Set_Spectra_MatrixCov()
   map_input_spectrum_ch_str[7] = "NCpi0_norm";
   map_input_spectrum_ch_str[8] = "Lee_FC";
   map_input_spectrum_ch_str[9] = "Lee_PC";
-  // map_input_spectrum_ch_str[10]= "nueCC_FC_ext";
-  // map_input_spectrum_ch_str[11]= "nueCC_PC_ext";
-  // map_input_spectrum_ch_str[12]= "numuCC_FC_ext";
-  // map_input_spectrum_ch_str[13]= "numuCC_PC_ext";
-  // map_input_spectrum_ch_str[14]= "CCpi0_FC_ext";
-  // map_input_spectrum_ch_str[15]= "CCpi0_PC_ext";
-  // map_input_spectrum_ch_str[16]= "NCpi0_ext";
+  map_input_spectrum_ch_str[10]= "nueCC_FC_ext";
+  map_input_spectrum_ch_str[11]= "nueCC_PC_ext";
+  map_input_spectrum_ch_str[12]= "numuCC_FC_ext";
+  map_input_spectrum_ch_str[13]= "numuCC_PC_ext";
+  map_input_spectrum_ch_str[14]= "CCpi0_FC_ext";
+  map_input_spectrum_ch_str[15]= "CCpi0_PC_ext";
+  map_input_spectrum_ch_str[16]= "NCpi0_ext";
 
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
@@ -1426,16 +1427,16 @@ void TLee::Set_Spectra_MatrixCov()
 
   
   /// for fake data set, begin
-  for(int idx=10; idx<=13; idx++) {
-    for(int ibin=1; ibin<=26; ibin++) {
-      map_input_spectrum_ch_bin[idx][ibin-1] = 0;
-    }
-  }  
-  for(int idx=14; idx<=16; idx++) {
-    for(int ibin=1; ibin<=11; ibin++) {
-      map_input_spectrum_ch_bin[idx][ibin-1] = 0;
-    }
-  }
+  // for(int idx=10; idx<=13; idx++) {
+  //   for(int ibin=1; ibin<=26; ibin++) {
+  //     map_input_spectrum_ch_bin[idx][ibin-1] = 0;
+  //   }
+  // }  
+  // for(int idx=14; idx<=16; idx++) {
+  //   for(int ibin=1; ibin<=11; ibin++) {
+  //     map_input_spectrum_ch_bin[idx][ibin-1] = 0;
+  //   }
+  // }
   /// for fake data set, end
   
 
@@ -1511,7 +1512,7 @@ void TLee::Set_Spectra_MatrixCov()
   map_detectorfile_str[7] = detector_directory+"cov_WMThetaYZ.root";
   map_detectorfile_str[8] = detector_directory+"cov_WMX.root";
   map_detectorfile_str[9] = detector_directory+"cov_WMYZ.root";
-  map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
+  //map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
   
   map<int, TFile*>map_file_detector_frac;
   map<int, TMatrixD*>map_matrix_detector_frac;
