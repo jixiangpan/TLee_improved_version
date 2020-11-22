@@ -238,7 +238,7 @@ int main(int argc, char** argv)
     Lee_test->Exe_Goodness_of_fit( vc_target_chs, vc_support_chs, 1 );
   }
 
-  if( 0 ) {
+  if( 1 ) {
     TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 11+15 );// oldworld, newworld
     for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*2+15 +ibin-1, ibin-1) = 1;
     for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*3+15 +ibin-1, ibin-1) = 1;
@@ -256,7 +256,7 @@ int main(int argc, char** argv)
     Lee_test->Exe_Goodness_of_fit( 11, 15, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 21);
   }
   
-  if( 0 ) {
+  if( 1 ) {
     TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 1+15 );// oldworld, newworld
     for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*2+15 +ibin-1, 0) = 1;
     for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*3+15 +ibin-1, 0) = 1;
@@ -272,6 +272,25 @@ int main(int argc, char** argv)
     TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
 
     Lee_test->Exe_Goodness_of_fit( 1, 15, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 22);
+  }
+
+  if( 0 ) {
+    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 26 );// oldworld, newworld
+    for( int ibin=1; ibin<=26; ibin++) matrix_gof_trans(26*2 +ibin-1, ibin-1) = 1;
+    for( int ibin=1; ibin<=26; ibin++) matrix_gof_trans(26*3 +ibin-1, ibin-1) = 1;
+
+    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
+    matrix_gof_trans_T.Transpose( matrix_gof_trans );
+
+    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
+    
+    //TFile *file_spectra_systCOV = new TFile("file_spectra_systCOV.root", "recreate");
+    //matrix_gof_pred.Write("matrix_pred");
+    //matrix_gof_data.Write("matrix_data");
+    //matrix_gof_syst.Write("matrix_systCOV_FluxXsDetector");
+    //file_spectra_systCOV->Close();
   }
   
   ///////////////////////// gof
