@@ -256,7 +256,7 @@ int main(int argc, char** argv)
     Lee_test->Exe_Goodness_of_fit( 11, 15, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 21);
   }
   
-  if( 1 ) {
+  if( 0 ) {
     TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 1+15 );// oldworld, newworld
     for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*2+15 +ibin-1, 0) = 1;
     for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*3+15 +ibin-1, 0) = 1;
@@ -472,8 +472,7 @@ int main(int argc, char** argv)
     double chi2_gmin_null8sm_true8sm  = 0;
     double chi2_null_null8Lee_true8Lee = 0;
     double chi2_gmin_null8Lee_true8Lee = 0;
-
-    TFile *file_out = new TFile(TString::Format("file_out_%03d.root", ifile), "recreate");
+    
     TTree *tree = new TTree("tree", "tree");
     tree->Branch("chi2_null_null8sm_true8sm", &chi2_null_null8sm_true8sm, "chi2_null_null8sm_true8sm/D" );
     tree->Branch("chi2_gmin_null8sm_true8sm", &chi2_gmin_null8sm_true8sm, "chi2_gmin_null8sm_true8sm/D" );
@@ -525,6 +524,7 @@ int main(int argc, char** argv)
       tree->Fill();
     }
 
+    TFile *file_out = new TFile(TString::Format("file_out_%03d.root", ifile), "recreate");
     file_out->cd();
     tree->Write();
     file_out->Close();
