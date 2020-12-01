@@ -234,9 +234,10 @@ void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag
       double chi2 = 0;
       double Lee_strength = par[0];
 
-      /////////      
-      TMatrixD matrix_meas(1, bins_newworld);
-      for(int ibin=0; ibin<matrix_meas.GetNcols(); ibin++) {
+      /////////
+      int size_map_fake_data = map_fake_data.size();
+      TMatrixD matrix_meas(1, size_map_fake_data);
+      for(int ibin=0; ibin<size_map_fake_data; ibin++) {
 	matrix_meas(0, ibin) = map_fake_data[ibin];	
       }
 
@@ -261,6 +262,7 @@ void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag
 	matrix_cov_syst(ibin, ibin) += val_stat_cov;
       }
 
+      /////////
       TMatrixD matrix_cov_total = matrix_cov_syst;
       TMatrixD matrix_cov_total_inv = matrix_cov_total;
       matrix_cov_total_inv.Invert();
@@ -273,7 +275,53 @@ void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag
       TMatrixD matrix_chi2 = matrix_delta * matrix_cov_total_inv *matrix_delta_T;
       chi2 = matrix_chi2(0,0);
       
-      /////////
+      ///////////////////////////////////////////////////////////////////////////
+
+      if( 0 ) {// do the fitting on the spectra and cov_total after constraint
+	
+	int num_Y = 26+8;
+	int num_X = matrix_cov_syst.GetNrows() - num_Y;
+
+	//////
+	
+	matrix_pred.T(); matrix_meas.T();
+	TMatrixD matrix_pred_X = matrix_pred.GetSub(num_Y, num_Y+num_X-1, 0, 0);
+	TMatrixD matrix_meas_X = matrix_meas.GetSub(num_Y, num_Y+num_X-1, 0, 0);
+
+	TMatrixD matrix_pred_Y = matrix_pred.GetSub(0, num_Y-1, 0, 0);
+	TMatrixD matrix_meas_Y = matrix_meas.GetSub(0, num_Y-1, 0, 0);
+	matrix_pred.T(); matrix_meas.T();
+	
+	TMatrixD matrix_XX = matrix_cov_total.GetSub(num_Y, num_Y+num_X-1, num_Y, num_Y+num_X-1);
+	TMatrixD matrix_XX_inv = matrix_XX;
+	matrix_XX_inv.Invert();
+	
+	TMatrixD matrix_YY = matrix_cov_total.GetSub(0, num_Y-1, 0, num_Y-1);
+	
+	TMatrixD matrix_YX = matrix_cov_total.GetSub(0, num_Y-1, num_Y, num_Y+num_X-1);
+	TMatrixD matrix_XY(num_X, num_Y); matrix_XY.Transpose(matrix_YX);
+	
+	TMatrixD matrix_Y_under_X = matrix_pred_Y + matrix_YX * matrix_XX_inv * (matrix_meas_X - matrix_pred_X);
+	TMatrixD matrix_YY_under_XX = matrix_YY - matrix_YX * matrix_XX_inv * matrix_XY;
+
+	//////
+		
+	matrix_Y_under_X.T();
+	matrix_meas_Y.T();
+
+	TMatrixD matrix_wicons_delta = matrix_Y_under_X - matrix_meas_Y;
+	TMatrixD matrix_wicons_delta_T = matrix_wicons_delta.T();
+	matrix_wicons_delta.T();
+
+	TMatrixD matrix_YY_under_XX_inv = matrix_YY_under_XX;
+	matrix_YY_under_XX_inv.Invert();
+
+	TMatrixD matrix_wicons_chi2 = matrix_wicons_delta * matrix_YY_under_XX_inv * matrix_wicons_delta_T;
+	double val_wicons_chi2 = matrix_wicons_chi2(0,0);
+	chi2 = val_wicons_chi2;	
+      }
+      
+      ///////////////////////////////////////////////////////////////////////////      
                   
       return chi2;
       
@@ -338,21 +386,25 @@ void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag
 
 void TLee::Set_toy_Asimov()
 {
+  map_fake_data.clear();
   for(int ibin=0; ibin<bins_newworld; ibin++) map_fake_data[ibin] = matrix_pred_newworld(0, ibin);
 }
 
 void TLee::Set_toy_Variation(int itoy)
 {
+  map_fake_data.clear();
   for(int ibin=0; ibin<bins_newworld; ibin++) map_fake_data[ibin] = map_toy_variation[itoy][ibin];
 }
 
 void TLee::Set_measured_data()
 {
+  map_fake_data.clear();
   for(int ibin=0; ibin<bins_newworld; ibin++) map_fake_data[ibin] = matrix_data_newworld(0, ibin);
 }
   
 void TLee::Set_fakedata(TMatrixD matrix_fakedata)
 {
+  map_fake_data.clear();
   int cols = matrix_fakedata.GetNcols();
   for(int ibin=0; ibin<cols; ibin++) map_fake_data[ibin] = matrix_fakedata(0, ibin);    
 }
@@ -1426,7 +1478,7 @@ void TLee::Set_Spectra_MatrixCov()
   cout<<endl;
 
   
-  /// for fake data set, begin
+  /////for fake data set, begin
   // for(int idx=10; idx<=13; idx++) {
   //   for(int ibin=1; ibin<=26; ibin++) {
   //     map_input_spectrum_ch_bin[idx][ibin-1] = 0;
@@ -1437,7 +1489,7 @@ void TLee::Set_Spectra_MatrixCov()
   //     map_input_spectrum_ch_bin[idx][ibin-1] = 0;
   //   }
   // }
-  /// for fake data set, end
+  /////for fake data set, end
   
 
   bins_oldworld = 0;

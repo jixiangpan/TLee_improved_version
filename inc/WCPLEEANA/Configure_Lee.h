@@ -7,10 +7,10 @@ namespace config_Lee
   TString detector_directory = "./data_framework_Doc33131/det_both/";
   TString mc_directory = "./data_framework_Doc33131/mc_stat/";
 
-  /* TString spectra_file = "./data_framework_fake7/merge_fake7.root"; */
-  /* TString flux_Xs_directory = "./data_framework_fake7/XsFlux/"; */
-  /* TString detector_directory = "./data_framework_fake7/DetVar_hanyu_11stat/"; */
-  /* TString mc_directory = "./data_framework_fake7/mc_stat/"; */
+  /* TString spectra_file = "./data_framework_fake5/merge_all.root"; */
+  /* TString flux_Xs_directory = "./data_framework_fake5/flux_Xs/"; */
+  /* TString detector_directory = "./data_framework_fake5/det_11stat/"; */
+  /* TString mc_directory = "./data_framework_fake5/mc_stat/"; */
 
   int channels_observation = 7;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
@@ -31,7 +31,7 @@ namespace config_Lee
   
   ////////// display graphics flag
 
-  bool flag_display_graphics = 0;
+  bool flag_display_graphics = 1;
   
   ////////// systematics flag
   
@@ -59,7 +59,11 @@ namespace config_Lee
 
   ////////// Lee strength fitting -- data
 
-  bool flag_Lee_strength_data = 1;
+  bool flag_Lee_strength_data = 0;
 
-  //////////
+  ////////// Advanced tools
+  
+  // void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag_fixed)
+  // if( 0 ) {// do the fitting on the spectra and cov_total after constraint ?
+  
 }

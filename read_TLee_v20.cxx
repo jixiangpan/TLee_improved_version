@@ -341,6 +341,7 @@ int main(int argc, char** argv)
     tt_text_data->SetTextFont(42);  tt_text_data->Draw(); tt_text_data->SetTextColor(kBlue);
 
     canv_gh_scan->SaveAs("canv_gh_scan.png");
+    
   }
   
   ////////////////////////////////////////////////////////////////////////////////////////
