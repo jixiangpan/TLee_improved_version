@@ -121,7 +121,11 @@ void plot_FC_new()
       double val_chi2_pull = chi2_null_toy->at( idx );
       double val_chi2_gmin = chi2_gmin_toy->at( idx );
       double val_Lee_gmin  = LeeF_gmin_toy->at( idx );
-      map_fc_Lee_dchi2[ Lee_strength_scaled100 ].push_back( val_chi2_pull - val_chi2_gmin );
+
+      double val_dchi2 = val_chi2_pull - val_chi2_gmin;
+      if( val_dchi2<0 && fabs(val_dchi2)<1e-6 ) val_dchi2 = 0;
+      
+      map_fc_Lee_dchi2[ Lee_strength_scaled100 ].push_back( val_dchi2 );
       map_fc_Lee_gmin[ Lee_strength_scaled100 ].push_back( val_Lee_gmin );
 
       if( max_Lee100<=Lee_strength_scaled100 ) max_Lee100 = Lee_strength_scaled100;

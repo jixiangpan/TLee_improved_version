@@ -36,9 +36,9 @@ namespace config_Lee
   ////////// systematics flag
   
   bool flag_syst_flux_Xs    = 1;
-  bool flag_syst_detector   = 0;
-  bool flag_syst_additional = 0;
-  bool flag_syst_mc_stat    = 0;
+  bool flag_syst_detector   = 1;
+  bool flag_syst_additional = 1;
+  bool flag_syst_mc_stat    = 1;
 
   double Lee_strength_for_outputfile_covariance_matrix = 0;
   
@@ -59,7 +59,7 @@ namespace config_Lee
 
   ////////// Lee strength fitting -- data
 
-  bool flag_Lee_strength_data = 0;
+  bool flag_Lee_strength_data = 1;
 
   //////////
 }

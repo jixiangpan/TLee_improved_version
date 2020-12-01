@@ -238,61 +238,6 @@ int main(int argc, char** argv)
     Lee_test->Exe_Goodness_of_fit( vc_target_chs, vc_support_chs, 1 );
   }
 
-  if( 1 ) {
-    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 11+15 );// oldworld, newworld
-    for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*2+15 +ibin-1, ibin-1) = 1;
-    for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*3+15 +ibin-1, ibin-1) = 1;
-
-    for( int ibin=1; ibin<=15; ibin++) matrix_gof_trans(26*2 +ibin-1, 11 +ibin-1) = 1;
-    for( int ibin=1; ibin<=15; ibin++) matrix_gof_trans(26*3 +ibin-1, 11 +ibin-1) = 1;
-    
-    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
-    matrix_gof_trans_T.Transpose( matrix_gof_trans );
-
-    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
-    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
-    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
-
-    Lee_test->Exe_Goodness_of_fit( 11, 15, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 21);
-  }
-  
-  if( 0 ) {
-    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 1+15 );// oldworld, newworld
-    for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*2+15 +ibin-1, 0) = 1;
-    for( int ibin=1; ibin<=11; ibin++) matrix_gof_trans(26*3+15 +ibin-1, 0) = 1;
-
-    for( int ibin=1; ibin<=15; ibin++) matrix_gof_trans(26*2 +ibin-1, 1 +ibin-1) = 1;
-    for( int ibin=1; ibin<=15; ibin++) matrix_gof_trans(26*3 +ibin-1, 1 +ibin-1) = 1;
-    
-    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
-    matrix_gof_trans_T.Transpose( matrix_gof_trans );
-
-    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
-    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
-    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
-
-    Lee_test->Exe_Goodness_of_fit( 1, 15, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 22);
-  }
-
-  if( 0 ) {
-    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 26 );// oldworld, newworld
-    for( int ibin=1; ibin<=26; ibin++) matrix_gof_trans(26*2 +ibin-1, ibin-1) = 1;
-    for( int ibin=1; ibin<=26; ibin++) matrix_gof_trans(26*3 +ibin-1, ibin-1) = 1;
-
-    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
-    matrix_gof_trans_T.Transpose( matrix_gof_trans );
-
-    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
-    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
-    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
-    
-    //TFile *file_spectra_systCOV = new TFile("file_spectra_systCOV.root", "recreate");
-    //matrix_gof_pred.Write("matrix_pred");
-    //matrix_gof_data.Write("matrix_data");
-    //matrix_gof_syst.Write("matrix_systCOV_FluxXsDetector");
-    //file_spectra_systCOV->Close();
-  }
-  
   ///////////////////////// gof
   
   if( flag_CCpi0_FC_by_numuCC ) { 
@@ -363,7 +308,12 @@ int main(int argc, char** argv)
       gh_scan->SetPoint( gh_scan->GetN(), val_s, val_chi2 - gmin);
       if( val_max_dchi2<val_chi2 - gmin ) val_max_dchi2 = val_chi2 - gmin;
     }
+    
+    double val_dchi2at0 = gh_scan->Eval(0);
     double val_dchi2at1 = gh_scan->Eval(1);
+    if( fabs(val_dchi2at0)<1e-6 ) val_dchi2at0 = 0;
+    
+    cout<<endl<<Form(" ---> dchi2 at LEE 0/1: %7.4f %7.4f", val_dchi2at0, val_dchi2at1 )<<endl<<endl;
     
     TCanvas *canv_gh_scan = new TCanvas("canv_gh_scan", "canv_gh_scan", 900, 650);
     canv_gh_scan->SetLeftMargin(0.15); canv_gh_scan->SetRightMargin(0.1);
@@ -563,14 +513,14 @@ int main(int argc, char** argv)
 
   if( 0 ) {
     
-    Lee_test->Set_measured_data();    
-    TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
+    // Lee_test->Set_measured_data();    
+    // TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;
     
     /////////////// range: [low, hgh] with step
     
-    double Lee_true_low = 0;
-    double Lee_true_hgh = 3;
-    double Lee_step     = 0.02;
+    // double Lee_true_low = 0;
+    // double Lee_true_hgh = 3;
+    // double Lee_step     = 0.02;
     
     /////////////// dchi2 distribution 
     
