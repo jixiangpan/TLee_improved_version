@@ -63,6 +63,7 @@ public:
   TLee() {
     rand = new TRandom3(0);
     flag_individual_cov_newworld = true;
+    flag_Lee_minimization_after_constraint = false;
   }
 
   /////////////////////////////////////////////////////// data memeber
@@ -131,12 +132,17 @@ public:
   map<int, map<int, double> >map_toy_variation;
   
   map<int, double>map_fake_data;
+
+  double val_GOF_noConstrain = 0;
+  double val_GOF_wiConstrain = 0;
+  int val_GOF_NDF = 0;
   
   int minimization_status;
   double minimization_chi2;
   double minimization_Lee_strength_val;
   double minimization_Lee_strength_err;
-
+  bool flag_Lee_minimization_after_constraint;
+  
   /////////////////////////////////////////////////////// function member
 
   void Set_config_file_directory(TString spectra_file_, TString flux_Xs_directory_, TString detector_directory_, TString mc_directory_);
@@ -157,6 +163,9 @@ public:
 
   // target channels are constrained by support channels
   int Exe_Goodness_of_fit(vector<int>vc_target_chs, vector<int>vc_support_chs, int index);
+
+  // target detailed channels are constrained by supported detailed channels
+  int Exe_Goodness_of_fit_detailed(vector<int>vc_target_detailed_chs, vector<int>vc_support_detailed_chs, int index);
   
   // produceing pseudo-experiments
   void Set_Variations(int num_toy);

@@ -277,7 +277,7 @@ void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag
       
       ///////////////////////////////////////////////////////////////////////////
 
-      if( 0 ) {// do the fitting on the spectra and cov_total after constraint
+      if( flag_Lee_minimization_after_constraint ) {// do the fitting on the spectra and cov_total after constraint
 	
 	int num_Y = 26+8;
 	int num_X = matrix_cov_syst.GetNrows() - num_Y;
@@ -447,6 +447,41 @@ void TLee::Set_Variations(int num_toy)
     
 }
 
+///////////////////////////////////////////////////////// ccc
+
+// target detailed channels are constrained by supported detailed channels
+int TLee::Exe_Goodness_of_fit_detailed(vector<int>vc_target_detailed_chs, vector<int>vc_support_detailed_chs, int index)
+{
+  int num_Y = vc_target_detailed_chs.size();
+  int num_X = vc_support_detailed_chs.size();
+
+  TMatrixD matrix_gof_trans( bins_newworld, num_Y+num_X );// oldworld, newworld
+  int new_ch = -1;
+  
+  for(int idx=0; idx<num_Y; idx++) {
+    int old_ch = vc_target_detailed_chs.at(idx);
+    new_ch++;
+    matrix_gof_trans(old_ch, new_ch) = 1;
+  }
+  
+  for(int idx=0; idx<num_X; idx++) {
+    int old_ch = vc_support_detailed_chs.at(idx);
+    new_ch++;
+    matrix_gof_trans(old_ch, new_ch) = 1;
+  }
+  
+  TMatrixD matrix_gof_trans_T = matrix_gof_trans.T();
+  matrix_gof_trans.T();
+  
+  TMatrixD matrix_pred = matrix_pred_newworld * matrix_gof_trans;
+  TMatrixD matrix_data = matrix_data_newworld * matrix_gof_trans;
+  TMatrixD matrix_syst = matrix_gof_trans_T * matrix_absolute_cov_newworld * matrix_gof_trans;
+
+  Exe_Goodness_of_fit(num_Y, num_X, matrix_pred, matrix_data, matrix_syst, index);  
+  
+  return 1;
+}
+  
 ///////////////////////////////////////////////////////// ccc
 
 // target constrained by support
@@ -625,6 +660,9 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   cout<<endl<<TString::Format(" ---> GOF noConstraint: chi2 %6.2f, ndf %3d, chi2/ndf %6.2f, p-value %10.8f",
 			      val_chi2_noConstraint, num_Y, val_chi2_noConstraint/num_Y, p_value_noConstraint)<<endl;
 
+  val_GOF_noConstrain = val_chi2_noConstraint;
+  val_GOF_NDF = num_Y;
+  
   // double sum_chi2 = 0;
   // for(int ibin=1; ibin<=num_Y; ibin++) {
   //   double val_pred = matrix_pred_Y(ibin-1, 0);      
@@ -816,6 +854,8 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   cout<<TString::Format(" ---> GOF wiConstraint: chi2 %6.2f, ndf %3d, chi2/ndf %6.2f, p-value %10.8f",
 			val_chi2_wiConstraint, num_Y, val_chi2_wiConstraint/num_Y, p_value_wiConstraint)<<endl<<endl;
   
+  val_GOF_wiConstrain = val_chi2_wiConstraint;
+
   /////////////////////////////
 
   roostr = TString::Format("h1_pred_Y_wiConstraint_%02d", index);
@@ -1564,7 +1604,7 @@ void TLee::Set_Spectra_MatrixCov()
   map_detectorfile_str[7] = detector_directory+"cov_WMThetaYZ.root";
   map_detectorfile_str[8] = detector_directory+"cov_WMX.root";
   map_detectorfile_str[9] = detector_directory+"cov_WMYZ.root";
-  //map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
+  //map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";// no LYatt when we firstly analyse the 5e9 POT
   
   map<int, TFile*>map_file_detector_frac;
   map<int, TMatrixD*>map_matrix_detector_frac;

@@ -31,7 +31,7 @@ namespace config_Lee
   
   ////////// display graphics flag
 
-  bool flag_display_graphics = 1;
+  bool flag_display_graphics = 0;
   
   ////////// systematics flag
   
@@ -47,7 +47,9 @@ namespace config_Lee
   ////////// goodness of fit
   
   double Lee_strength_for_GoF      = 0;
-    
+
+  bool flag_GoF_output2file_default_0 = 0;
+  
   bool flag_both_numuCC            = 0;// 1
   bool flag_CCpi0_FC_by_numuCC     = 0;// 2
   bool flag_CCpi0_PC_by_numuCC     = 0;// 3
@@ -63,7 +65,8 @@ namespace config_Lee
 
   ////////// Advanced tools
   
-  // void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag_fixed)
-  // if( 0 ) {// do the fitting on the spectra and cov_total after constraint ?
+  ///// void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag_fixed)
+  ///// do the fitting on the spectra and cov_total after constraint ?
+  bool flag_Lee_minimization_after_constraint = 0;
   
 }

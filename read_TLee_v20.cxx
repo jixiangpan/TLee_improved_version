@@ -104,6 +104,8 @@ int main(int argc, char** argv)
   Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_outputfile_covariance_matrix;
   Lee_test->Set_Collapse();
 
+  Lee_test->flag_Lee_minimization_after_constraint = config_Lee::flag_Lee_minimization_after_constraint;
+  
   //////////
   
   TFile *file_collapsed_covariance_matrix = new TFile("file_collapsed_covariance_matrix.root", "recreate");
@@ -115,6 +117,8 @@ int main(int argc, char** argv)
   int flag_syst_mc_stat = config_Lee::flag_syst_mc_stat;
   double user_Lee_strength_for_output_covariance_matrix = config_Lee::Lee_strength_for_outputfile_covariance_matrix;
   double user_scaleF_POT = scaleF_POT;
+  vector<double>vc_val_GOF;
+  vector<int>vc_val_GOF_NDF;
   tree_config->Branch("flag_syst_flux_Xs", &flag_syst_flux_Xs, "flag_syst_flux_Xs/I" );
   tree_config->Branch("flag_syst_detector", &flag_syst_detector, "flag_syst_detector/I" );
   tree_config->Branch("flag_syst_additional", &flag_syst_additional, "flag_syst_additional/I" );
@@ -122,9 +126,9 @@ int main(int argc, char** argv)
   tree_config->Branch("user_Lee_strength_for_output_covariance_matrix", &user_Lee_strength_for_output_covariance_matrix,
                       "user_Lee_strength_for_output_covariance_matrix/D" );
   tree_config->Branch("user_scaleF_POT", &user_scaleF_POT, "user_scaleF_POT/D" );
-  tree_config->Fill();
+  tree_config->Branch("vc_val_GOF", &vc_val_GOF);
+  tree_config->Branch("vc_val_GOF_NDF", &vc_val_GOF_NDF);
   file_collapsed_covariance_matrix->cd();
-  tree_config->Write();
 
   Lee_test->matrix_absolute_cov_newworld.Write("matrix_absolute_cov_newworld");// (bins, bins)
   Lee_test->matrix_absolute_flux_cov_newworld.Write("matrix_absolute_flux_cov_newworld");
@@ -141,7 +145,7 @@ int main(int argc, char** argv)
      
   Lee_test->matrix_pred_newworld.Write("matrix_pred_newworld");// (1, bins)
   Lee_test->matrix_data_newworld.Write("matrix_data_newworld");// (1, bins)  
-  file_collapsed_covariance_matrix->Close();
+  //file_collapsed_covariance_matrix->Close();
   
   //////////
 
@@ -151,7 +155,30 @@ int main(int argc, char** argv)
   
   Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_GoF;
   Lee_test->Set_Collapse();
- 
+
+  if( config_Lee::flag_GoF_output2file_default_0 ) {
+    file_collapsed_covariance_matrix->cd();
+
+    for(auto it=Lee_test->map_data_spectrum_ch_bin.begin(); it!=Lee_test->map_data_spectrum_ch_bin.end(); it++) {
+      int val_ch = it->first;
+
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back( val_ch );
+      
+      vector<int>vc_support_chs;
+
+      Lee_test->Exe_Goodness_of_fit( vc_target_chs, vc_support_chs, 100 + val_ch );
+
+      vc_val_GOF.push_back( Lee_test->val_GOF_noConstrain );
+      vc_val_GOF_NDF.push_back( Lee_test->val_GOF_NDF );
+      //cout<<" ---> "<<Lee_test->val_GOF_NDF<<"\t"<<Lee_test->val_GOF_noConstrain<<endl;
+    }
+    
+    tree_config->Fill();
+    tree_config->Write();
+    file_collapsed_covariance_matrix->Close();
+  }
+  
   bool flag_both_numuCC            = config_Lee::flag_both_numuCC;// 1
   bool flag_CCpi0_FC_by_numuCC     = config_Lee::flag_CCpi0_FC_by_numuCC;// 2
   bool flag_CCpi0_PC_by_numuCC     = config_Lee::flag_CCpi0_PC_by_numuCC;// 3
@@ -176,6 +203,16 @@ int main(int argc, char** argv)
     vc_support_chs.push_back( 7 );
 
     Lee_test->Exe_Goodness_of_fit( vc_target_chs, vc_support_chs, 8 );
+  }
+
+  if( 0 ) {
+    vector<int>vc_target_chs;
+    for(int idx=1; idx<=26; idx++) vc_target_chs.push_back( idx -1 );
+    
+    vector<int>vc_support_chs;
+    for(int idx=1; idx<=26*3+11*3; idx++) vc_support_chs.push_back( 26 +idx -1 );
+  
+    Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 9 );
   }
   
   ///////////////////////// gof
