@@ -12,6 +12,11 @@ namespace config_Lee
   /* TString detector_directory = "./data_framework_fake5/det_11stat/"; */
   /* TString mc_directory = "./data_framework_fake5/mc_stat/"; */
 
+  /* TString spectra_file = "./TLee_input_1mu0p/merge.root"; */
+  /* TString flux_Xs_directory = "./TLee_input_1mu0p/flux_Xs/"; */
+  /* TString detector_directory = "./TLee_input_1mu0p/det/"; */
+  /* TString mc_directory = "./TLee_input_1mu0p/mc_stat/"; */
+  
   int channels_observation = 7;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
 

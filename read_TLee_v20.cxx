@@ -214,6 +214,15 @@ int main(int argc, char** argv)
   
     Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 9 );
   }
+
+  if( 0 ) {
+    vector<int>vc_target_chs;
+    for(int idx=3; idx<=10; idx++) vc_target_chs.push_back( idx -1 );
+    
+    vector<int>vc_support_chs;
+    
+    Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 9 );
+  }
   
   ///////////////////////// gof
   
