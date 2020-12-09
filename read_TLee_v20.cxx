@@ -161,13 +161,21 @@ int main(int argc, char** argv)
 
     for(auto it=Lee_test->map_data_spectrum_ch_bin.begin(); it!=Lee_test->map_data_spectrum_ch_bin.end(); it++) {
       int val_ch = it->first;
-
+      int size_map = it->second.size();
+      int size_before = 0;
+      for(int idx=1; idx<val_ch; idx++) {
+	int size_current = Lee_test->map_data_spectrum_ch_bin[idx].size();
+	size_before += size_current;
+      }
+      
       vector<int>vc_target_chs;
-      vc_target_chs.push_back( val_ch );
+      for(int ibin=1; ibin<size_map; ibin++) {
+	vc_target_chs.push_back( size_before + ibin -1 );
+      }
       
       vector<int>vc_support_chs;
 
-      Lee_test->Exe_Goodness_of_fit( vc_target_chs, vc_support_chs, 100 + val_ch );
+      Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 100 + val_ch );
 
       vc_val_GOF.push_back( Lee_test->val_GOF_noConstrain );
       vc_val_GOF_NDF.push_back( Lee_test->val_GOF_NDF );
