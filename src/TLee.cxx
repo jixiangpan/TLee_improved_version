@@ -273,53 +273,138 @@ void TLee::Minimization_Lee_strength_FullCov(double Lee_initial_value, bool flag
       matrix_delta_T.Transpose( matrix_delta );
       
       TMatrixD matrix_chi2 = matrix_delta * matrix_cov_total_inv *matrix_delta_T;
-      chi2 = matrix_chi2(0,0);
+      chi2 = matrix_chi2(0,0);      
       
       ///////////////////////////////////////////////////////////////////////////
 
       if( flag_Lee_minimization_after_constraint ) {// do the fitting on the spectra and cov_total after constraint
-	
-	int num_Y = 26+8;
-	int num_X = matrix_cov_syst.GetNrows() - num_Y;
 
+	if( 0 ) {
+	  int num_Y = 26+26;
+	  int num_X = matrix_cov_syst.GetNrows() - num_Y;
+	  
+	  matrix_pred.T(); matrix_meas.T();
+	  TMatrixD matrix_pred_X = matrix_pred.GetSub(num_Y, num_Y+num_X-1, 0, 0);
+	  TMatrixD matrix_meas_X = matrix_meas.GetSub(num_Y, num_Y+num_X-1, 0, 0);
+
+	  TMatrixD matrix_pred_Y = matrix_pred.GetSub(0, num_Y-1, 0, 0);
+	  TMatrixD matrix_meas_Y = matrix_meas.GetSub(0, num_Y-1, 0, 0);
+	  matrix_pred.T(); matrix_meas.T();
+	
+	  TMatrixD matrix_XX = matrix_cov_total.GetSub(num_Y, num_Y+num_X-1, num_Y, num_Y+num_X-1);
+	  TMatrixD matrix_XX_inv = matrix_XX;
+	  matrix_XX_inv.Invert();
+	
+	  TMatrixD matrix_YY = matrix_cov_total.GetSub(0, num_Y-1, 0, num_Y-1);
+	
+	  TMatrixD matrix_YX = matrix_cov_total.GetSub(0, num_Y-1, num_Y, num_Y+num_X-1);
+	  TMatrixD matrix_XY(num_X, num_Y); matrix_XY.Transpose(matrix_YX);
+	
+	  TMatrixD matrix_Y_under_X = matrix_pred_Y + matrix_YX * matrix_XX_inv * (matrix_meas_X - matrix_pred_X);
+	  TMatrixD matrix_YY_under_XX = matrix_YY - matrix_YX * matrix_XX_inv * matrix_XY;
+	  
+	  //////
+	  
+	  matrix_Y_under_X.T();
+	  matrix_meas_Y.T();
+	  
+	  TMatrixD matrix_wicons_delta = matrix_Y_under_X - matrix_meas_Y;
+	  TMatrixD matrix_wicons_delta_T = matrix_wicons_delta.T();
+	  matrix_wicons_delta.T();
+
+	  TMatrixD matrix_YY_under_XX_inv = matrix_YY_under_XX;
+	  matrix_YY_under_XX_inv.Invert();
+	  
+	  TMatrixD matrix_wicons_chi2 = matrix_wicons_delta * matrix_YY_under_XX_inv * matrix_wicons_delta_T;
+	  double val_wicons_chi2 = matrix_wicons_chi2(0,0);
+	  chi2 = val_wicons_chi2;	
+	}
+	
 	//////
-	
-	matrix_pred.T(); matrix_meas.T();
-	TMatrixD matrix_pred_X = matrix_pred.GetSub(num_Y, num_Y+num_X-1, 0, 0);
-	TMatrixD matrix_meas_X = matrix_meas.GetSub(num_Y, num_Y+num_X-1, 0, 0);
 
-	TMatrixD matrix_pred_Y = matrix_pred.GetSub(0, num_Y-1, 0, 0);
-	TMatrixD matrix_meas_Y = matrix_meas.GetSub(0, num_Y-1, 0, 0);
-	matrix_pred.T(); matrix_meas.T();
-	
-	TMatrixD matrix_XX = matrix_cov_total.GetSub(num_Y, num_Y+num_X-1, num_Y, num_Y+num_X-1);
-	TMatrixD matrix_XX_inv = matrix_XX;
-	matrix_XX_inv.Invert();
-	
-	TMatrixD matrix_YY = matrix_cov_total.GetSub(0, num_Y-1, 0, num_Y-1);
-	
-	TMatrixD matrix_YX = matrix_cov_total.GetSub(0, num_Y-1, num_Y, num_Y+num_X-1);
-	TMatrixD matrix_XY(num_X, num_Y); matrix_XY.Transpose(matrix_YX);
-	
-	TMatrixD matrix_Y_under_X = matrix_pred_Y + matrix_YX * matrix_XX_inv * (matrix_meas_X - matrix_pred_X);
-	TMatrixD matrix_YY_under_XX = matrix_YY - matrix_YX * matrix_XX_inv * matrix_XY;
+	if( 1 ) {
+	  
+	  vector<int> vc_target_detailed_chs;	 
+	  for(int idx=0; idx<8; idx++) vc_target_detailed_chs.push_back( idx );
+	  for(int idx=26; idx<26+8; idx++) vc_target_detailed_chs.push_back( idx );	  
+	  vector<int> vc_support_detailed_chs;
+	  for(int idx=8; idx<26; idx++) vc_support_detailed_chs.push_back( idx );
+	  for(int idx=26+8; idx<26+26; idx++) vc_support_detailed_chs.push_back( idx );
+	  for(int idx=26+26; idx<137; idx++) vc_support_detailed_chs.push_back( idx );
 
-	//////
-		
-	matrix_Y_under_X.T();
-	matrix_meas_Y.T();
+	  // vector<int> vc_target_detailed_chs;	 
+	  // for(int idx=0; idx<26; idx++) vc_target_detailed_chs.push_back( idx );	  
+	  // vector<int> vc_support_detailed_chs;
+	  // for(int idx=26; idx<137; idx++) vc_support_detailed_chs.push_back( idx );
 
-	TMatrixD matrix_wicons_delta = matrix_Y_under_X - matrix_meas_Y;
-	TMatrixD matrix_wicons_delta_T = matrix_wicons_delta.T();
-	matrix_wicons_delta.T();
+	  //////
+	  
+	  int num_Y = vc_target_detailed_chs.size();
+	  int num_X = vc_support_detailed_chs.size();
+	  
+	  TMatrixD matrix_gof_trans( bins_newworld, num_Y+num_X );// oldworld, newworld
+	  int new_ch = -1;
+	  
+	  for(int idx=0; idx<num_Y; idx++) {
+	    int old_ch = vc_target_detailed_chs.at(idx);
+	    new_ch++;
+	    matrix_gof_trans(old_ch, new_ch) = 1;
+	  }
+	  
+	  for(int idx=0; idx<num_X; idx++) {
+	    int old_ch = vc_support_detailed_chs.at(idx);
+	    new_ch++;
+	    matrix_gof_trans(old_ch, new_ch) = 1;
+	  }
+	  
+	  TMatrixD matrix_gof_trans_T = matrix_gof_trans.T();
+	  matrix_gof_trans.T();
 
-	TMatrixD matrix_YY_under_XX_inv = matrix_YY_under_XX;
-	matrix_YY_under_XX_inv.Invert();
+	  TMatrixD matrix_pred_userA = matrix_pred * matrix_gof_trans;
+	  TMatrixD matrix_meas_userA = matrix_meas * matrix_gof_trans;
+	  TMatrixD matrix_cov_total_userA = matrix_gof_trans_T * matrix_cov_total * matrix_gof_trans;
 
-	TMatrixD matrix_wicons_chi2 = matrix_wicons_delta * matrix_YY_under_XX_inv * matrix_wicons_delta_T;
-	double val_wicons_chi2 = matrix_wicons_chi2(0,0);
-	chi2 = val_wicons_chi2;	
-      }
+	  //////
+	  
+	  matrix_pred_userA.T(); matrix_meas_userA.T();
+	  TMatrixD matrix_pred_X = matrix_pred_userA.GetSub(num_Y, num_Y+num_X-1, 0, 0);
+	  TMatrixD matrix_meas_X = matrix_meas_userA.GetSub(num_Y, num_Y+num_X-1, 0, 0);
+
+	  TMatrixD matrix_pred_Y = matrix_pred_userA.GetSub(0, num_Y-1, 0, 0);
+	  TMatrixD matrix_meas_Y = matrix_meas_userA.GetSub(0, num_Y-1, 0, 0);
+	  matrix_pred_userA.T(); matrix_meas_userA.T();
+	
+	  TMatrixD matrix_XX = matrix_cov_total_userA.GetSub(num_Y, num_Y+num_X-1, num_Y, num_Y+num_X-1);
+	  TMatrixD matrix_XX_inv = matrix_XX;
+	  matrix_XX_inv.Invert();
+	
+	  TMatrixD matrix_YY = matrix_cov_total_userA.GetSub(0, num_Y-1, 0, num_Y-1);
+	
+	  TMatrixD matrix_YX = matrix_cov_total_userA.GetSub(0, num_Y-1, num_Y, num_Y+num_X-1);
+	  TMatrixD matrix_XY(num_X, num_Y); matrix_XY.Transpose(matrix_YX);
+	
+	  TMatrixD matrix_Y_under_X = matrix_pred_Y + matrix_YX * matrix_XX_inv * (matrix_meas_X - matrix_pred_X);
+	  TMatrixD matrix_YY_under_XX = matrix_YY - matrix_YX * matrix_XX_inv * matrix_XY;
+	  
+	  //////
+	  
+	  matrix_Y_under_X.T();
+	  matrix_meas_Y.T();
+	  
+	  TMatrixD matrix_wicons_delta = matrix_Y_under_X - matrix_meas_Y;
+	  TMatrixD matrix_wicons_delta_T = matrix_wicons_delta.T();
+	  matrix_wicons_delta.T();
+
+	  TMatrixD matrix_YY_under_XX_inv = matrix_YY_under_XX;
+	  matrix_YY_under_XX_inv.Invert();
+	  
+	  TMatrixD matrix_wicons_chi2 = matrix_wicons_delta * matrix_YY_under_XX_inv * matrix_wicons_delta_T;
+	  double val_wicons_chi2 = matrix_wicons_chi2(0,0);
+	  chi2 = val_wicons_chi2;
+	  
+	}
+	
+      }// flag_Lee_minimization_after_constraint
       
       ///////////////////////////////////////////////////////////////////////////      
                   
@@ -656,9 +741,17 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   matrix_cov_noConstraint_inv.Invert();
   TMatrixD matrix_chi2_noConstraint = matrix_delta_noConstraint * matrix_cov_noConstraint_inv * matrix_delta_noConstraint_T;
   double val_chi2_noConstraint = matrix_chi2_noConstraint(0,0);
-  double p_value_noConstraint = TMath::Prob( val_chi2_noConstraint, num_Y );  
-  cout<<endl<<TString::Format(" ---> GOF noConstraint: chi2 %6.2f, ndf %3d, chi2/ndf %6.2f, p-value %10.8f",
-			      val_chi2_noConstraint, num_Y, val_chi2_noConstraint/num_Y, p_value_noConstraint)<<endl;
+  double p_value_noConstraint = TMath::Prob( val_chi2_noConstraint, num_Y );
+  double val_data_noConstraint = 0;
+  double val_pred_noConstraint = 0;
+  for(int idx=0; idx<num_Y; idx++) {
+    val_data_noConstraint += matrix_data_Y(idx,0);
+    val_pred_noConstraint += matrix_pred_Y(idx,0);
+  }
+  cout<<endl<<TString::Format(" ---> GOF noConstraint: chi2 %6.2f, ndf %3d, chi2/ndf %6.2f, p-value %10.8f, meas/pred %4.2f %4.2f",
+			      val_chi2_noConstraint, num_Y, val_chi2_noConstraint/num_Y, p_value_noConstraint,
+			      val_data_noConstraint, val_pred_noConstraint
+			      )<<endl;
 
   val_GOF_noConstrain = val_chi2_noConstraint;
   val_GOF_NDF = num_Y;
@@ -850,9 +943,18 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   matrix_cov_wiConstraint_inv.Invert();
   TMatrixD matrix_chi2_wiConstraint = matrix_delta_wiConstraint * matrix_cov_wiConstraint_inv * matrix_delta_wiConstraint_T;
   double val_chi2_wiConstraint = matrix_chi2_wiConstraint(0,0);
-  double p_value_wiConstraint = TMath::Prob( val_chi2_wiConstraint, num_Y );  
-  cout<<TString::Format(" ---> GOF wiConstraint: chi2 %6.2f, ndf %3d, chi2/ndf %6.2f, p-value %10.8f",
-			val_chi2_wiConstraint, num_Y, val_chi2_wiConstraint/num_Y, p_value_wiConstraint)<<endl<<endl;
+  double p_value_wiConstraint = TMath::Prob( val_chi2_wiConstraint, num_Y );
+  double val_data_wiConstraint = 0;
+  double val_pred_wiConstraint = 0;
+  for(int idx=0; idx<num_Y; idx++) {
+    val_data_wiConstraint += matrix_data_Y(idx,0);
+    val_pred_wiConstraint += matrix_Y_under_X(idx,0);
+    //cout<<" ---> "<<matrix_Y_under_X(idx,0) - matrix_pred_Y(idx, 0)<<endl;
+  }  
+  cout<<TString::Format(" ---> GOF wiConstraint: chi2 %6.2f, ndf %3d, chi2/ndf %6.2f, p-value %10.8f, meas/pred %4.2f %4.2f",
+			val_chi2_wiConstraint, num_Y, val_chi2_wiConstraint/num_Y, p_value_wiConstraint,
+			val_data_wiConstraint, val_pred_wiConstraint
+			)<<endl<<endl;
   
   val_GOF_wiConstrain = val_chi2_wiConstraint;
 
@@ -1005,6 +1107,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   pad_top_total->Draw(); pad_top_total->cd();
 
   h1_pred_Y_wiConstraint->Draw("e2");
+  h1_pred_Y_wiConstraint->SetXTitle("Energy (#times 100 MeV)");
   h1_pred_Y_noConstraint->Draw("same e2");  
   h1_pred_Y_wiConstraint_clone->Draw("same hist");
   h1_pred_Y_noConstraint_clone->Draw("same hist");  
@@ -1481,13 +1584,13 @@ void TLee::Set_Spectra_MatrixCov()
   map_input_spectrum_ch_str[7] = "NCpi0_norm";
   map_input_spectrum_ch_str[8] = "Lee_FC";
   map_input_spectrum_ch_str[9] = "Lee_PC";
-  map_input_spectrum_ch_str[10]= "nueCC_FC_ext";
-  map_input_spectrum_ch_str[11]= "nueCC_PC_ext";
-  map_input_spectrum_ch_str[12]= "numuCC_FC_ext";
-  map_input_spectrum_ch_str[13]= "numuCC_PC_ext";
-  map_input_spectrum_ch_str[14]= "CCpi0_FC_ext";
-  map_input_spectrum_ch_str[15]= "CCpi0_PC_ext";
-  map_input_spectrum_ch_str[16]= "NCpi0_ext";
+  // map_input_spectrum_ch_str[10]= "nueCC_FC_ext";
+  // map_input_spectrum_ch_str[11]= "nueCC_PC_ext";
+  // map_input_spectrum_ch_str[12]= "numuCC_FC_ext";
+  // map_input_spectrum_ch_str[13]= "numuCC_PC_ext";
+  // map_input_spectrum_ch_str[14]= "CCpi0_FC_ext";
+  // map_input_spectrum_ch_str[15]= "CCpi0_PC_ext";
+  // map_input_spectrum_ch_str[16]= "NCpi0_ext";
 
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
@@ -1519,16 +1622,16 @@ void TLee::Set_Spectra_MatrixCov()
 
   
   /////for fake data set, begin
-  // for(int idx=10; idx<=13; idx++) {
-  //   for(int ibin=1; ibin<=26; ibin++) {
-  //     map_input_spectrum_ch_bin[idx][ibin-1] = 0;
-  //   }
-  // }  
-  // for(int idx=14; idx<=16; idx++) {
-  //   for(int ibin=1; ibin<=11; ibin++) {
-  //     map_input_spectrum_ch_bin[idx][ibin-1] = 0;
-  //   }
-  // }
+  for(int idx=10; idx<=13; idx++) {
+    for(int ibin=1; ibin<=26; ibin++) {
+      map_input_spectrum_ch_bin[idx][ibin-1] = 0;
+    }
+  }  
+  for(int idx=14; idx<=16; idx++) {
+    for(int ibin=1; ibin<=11; ibin++) {
+      map_input_spectrum_ch_bin[idx][ibin-1] = 0;
+    }
+  }
   /////for fake data set, end
   
 
@@ -1604,7 +1707,7 @@ void TLee::Set_Spectra_MatrixCov()
   map_detectorfile_str[7] = detector_directory+"cov_WMThetaYZ.root";
   map_detectorfile_str[8] = detector_directory+"cov_WMX.root";
   map_detectorfile_str[9] = detector_directory+"cov_WMYZ.root";
-  //map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
+  map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
   
   map<int, TFile*>map_file_detector_frac;
   map<int, TMatrixD*>map_matrix_detector_frac;

@@ -141,6 +141,7 @@ public:
   double minimization_chi2;
   double minimization_Lee_strength_val;
   double minimization_Lee_strength_err;
+  int minimization_NDF;
   bool flag_Lee_minimization_after_constraint;
   
   /////////////////////////////////////////////////////// function member

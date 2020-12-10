@@ -339,11 +339,22 @@ int main(int argc, char** argv)
 
     Lee_test->Minimization_Lee_strength_FullCov(2, 0);// (initial value, fix or not)
 
-    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.2f, %5.2f +/- %5.2f",
-                                Lee_test->minimization_chi2,
+    // cout<<endl<<TString::Format(" ---> Best fit of Lee strength: chi2 %6.3f, %5.3f +/- %5.3f",
+    //                             Lee_test->minimization_chi2,
+    //                             Lee_test->minimization_Lee_strength_val,
+    //                             Lee_test->minimization_Lee_strength_err
+    //                             )<<endl<<endl;
+
+    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: %6.4f,  chi2 %6.3f",                          
                                 Lee_test->minimization_Lee_strength_val,
-                                Lee_test->minimization_Lee_strength_err
-                                )<<endl<<endl;
+				Lee_test->minimization_chi2
+                                )<<endl<<endl;    
+
+    cout<<endl<<TString::Format(" ---> Best fit of Lee strength: %6.4f +/- %6.4f,  chi2 %6.3f",                          
+                                Lee_test->minimization_Lee_strength_val,
+				Lee_test->minimization_Lee_strength_err,
+				Lee_test->minimization_chi2
+                                )<<endl<<endl;    
 
     /////////////////////////////////////////
     
@@ -390,13 +401,59 @@ int main(int argc, char** argv)
     lineB_dchi2at1->SetLineWidth(2);
     lineB_dchi2at1->SetLineColor(kBlue);
     lineB_dchi2at1->SetLineStyle(7);
-    auto *tt_text_data = new TLatex( 0.2, val_dchi2at1*1.1, Form("#Delta#chi^{2} = %3.2f", val_dchi2at1) );
+    auto *tt_text_data = new TLatex( 0.2, val_dchi2at1*1.1, Form("#Delta#chi^{2} = %4.3f", val_dchi2at1) );
     tt_text_data->SetTextAlign(11); tt_text_data->SetTextSize(0.05); tt_text_data->SetTextAngle(0);
     tt_text_data->SetTextFont(42);  tt_text_data->Draw(); tt_text_data->SetTextColor(kBlue);
 
     canv_gh_scan->SaveAs("canv_gh_scan.png");
     
   }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////// MicroBooNE suggested /////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+  if( config_Lee::flag_chi2_data_H0 ) {
+
+    Lee_test->Set_measured_data();// use the measured data as the input data for the fitting    
+    
+    Lee_test->scaleF_Lee = 0;
+    Lee_test->Set_Collapse();
+    
+    Lee_test->Minimization_Lee_strength_FullCov(0, 1);
+    
+    double chi2 = Lee_test->minimization_chi2;
+    int ndf = Lee_test->bins_newworld;
+    double p_value = TMath::Prob( chi2, ndf );
+    
+    cout<<Form(" ---> flag_chi2_data_H0, chi2/ndf %8.2f %3d %8.4f, p-value %f", chi2,ndf, chi2/ndf, p_value)<<endl;
+  }
+
+  
+  if( config_Lee::flag_chi2_data_H0 ) {
+    
+    Lee_test->Set_measured_data();// use the measured data as the input data for the fitting
+    
+    Lee_test->scaleF_Lee = 0;
+    Lee_test->Set_Collapse();
+
+    Lee_test->Minimization_Lee_strength_FullCov(0, 1);    
+    double chi2_H0 = Lee_test->minimization_chi2;
+    
+    Lee_test->Minimization_Lee_strength_FullCov(1, 1);    
+    double chi2_H1 = Lee_test->minimization_chi2;
+
+    double dchi2 = chi2_H0 - chi2_H1;
+    
+    int ndf = 1;
+    double p_value = TMath::Prob( dchi2, ndf );    
+    cout<<Form(" ---> flag_dchi2_H0toH1, chi2/ndf %8.2f %3d %8.4f, p-value %f", dchi2, ndf, dchi2/ndf, p_value)<<endl;
+
+    p_value = TMath::Prob( -dchi2, ndf );
+    cout<<Form(" ---> flag_dchi2_H1toH0, chi2/ndf %8.2f %3d %8.4f, p-value %f", -dchi2, ndf, -dchi2/ndf, p_value)<<endl;
+    
+  }
+
   
   ////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////// Advanced Statistics Analysis /////////////////////////////
