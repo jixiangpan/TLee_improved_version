@@ -65,6 +65,7 @@ void TLee::Exe_Fiedman_Cousins_Data(TMatrixD matrix_fakedata, double Lee_true_lo
   vector<int>Lee_scan100_data;
   vector<double>chi2_null_scan_data;
   
+  TFile *file_data = new TFile("file_data.root", "recreate");
   TTree *tree_data = new TTree("tree_data", "Feldman-Cousins");
 
   tree_data->Branch( "Lee_bestFit_data", &Lee_bestFit_data, "Lee_bestFit_data/D" );
@@ -88,8 +89,7 @@ void TLee::Exe_Fiedman_Cousins_Data(TMatrixD matrix_fakedata, double Lee_true_lo
   cout<<endl;
   
   tree_data->Fill();
-  
-  TFile *file_data = new TFile("file_data.root", "recreate");
+    
   file_data->cd();
   tree_data->Write();
   file_data->Close();      
@@ -104,7 +104,8 @@ void TLee::Exe_Fledman_Cousins_Asimov(double Lee_true_low, double Lee_true_hgh, 
   int Lee_strength_scaled100  = 0;  
   vector<double>Lee_scan100;
   vector<double>chi2_null_toy;
-  
+
+  TFile *file_Asimov = new TFile("file_Asimov.root", "recreate");
   TTree *tree_Asimov = new TTree("tree_Asimov", "Feldman-Cousins");
 
   tree_Asimov->Branch( "Lee_strength_scaled100", &Lee_strength_scaled100, "Lee_strength_scaled100/I" );
@@ -140,8 +141,7 @@ void TLee::Exe_Fledman_Cousins_Asimov(double Lee_true_low, double Lee_true_hgh, 
     tree_Asimov->Fill();
     
   }// idx
-
-  TFile *file_Asimov = new TFile("file_Asimov.root", "recreate");
+  
   file_Asimov->cd();
   tree_Asimov->Write();
   file_Asimov->Close();
@@ -158,7 +158,8 @@ void TLee::Exe_Feldman_Cousins(double Lee_true_low, double Lee_true_hgh, double 
   vector<double>chi2_null_toy;
   vector<double>chi2_gmin_toy;
   vector<double>LeeF_gmin_toy;
-    
+
+  TFile *file_FC = new TFile(Form("file_FC_%06d.root", ifile), "recreate");
   TTree *tree = new TTree("tree", "Feldman-Cousins");
 
   tree->Branch( "Lee_strength_scaled100", &Lee_strength_scaled100, "Lee_strength_scaled100/I" );
@@ -206,8 +207,7 @@ void TLee::Exe_Feldman_Cousins(double Lee_true_low, double Lee_true_hgh, double 
   }// idx
   
   ///////////////////////
-  
-  TFile *file_FC = new TFile(Form("file_FC_%06d.root", ifile), "recreate");
+    
   file_FC->cd();
   tree->Write();
   file_FC->Close();

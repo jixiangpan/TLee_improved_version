@@ -557,6 +557,7 @@ int main(int argc, char** argv)
     double chi2_null_null8Lee_true8Lee = 0;
     double chi2_gmin_null8Lee_true8Lee = 0;
     
+    TFile *file_out = new TFile(TString::Format("file_out_%03d.root", ifile), "recreate");
     TTree *tree = new TTree("tree", "tree");
     tree->Branch("chi2_null_null8sm_true8sm", &chi2_null_null8sm_true8sm, "chi2_null_null8sm_true8sm/D" );
     tree->Branch("chi2_gmin_null8sm_true8sm", &chi2_gmin_null8sm_true8sm, "chi2_gmin_null8sm_true8sm/D" );
@@ -607,8 +608,7 @@ int main(int argc, char** argv)
       if( status_fit!=0 ) continue;
       tree->Fill();
     }
-
-    TFile *file_out = new TFile(TString::Format("file_out_%03d.root", ifile), "recreate");
+    
     file_out->cd();
     tree->Write();
     file_out->Close();
@@ -658,7 +658,7 @@ int main(int argc, char** argv)
     
     /////////////// dchi2 distribution 
     
-    //int num_toy = 1;    
+    //int num_toy = 2;    
     //Lee_test->Exe_Feldman_Cousins(Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);
 
     /////////////// dchi2 of Asimov sample
