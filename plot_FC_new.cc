@@ -72,10 +72,13 @@ void plot_FC_new()
   int user_val_Lee100 = 200;
 
   bool flag_file_Asimov = 0;
+
+  //TString dir_str = "./result_fc_fake5_allchannels/";
+  TString dir_str = "./result_fc_fake5_constraintchannels/";
   
   //////////////////////////////////////////////////////////////////////////////////////// file_fc
 
-  roostr = "file_FC_toy_Lee0to5.root";
+  roostr = dir_str+"total_fc.root";
   TFile *file_fc = new TFile(roostr, "read");
   TTree *tree = (TTree*)file_fc->Get("tree");
   
@@ -189,7 +192,7 @@ void plot_FC_new()
 
   //////////////////////////////////////////////////////////////////////////////////////// file_Asimov
   
-  roostr = "file_Asimov.root";
+  roostr = dir_str+"file_Asimov.root";
   TFile *file_Asimov = new TFile(roostr, "read");
   TTree *tree_Asimov = (TTree*)file_Asimov->Get("tree_Asimov");
   
@@ -338,7 +341,7 @@ void plot_FC_new()
     
   //////////////////////////////////////////////////////////////////////////////////////// file_data
 
-  roostr = "file_data.root";
+  roostr = dir_str+"file_data.root";
   TFile *file_data = new TFile(roostr, "read");
   TTree *tree_data = (TTree*)file_data->Get("tree_data");
 
@@ -450,7 +453,8 @@ void plot_FC_new()
   func_xy_title(gh_CL_data, "LEE strength", "Confidence Level (%)");  
   gh_CL_data->GetXaxis()->CenterTitle(); gh_CL_data->GetYaxis()->CenterTitle();
   gh_CL_data->GetXaxis()->SetNdivisions(509); gh_CL_data->GetYaxis()->SetNdivisions(509);  
-  gh_CL_data->GetXaxis()->SetTitleOffset(1.2);  
+  gh_CL_data->GetXaxis()->SetTitleOffset(1.2);
+  gh_CL_data->GetYaxis()->SetRangeUser(0,110);
   TF1 *f1_CL68 = new TF1("f1_CL68", "68", 0, 1e6);
   f1_CL68->Draw("same"); f1_CL68->SetLineColor(kRed); f1_CL68->SetLineStyle(7);  
   TF1 *f1_CL95 = new TF1("f1_CL95", "95", 0, 1e6);
@@ -510,9 +514,10 @@ void plot_FC_new()
   h2_basic_scan_dchi2->GetXaxis()->SetNdivisions(509);// same as gh_scan_dchi2_data
   h2_basic_scan_dchi2->GetYaxis()->SetNdivisions(509);
 
-  TLegend *lg_scan_dchi2_data = new TLegend(0.65, 0.46, 0.94, 0.67);
-  lg_scan_dchi2_data->AddEntry( gh_CI68_data, "68% CL", "f");
-  lg_scan_dchi2_data->AddEntry( gh_CI95_data, "95% CL", "f");
+  //TLegend *lg_scan_dchi2_data = new TLegend(0.65, 0.46-0.1, 0.94, 0.67-0.1);
+  TLegend *lg_scan_dchi2_data = new TLegend(0.15+0.05, 0.46+0.2, 0.5+0.05, 0.67+0.2);
+  lg_scan_dchi2_data->AddEntry( gh_CI68_data, "68% CI "+TString::Format("(%4.2f, %4.2f)", CI68_low, CI68_hgh), "f");
+  lg_scan_dchi2_data->AddEntry( gh_CI95_data, "95% CI "+TString::Format("(%4.2f, %4.2f)", CI95_low, CI95_hgh), "f");
   lg_scan_dchi2_data->Draw();
   lg_scan_dchi2_data->SetBorderSize(0);
   lg_scan_dchi2_data->SetFillStyle(0);
