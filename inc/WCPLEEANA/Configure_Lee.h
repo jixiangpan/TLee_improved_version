@@ -2,15 +2,15 @@ namespace config_Lee
 {
   ////////// input files for spectra and covariance matrixes
   
-  TString spectra_file = "./data_framework_Doc33131/merge_all.root";
-  TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/";
-  TString detector_directory = "./data_framework_Doc33131/det_both/";
-  TString mc_directory = "./data_framework_Doc33131/mc_stat/";
+  /* TString spectra_file = "./data_framework_Doc33131/merge_all.root"; */
+  /* TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/"; */
+  /* TString detector_directory = "./data_framework_Doc33131/det_both/"; */
+  /* TString mc_directory = "./data_framework_Doc33131/mc_stat/"; */
 
-  /* TString spectra_file = "./data_framework_fake5/merge_all.root"; */
-  /* TString flux_Xs_directory = "./data_framework_fake5/flux_Xs/"; */
-  /* TString detector_directory = "./data_framework_fake5/DetVar_hanyu_11stat/"; */
-  /* TString mc_directory = "./data_framework_fake5/mc_stat/"; */
+  TString spectra_file = "./data_framework_fake5/merge_all.root";
+  TString flux_Xs_directory = "./data_framework_fake5/flux_Xs/";
+  TString detector_directory = "./data_framework_fake5/DetVar_hanyu_11stat/";
+  TString mc_directory = "./data_framework_fake5/mc_stat/";
 
   /* TString spectra_file = "./data_framework_fake7_percent98/merge_fake7_sample98percent.root"; */
   /* TString flux_Xs_directory = "./data_framework_fake7_percent98/XsFlux/"; */
