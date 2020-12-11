@@ -2,20 +2,20 @@ namespace config_Lee
 {
   ////////// input files for spectra and covariance matrixes
   
-  /* TString spectra_file = "./data_framework_Doc33131/merge_all.root"; */
-  /* TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/"; */
-  /* TString detector_directory = "./data_framework_Doc33131/det_both/"; */
-  /* TString mc_directory = "./data_framework_Doc33131/mc_stat/"; */
+  TString spectra_file = "./data_framework_Doc33131/merge_all.root";
+  TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/";
+  TString detector_directory = "./data_framework_Doc33131/det_both/";
+  TString mc_directory = "./data_framework_Doc33131/mc_stat/";
 
   /* TString spectra_file = "./data_framework_fake5/merge_all.root"; */
   /* TString flux_Xs_directory = "./data_framework_fake5/flux_Xs/"; */
   /* TString detector_directory = "./data_framework_fake5/DetVar_hanyu_11stat/"; */
   /* TString mc_directory = "./data_framework_fake5/mc_stat/"; */
 
-  TString spectra_file = "./data_framework_fake7_percent98/merge_fake7_sample98percent.root";
-  TString flux_Xs_directory = "./data_framework_fake7_percent98/XsFlux/";
-  TString detector_directory = "./data_framework_fake7_percent98/DetVar_hanyu_11stat/";
-  TString mc_directory = "./data_framework_fake7_percent98/mc_stat_sample98percent/";
+  /* TString spectra_file = "./data_framework_fake7_percent98/merge_fake7_sample98percent.root"; */
+  /* TString flux_Xs_directory = "./data_framework_fake7_percent98/XsFlux/"; */
+  /* TString detector_directory = "./data_framework_fake7_percent98/DetVar_hanyu_11stat/"; */
+  /* TString mc_directory = "./data_framework_fake7_percent98/mc_stat_sample98percent/"; */
 
   int channels_observation = 7;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
@@ -61,12 +61,12 @@ namespace config_Lee
   bool flag_NCpi0_by_numuCC        = 0;// 4
   bool flag_nueCC_PC_by_numuCC_pi0 = 0;// 5
   bool flag_nueCC_HghE_FC_by_numuCC_pi0_nueFC = 0;// 6, HghE>800 MeV
-  bool flag_nueCC_LowE_FC_by_all   = 1;// 7
+  bool flag_nueCC_LowE_FC_by_all   = 0;// 7
   bool flag_nueCC_FC_by_all        = 0;// 8
 
   ////////// Lee strength fitting -- data
 
-  bool flag_Lee_strength_data = 0;
+  bool flag_Lee_strength_data = 1;
 
   ////////// MicroBooNE suggested
 

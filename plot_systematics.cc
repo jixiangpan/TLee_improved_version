@@ -264,7 +264,9 @@ void plot_systematics()
   }
 
   canv_h2_correlation_flux->SaveAs("canv_h2_correlation_flux.png");
-    
+  canv_h2_correlation_flux->SaveAs("canv_h2_correlation_flux.root");
+  h2_correlation_flux->SaveAs("h2_correlation_flux.root");
+  
   /////////////////////////////////////////////////////////////////////////////////////////////////////// Xs
 
   roostr = "h2_covariance_Xs";
@@ -336,7 +338,9 @@ void plot_systematics()
   }
 
   canv_h2_correlation_Xs->SaveAs("canv_h2_correlation_Xs.png");
-        
+  canv_h2_correlation_Xs->SaveAs("canv_h2_correlation_Xs.root");
+  h2_correlation_Xs->SaveAs("h2_correlation_Xs.root");
+    
   /////////////////////////////////////////////////////////////////////////////////////////////////////// detector
 
   roostr = "h2_covariance_detector";

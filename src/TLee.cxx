@@ -729,6 +729,13 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     }
 
     if( (val_pred==val_data) && (val_pred==0) ) matrix_goodness_cov_total_noConstraint(i,i) = 1e-6;
+
+    /// CNP
+    // double val_stat_cov = 0;
+    // if( val_data==0 ) val_stat_cov = val_pred/2;
+    // else val_stat_cov = 3./( 1./val_data + 2./val_pred );	
+    // if( val_data==0 && val_pred==0 ) val_stat_cov = 1e-6;
+    // matrix_goodness_cov_total_noConstraint(i,i) = val_stat_cov;
   }  
   matrix_goodness_cov_total_noConstraint = matrix_goodness_cov_total_noConstraint + matrix_YY;
 
@@ -1621,7 +1628,7 @@ void TLee::Set_Spectra_MatrixCov()
   cout<<endl;
 
   
-  /////for fake data set, begin
+  ////////////////////for fake data set, begin
   for(int idx=10; idx<=13; idx++) {
     for(int ibin=1; ibin<=26; ibin++) {
       map_input_spectrum_ch_bin[idx][ibin-1] = 0;
@@ -1632,7 +1639,7 @@ void TLee::Set_Spectra_MatrixCov()
       map_input_spectrum_ch_bin[idx][ibin-1] = 0;
     }
   }
-  /////for fake data set, end
+  ////////////////////for fake data set, end
   
 
   bins_oldworld = 0;

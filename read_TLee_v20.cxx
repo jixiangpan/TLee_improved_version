@@ -215,6 +215,28 @@ int main(int argc, char** argv)
 
   if( 0 ) {
     vector<int>vc_target_chs;
+    for(int idx=0; idx<8; idx++) vc_target_chs.push_back( idx );
+    for(int idx=26; idx<26+8; idx++) vc_target_chs.push_back( idx );
+    
+    vector<int>vc_support_chs;
+    for(int idx=8; idx<26; idx++) vc_support_chs.push_back( idx );
+    for(int idx=26+8; idx<26+26; idx++) vc_support_chs.push_back( idx );
+    for(int idx=26+26; idx<137; idx++) vc_support_chs.push_back( idx );
+  
+    Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 1001 );
+  }
+  
+  if( 0 ) {
+    vector<int>vc_target_chs;
+    for(int idx=0; idx<137; idx++) vc_target_chs.push_back( idx );
+    
+    vector<int>vc_support_chs;
+  
+    Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 1001 );
+  }
+  
+  if( 0 ) {
+    vector<int>vc_target_chs;
     for(int idx=1; idx<=26; idx++) vc_target_chs.push_back( idx -1 );
     
     vector<int>vc_support_chs;
@@ -430,7 +452,7 @@ int main(int argc, char** argv)
   }
 
   
-  if( config_Lee::flag_chi2_data_H0 ) {
+  if( config_Lee::flag_dchi2_H0toH1 ) {
     
     Lee_test->Set_measured_data();// use the measured data as the input data for the fitting
     
