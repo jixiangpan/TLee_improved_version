@@ -269,6 +269,20 @@ int main(int argc, char** argv)
 
     Lee_test->Exe_Goodness_of_fit( 8, matrix_gof_trans.GetNcols()-8, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 7);
   }
+    
+  if( 0 ) {
+    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 26*6 + 11*3 );// oldworld, newworld
+    for( int ibin=1; ibin<=26*6 + 11*3; ibin++) matrix_gof_trans(ibin-1, ibin-1) = 1;
+    
+    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
+    matrix_gof_trans_T.Transpose( matrix_gof_trans );
+
+    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
+
+    Lee_test->Exe_Goodness_of_fit( 8, matrix_gof_trans.GetNcols()-8, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 107);
+  }
   
   ///////////////////////// gof
   
@@ -617,7 +631,7 @@ int main(int argc, char** argv)
 
   //////////////////////////////////////////////// Sensitivity by Asimov sample
 
-  if( 0 ) {
+  if( 1 ) {
 
     ///////////////////////// reject SM
     
@@ -645,13 +659,13 @@ int main(int argc, char** argv)
 
   ////////////////////////////////////////////////  Feldman-Cousins approach --> heavy computation cost
 
-  if( 1 ) {
+  if( 0 ) {
     
     /////////////// range: [low, hgh] with step
     
-    double Lee_true_low = 0;
-    double Lee_true_hgh = 3;
-    double Lee_step     = 0.02;
+    //double Lee_true_low = 0;
+    //double Lee_true_hgh = 3;
+    //double Lee_step     = 0.02;
     
     /////////////// dchi2 distribution 
     
@@ -660,7 +674,7 @@ int main(int argc, char** argv)
 
     /////////////// dchi2 of Asimov sample
     
-    Lee_test->Exe_Fledman_Cousins_Asimov(Lee_true_low, Lee_true_hgh, Lee_step);
+    //Lee_test->Exe_Fledman_Cousins_Asimov(Lee_true_low, Lee_true_hgh, Lee_step);
 
     /////////////// dchi2 of measured data
     

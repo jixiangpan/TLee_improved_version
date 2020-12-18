@@ -1580,7 +1580,7 @@ void TLee::Set_Spectra_MatrixCov()
   TString roostr = "";
 
   ////////////////////////////////////// pred
-  
+  /*
   // https://www.phy.bnl.gov/xqian/talks/wire-cell/Leeana/configurations/cov_input.txt  
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
@@ -1602,6 +1602,23 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
+  */
+  /////////////////////////////////////// 1u0p and 1uNp
+  
+  map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
+  map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
+  map_input_spectrum_ch_str[3] = "numuCC_FC_1u0p_norm";
+  map_input_spectrum_ch_str[4] = "numuCC_PC_1u0p_norm";
+  map_input_spectrum_ch_str[5] = "numuCC_FC_1uNp_norm";
+  map_input_spectrum_ch_str[6] = "numuCC_PC_1uNp_norm";
+  map_input_spectrum_ch_str[7] = "CCpi0_FC_norm";
+  map_input_spectrum_ch_str[8] = "CCpi0_PC_norm";
+  map_input_spectrum_ch_str[9] = "NCpi0_norm";
+  map_input_spectrum_ch_str[10] = "Lee_FC";
+  map_input_spectrum_ch_str[11] = "Lee_PC";
+  /// flag for LEE channels corresponding to the cov_input.txt
+  map_Lee_ch[10] = 1;
+  map_Lee_ch[11] = 1;
   
   //////////////////
   //////////////////
@@ -1629,16 +1646,16 @@ void TLee::Set_Spectra_MatrixCov()
 
   
   ////////////////////for fake data set, begin
-  for(int idx=10; idx<=13; idx++) {
-    for(int ibin=1; ibin<=26; ibin++) {
-      map_input_spectrum_ch_bin[idx][ibin-1] = 0;
-    }
-  }  
-  for(int idx=14; idx<=16; idx++) {
-    for(int ibin=1; ibin<=11; ibin++) {
-      map_input_spectrum_ch_bin[idx][ibin-1] = 0;
-    }
-  }
+  // for(int idx=10; idx<=13; idx++) {
+  //   for(int ibin=1; ibin<=26; ibin++) {
+  //     map_input_spectrum_ch_bin[idx][ibin-1] = 0;
+  //   }
+  // }  
+  // for(int idx=14; idx<=16; idx++) {
+  //   for(int ibin=1; ibin<=11; ibin++) {
+  //     map_input_spectrum_ch_bin[idx][ibin-1] = 0;
+  //   }
+  // }
   ////////////////////for fake data set, end
   
 
