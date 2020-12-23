@@ -682,6 +682,12 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   int color_wi = kBlue;
   int color_data = kBlack;
 
+  // TFile *file_cov = new TFile("file_cov_AA.root", "recreate");
+  // matrix_syst.Write("covariance_Flux");
+  // //matrix_pred.Write("matrix_prediction");
+  // //matrix_data.Write("matrix_measurement");
+  // file_cov->Close();
+  
   ///////////////////////////////////////////////////////////////////////////////////////////// for no-systematics
 
   {
@@ -1580,7 +1586,7 @@ void TLee::Set_Spectra_MatrixCov()
   TString roostr = "";
 
   ////////////////////////////////////// pred
-  /*
+  
   // https://www.phy.bnl.gov/xqian/talks/wire-cell/Leeana/configurations/cov_input.txt  
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
@@ -1591,20 +1597,24 @@ void TLee::Set_Spectra_MatrixCov()
   map_input_spectrum_ch_str[7] = "NCpi0_norm";
   map_input_spectrum_ch_str[8] = "Lee_FC";
   map_input_spectrum_ch_str[9] = "Lee_PC";
-  // map_input_spectrum_ch_str[10]= "nueCC_FC_ext";
-  // map_input_spectrum_ch_str[11]= "nueCC_PC_ext";
-  // map_input_spectrum_ch_str[12]= "numuCC_FC_ext";
-  // map_input_spectrum_ch_str[13]= "numuCC_PC_ext";
-  // map_input_spectrum_ch_str[14]= "CCpi0_FC_ext";
-  // map_input_spectrum_ch_str[15]= "CCpi0_PC_ext";
-  // map_input_spectrum_ch_str[16]= "NCpi0_ext";
+  map_input_spectrum_ch_str[10]= "nueCC_FC_ext";
+  map_input_spectrum_ch_str[11]= "nueCC_PC_ext";
+  map_input_spectrum_ch_str[12]= "numuCC_FC_ext";
+  map_input_spectrum_ch_str[13]= "numuCC_PC_ext";
+  map_input_spectrum_ch_str[14]= "CCpi0_FC_ext";
+  map_input_spectrum_ch_str[15]= "CCpi0_PC_ext";
+  map_input_spectrum_ch_str[16]= "NCpi0_ext";
 
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
-  */
-  /////////////////////////////////////// 1u0p and 1uNp
   
+  /////////////////////////////////////// case: 
+
+  // for(int idx=1; idx<=32; idx++) map_input_spectrum_ch_str[idx] = TString::Format("ch_%02d", idx);
+  
+  /////////////////////////////////////// case: 1u0p and 1uNp
+  /*
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_1u0p_norm";
@@ -1619,7 +1629,7 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[10] = 1;
   map_Lee_ch[11] = 1;
-  
+  */
   //////////////////
   //////////////////
   
@@ -1704,9 +1714,7 @@ void TLee::Set_Spectra_MatrixCov()
     map_matrix_flux_Xs_frac[idx] = (TMatrixD*)map_file_flux_Xs_frac[idx]->Get(TString::Format("frac_cov_xf_mat_%d", idx));
     cout<<TString::Format(" %2d %s", idx, roostr.Data())<<endl;
 
-
-    matrix_flux_Xs_frac += (*map_matrix_flux_Xs_frac[idx]);
-    
+    matrix_flux_Xs_frac += (*map_matrix_flux_Xs_frac[idx]);    
     
     if( idx<=13 ) {// flux
       matrix_flux_frac += (*map_matrix_flux_Xs_frac[idx]);

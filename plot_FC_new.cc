@@ -73,8 +73,11 @@ void plot_FC_new()
 
   bool flag_file_Asimov = 0;
 
-  double val_best = 0.217;
-  TString dir_str = "./result_fc_fake5_allchannels/";
+  double val_best = 0.3353;
+  TString dir_str = "./result_fc_fake5_1mu0p1muNp/";
+
+  // double val_best = 0.217;
+  // TString dir_str = "./result_fc_fake5_allchannels/";
 
   //double val_best = 0.219;
   //TString dir_str = "./result_fc_fake5_constraintchannels/";

@@ -26,13 +26,17 @@ void plot_null_true()
   TString roostr = "";
 
   //roostr = "./result_fake7/sum_result_exSM_exLEE.root";
-  roostr = "./result_fake5/total_exSM_exLEE.root";
+  //roostr = "./result_fake5/total_exSM_exLEE.root";
+  roostr = "./result_fake5_1mu0p1muNp/total_exSM_exLEE.root";
   
   //double dchi2_data = 0.0477;// fake7, at LEE = 0
   //double dchi2_data = 5.4772;// fake7, at LEE = 1;
 
   //double dchi2_data = 2.1165;// fake5, at LEE = 0
-  double dchi2_data = 11.3884;// fake5, at LEE = 1;  
+  //double dchi2_data = 11.3884;// fake5, at LEE = 1;  
+
+  //double dchi2_data = 3.8253;// fake5 1mu0p1muNp, at LEE = 0
+  double dchi2_data = 6.6554;// fake5 1mu0p1muNp, at LEE = 1;  
   
   bool flag_exSM = 0;
 

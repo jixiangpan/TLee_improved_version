@@ -7,6 +7,16 @@ namespace config_Lee
   /* TString detector_directory = "./data_framework_Doc33131/det_both/"; */
   /* TString mc_directory = "./data_framework_Doc33131/mc_stat/"; */
 
+  TString spectra_file = "./TLee_input_normal_hanyu_opendata_5e19/merge.root";
+  TString flux_Xs_directory = "./TLee_input_normal_hanyu_opendata_5e19/flux_Xs/";
+  TString detector_directory = "./TLee_input_normal_hanyu_opendata_5e19/det/";
+  TString mc_directory = "./TLee_input_normal_hanyu_opendata_5e19/mc_stat/";
+
+  /* TString spectra_file = "./TLee_input_additional_part9_vertex/merge.root"; */
+  /* TString flux_Xs_directory = "./TLee_input_additional_part9_vertex/flux_Xs/"; */
+  /* TString detector_directory = "./TLee_input_additional_part9_vertex/det/"; */
+  /* TString mc_directory = "./TLee_input_additional_part9_vertex/mc_stat/"; */
+
   /* TString spectra_file = "./data_framework_fake5/merge_all.root"; */
   /* TString flux_Xs_directory = "./data_framework_fake5/flux_Xs/"; */
   /* TString detector_directory = "./data_framework_fake5/DetVar_hanyu_11stat/"; */
@@ -17,17 +27,29 @@ namespace config_Lee
   /* TString detector_directory = "./data_framework_fake7_percent98/DetVar_hanyu_11stat/"; */
   /* TString mc_directory = "./data_framework_fake7_percent98/mc_stat_sample98percent/"; */
   
-  TString spectra_file = "./TLee_input_fakeset5_1mu0p1muNp/merge.root";
-  TString flux_Xs_directory = "./TLee_input_fakeset5_1mu0p1muNp/flux_Xs/";
-  TString detector_directory = "./TLee_input_fakeset5_1mu0p1muNp/det/";
-  TString mc_directory = "./TLee_input_fakeset5_1mu0p1muNp/mc_stat/";
+  /* TString spectra_file = "./TLee_input_fakeset5_1mu0p1muNp/merge.root"; */
+  /* TString flux_Xs_directory = "./TLee_input_fakeset5_1mu0p1muNp/flux_Xs/"; */
+  /* TString detector_directory = "./TLee_input_fakeset5_1mu0p1muNp/det/"; */
+  /* TString mc_directory = "./TLee_input_fakeset5_1mu0p1muNp/mc_stat/"; */
   
   /* TString spectra_file = "./TLee_input_fakeset5_myself/merge.root"; */
   /* TString flux_Xs_directory = "./TLee_input_fakeset5_myself/flux_Xs/"; */
   /* TString detector_directory = "./TLee_input_fakeset5_myself/det/"; */
   /* TString mc_directory = "./TLee_input_fakeset5_myself/mc_stat/"; */
-  
-  int channels_observation = 9;// data channels (=hdata_obsch_# in spectra_file above)
+
+  /*
+  TString spectra_file = "./TLee_input_1mu0p_old/merge.root";
+  TString flux_Xs_directory = "./TLee_input_1mu0p_old/flux_Xs/";
+  TString detector_directory = "./TLee_input_1mu0p_old/det/";
+  TString mc_directory = "./TLee_input_1mu0p_old/mc_stat/";
+  */
+  /*
+  TString spectra_file = "./TLee_input_1mu0p_new/merge.root";
+  TString flux_Xs_directory = "./TLee_input_1mu0p_new/flux_Xs/";
+  TString detector_directory = "./TLee_input_1mu0p_new/det/";
+  TString mc_directory = "./TLee_input_1mu0p_new/mc_stat/";
+  */
+  int channels_observation = 7;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
 
   int syst_cov_flux_Xs_begin = 1;// files in flux_Xs_directory above
@@ -76,7 +98,7 @@ namespace config_Lee
 
   ////////// Lee strength fitting -- data
 
-  bool flag_Lee_strength_data = 1;
+  bool flag_Lee_strength_data = 0;
 
   ////////// MicroBooNE suggested
 
