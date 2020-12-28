@@ -7,15 +7,10 @@ namespace config_Lee
   /* TString detector_directory = "./data_framework_Doc33131/det_both/"; */
   /* TString mc_directory = "./data_framework_Doc33131/mc_stat/"; */
 
-  /* TString spectra_file = "./TLee_input_normal_hanyu_opendata_5e19/merge.root"; */
-  /* TString flux_Xs_directory = "./TLee_input_normal_hanyu_opendata_5e19/flux_Xs/"; */
-  /* TString detector_directory = "./TLee_input_normal_hanyu_opendata_5e19/det/"; */
-  /* TString mc_directory = "./TLee_input_normal_hanyu_opendata_5e19/mc_stat/"; */
-
-  /* TString spectra_file = "./TLee_input_additional_part9_vertex/merge.root"; */
-  /* TString flux_Xs_directory = "./TLee_input_additional_part9_vertex/flux_Xs/"; */
-  /* TString detector_directory = "./TLee_input_additional_part9_vertex/det/"; */
-  /* TString mc_directory = "./TLee_input_additional_part9_vertex/mc_stat/"; */
+  TString spectra_file = "./new_TLee_input_opendata5e19/merge.root";
+  TString flux_Xs_directory = "./new_TLee_input_opendata5e19/flux_Xs/";
+  TString detector_directory = "./new_TLee_input_opendata5e19/det/";
+  TString mc_directory = "./new_TLee_input_opendata5e19/mc_stat/";
 
   int channels_observation = 7;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
