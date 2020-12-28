@@ -2,10 +2,10 @@ namespace config_Lee
 {
   ////////// input files for spectra and covariance matrixes
   
-  TString spectra_file = "./data_framework_Doc33131/merge_all.root";
-  TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/";
-  TString detector_directory = "./data_framework_Doc33131/det_both/";
-  TString mc_directory = "./data_framework_Doc33131/mc_stat/";
+  /* TString spectra_file = "./data_framework_Doc33131/merge_all.root"; */
+  /* TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/"; */
+  /* TString detector_directory = "./data_framework_Doc33131/det_both/"; */
+  /* TString mc_directory = "./data_framework_Doc33131/mc_stat/"; */
 
   /* TString spectra_file = "./TLee_input_normal_hanyu_opendata_5e19/merge.root"; */
   /* TString flux_Xs_directory = "./TLee_input_normal_hanyu_opendata_5e19/flux_Xs/"; */
