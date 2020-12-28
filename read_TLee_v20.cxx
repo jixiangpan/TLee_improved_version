@@ -213,70 +213,6 @@ int main(int argc, char** argv)
     Lee_test->Exe_Goodness_of_fit( vc_target_chs, vc_support_chs, 8 );
   }
 
-  if( 0 ) {
-    vector<int>vc_target_chs;
-    vc_target_chs.push_back( 1 );
-    //vc_target_chs.push_back( 7 );
-    //vc_target_chs.push_back( 2 );
-    //vc_target_chs.push_back( 8 );
-    
-    vector<int>vc_support_chs;
-    
-    Lee_test->Exe_Goodness_of_fit( vc_target_chs, vc_support_chs, 203 );
-  }
-
-  if( 0 ) {
-    vector<int>vc_target_chs;
-    for(int idx=183-1; idx<208-1; idx++) vc_target_chs.push_back( idx );
-    for(int idx=209-1; idx<234-1; idx++) vc_target_chs.push_back( idx );
-    
-    vector<int>vc_support_chs;
-  
-    Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 1001 );
-  }
-  
-  if( 0 ) {
-    vector<int>vc_target_chs;
-    for(int idx=0; idx<8; idx++) vc_target_chs.push_back( idx );
-    for(int idx=26; idx<26+8; idx++) vc_target_chs.push_back( idx );
-    
-    vector<int>vc_support_chs;
-    for(int idx=8; idx<26; idx++) vc_support_chs.push_back( idx );
-    for(int idx=26+8; idx<26+26; idx++) vc_support_chs.push_back( idx );
-    for(int idx=26+26; idx<137; idx++) vc_support_chs.push_back( idx );
-  
-    Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 1001 );
-  }
-  
-  if( 0 ) {
-    vector<int>vc_target_chs;
-    for(int idx=0; idx<137; idx++) vc_target_chs.push_back( idx );
-    
-    vector<int>vc_support_chs;
-  
-    Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 1001 );
-  }
-
-  
-  if( 0 ) {
-    vector<int>vc_target_chs;
-    for(int idx=1; idx<=26; idx++) vc_target_chs.push_back( idx -1 );
-    
-    vector<int>vc_support_chs;
-    for(int idx=1; idx<=26*3+11*3; idx++) vc_support_chs.push_back( 26 +idx -1 );
-  
-    Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 9 );
-  }
-
-  if( 0 ) {
-    vector<int>vc_target_chs;
-    for(int idx=3; idx<=10; idx++) vc_target_chs.push_back( idx -1 );
-    
-    vector<int>vc_support_chs;
-    
-    Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 9 );
-  }
-  
   ///////////////////////// gof
   
   if( flag_nueCC_LowE_FC_by_all ) {
@@ -291,41 +227,6 @@ int main(int argc, char** argv)
     TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
 
     Lee_test->Exe_Goodness_of_fit( 8, matrix_gof_trans.GetNcols()-8, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 7);
-  }
-    
-  if( 0 ) {
-    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 26*6 + 11*3 );// oldworld, newworld
-    for( int ibin=1; ibin<=26*6 + 11*3; ibin++) matrix_gof_trans(ibin-1, ibin-1) = 1;
-    
-    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
-    matrix_gof_trans_T.Transpose( matrix_gof_trans );
-
-    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
-    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
-    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
-
-    Lee_test->Exe_Goodness_of_fit( 8, matrix_gof_trans.GetNcols()-8, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 107);
-  }
-
-  if( 0 ) {
-    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 26 );// oldworld, newworld
-    for( int ibin=1; ibin<=26; ibin++) matrix_gof_trans(ibin +26*2 -1, ibin-1) = 1;
-    for( int ibin=1; ibin<=26; ibin++) matrix_gof_trans(ibin + 26*3 -1, ibin-1) = 1;
-    
-    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
-    matrix_gof_trans_T.Transpose( matrix_gof_trans );
-
-    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
-    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
-    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
-
-    Lee_test->Exe_Goodness_of_fit( 11, matrix_gof_trans.GetNcols()-11, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 107);
-
-    TFile *file_test = new TFile("file_test.root", "recreate");
-    //matrix_gof_pred.Write("matrix_pred");
-    //matrix_gof_data.Write("matrix_data");
-    matrix_gof_syst.Write("matrix_systCOV_total");
-    file_test->Close();
   }
   
   ///////////////////////// gof
@@ -634,7 +535,7 @@ int main(int argc, char** argv)
       int status_fit = 0;
           
       /////////////////////////////////// null8sm, true8sm
-      /*
+      
       Lee_test->scaleF_Lee = 0;
       Lee_test->Set_Collapse();    
       Lee_test->Set_Variations(1);
@@ -646,7 +547,7 @@ int main(int argc, char** argv)
       Lee_test->Minimization_Lee_strength_FullCov(1, 0);
       chi2_gmin_null8sm_true8sm = Lee_test->minimization_chi2;
       status_fit += Lee_test->minimization_status;
-      */
+      
       /////////////////////////////////// null8Lee, true8Lee
       
       Lee_test->scaleF_Lee = 1;

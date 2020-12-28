@@ -1151,6 +1151,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   
   gh_ratio_noConstraint->Draw("same pe");
   gh_ratio_wiConstraint->Draw("same pe");
+  
   /*
   h1_spectra_wi2no->Draw("same");
   h1_spectra_wi2no->SetLineColor(kGreen+1);
@@ -1160,6 +1161,12 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   lg_wi2no->Draw("same"); lg_wi2no->SetTextSize(0.078); lg_wi2no->SetTextAngle(90);
   lg_wi2no->SetBorderSize(0);
   */
+
+  // TFile *file_test = new TFile("file_test.root", "recreate");
+  // gh_ratio_noConstraint->Write("gh_data2no");
+  // h1_spectra_wi2no->Write();
+  // h1_pred_Y_wiConstraint_clone->Write();
+  // file_test->Close();
   
   // TLatex *latex = new TLatex(0.5, 0.5, TString::Format("#color[%d]{Predictioin wi/wo}", kGreen+1));
   // latex->Draw("same"); latex->SetTextSize(0.078); //latex->SetTextAngle(90);
@@ -1611,25 +1618,25 @@ void TLee::Set_Spectra_MatrixCov()
   
   /////////////////////////////////////// case: 
 
-  // for(int idx=1; idx<=32; idx++) map_input_spectrum_ch_str[idx] = TString::Format("ch_%02d", idx);
+  // for(int idx=1; idx<=11; idx++) map_input_spectrum_ch_str[idx] = TString::Format("ch_%02d", idx);
   
   /////////////////////////////////////// case: 1u0p and 1uNp
-  /*
-  map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
-  map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
-  map_input_spectrum_ch_str[3] = "numuCC_FC_1u0p_norm";
-  map_input_spectrum_ch_str[4] = "numuCC_PC_1u0p_norm";
-  map_input_spectrum_ch_str[5] = "numuCC_FC_1uNp_norm";
-  map_input_spectrum_ch_str[6] = "numuCC_PC_1uNp_norm";
-  map_input_spectrum_ch_str[7] = "CCpi0_FC_norm";
-  map_input_spectrum_ch_str[8] = "CCpi0_PC_norm";
-  map_input_spectrum_ch_str[9] = "NCpi0_norm";
-  map_input_spectrum_ch_str[10] = "Lee_FC";
-  map_input_spectrum_ch_str[11] = "Lee_PC";
-  /// flag for LEE channels corresponding to the cov_input.txt
-  map_Lee_ch[10] = 1;
-  map_Lee_ch[11] = 1;
-  */
+  
+  // map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
+  // map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
+  // map_input_spectrum_ch_str[3] = "numuCC_FC_1u0p_norm";
+  // map_input_spectrum_ch_str[4] = "numuCC_PC_1u0p_norm";
+  // map_input_spectrum_ch_str[5] = "numuCC_FC_1uNp_norm";
+  // map_input_spectrum_ch_str[6] = "numuCC_PC_1uNp_norm";
+  // map_input_spectrum_ch_str[7] = "CCpi0_FC_norm";
+  // map_input_spectrum_ch_str[8] = "CCpi0_PC_norm";
+  // map_input_spectrum_ch_str[9] = "NCpi0_norm";
+  // map_input_spectrum_ch_str[10] = "Lee_FC";
+  // map_input_spectrum_ch_str[11] = "Lee_PC";
+  // /// flag for LEE channels corresponding to the cov_input.txt
+  // map_Lee_ch[10] = 1;
+  // map_Lee_ch[11] = 1;
+  
   //////////////////
   //////////////////
   
