@@ -40,7 +40,7 @@ void plot_systematics()
   TMatrixD* matrix_data_newworld = (TMatrixD*)roofile_syst->Get("matrix_data_newworld");
 
   map<int, TMatrixD*>matrix_absolute_detector_sub_cov_newworld;
-  for(int idx=1; idx<=9; idx++) {
+  for(int idx=1; idx<=10; idx++) {
     if( idx==5 ) continue;
     roostr = TString::Format("matrix_absolute_detector_sub_cov_newworld_%02d", idx);
     matrix_absolute_detector_sub_cov_newworld[idx] = (TMatrixD*)roofile_syst->Get(roostr);
@@ -1070,6 +1070,7 @@ void plot_systematics()
   str_sub[7] = "WireMod #theta_{yz}";
   str_sub[8] = "WireMod x";
   str_sub[9] = "WireMod y";
+  str_sub[10]= "LY Att";
 
   
   map<int, TH1D*>h1_fraction_detecor_sub;

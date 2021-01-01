@@ -1603,7 +1603,7 @@ void TLee::Set_Spectra_MatrixCov()
   map_input_spectrum_ch_str[6] = "CCpi0_PC_norm";
   map_input_spectrum_ch_str[7] = "NCpi0_norm";
   map_input_spectrum_ch_str[8] = "Lee_FC";
-  map_input_spectrum_ch_str[9] = "Lee_PC";
+  map_input_spectrum_ch_str[9] = "Lee_PC"; 
   map_input_spectrum_ch_str[10]= "nueCC_FC_ext";
   map_input_spectrum_ch_str[11]= "nueCC_PC_ext";
   map_input_spectrum_ch_str[12]= "numuCC_FC_ext";
@@ -1615,10 +1615,6 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
-  
-  /////////////////////////////////////// case: 
-
-  // for(int idx=1; idx<=11; idx++) map_input_spectrum_ch_str[idx] = TString::Format("ch_%02d", idx);
   
   /////////////////////////////////////// case: 1u0p and 1uNp
   
@@ -1688,21 +1684,41 @@ void TLee::Set_Spectra_MatrixCov()
   }// ich
 
   ////////////////////////////////////// data
-
+  
+  cout<<" Observations"<<endl;
+  
   int line_data = -1;
   bins_newworld = 0;
   for(int ich=1; ich<=channels_observation; ich++) {
     roostr = TString::Format("hdata_obsch_%d", ich);
     TH1F *h1_spectrum = (TH1F*)file_spectra->Get(roostr);
+    cout<<Form(" %2d  %-20s   bin-num %2d", ich, roostr.Data(), h1_spectrum->GetNbinsX()+1)<<endl;
+        
     for(int ibin=1; ibin<=h1_spectrum->GetNbinsX()+1; ibin++) {
       map_data_spectrum_ch_bin[ich][ibin-1] = h1_spectrum->GetBinContent(ibin);
 
+      // if( ich==1 ) {
+      // 	if( ibin==3 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 1.46;
+      // 	if( ibin==4 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 3.65;
+      // 	if( ibin==5 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 2;
+      // 	if( ibin==6 ) map_data_spectrum_ch_bin[ich][ibin-1] += 1.62;	
+      // }
+      
+      // if( ich==1 ) {
+      // 	if( ibin==3 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 1.327;
+      // 	if( ibin==4 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 2.289;
+      // 	if( ibin==5 ) map_data_spectrum_ch_bin[ich][ibin-1] += 1.05;
+      // 	if( ibin==6 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 7.41;	
+      // }
+      
       line_data++;
       bins_newworld++;
-      map_data_spectrum_newworld_bin[line_data] = map_data_spectrum_ch_bin[ich][ibin-1]; 
+      map_data_spectrum_newworld_bin[line_data] = map_data_spectrum_ch_bin[ich][ibin-1];
+
     }// ibin
   }// ich
-
+  cout<<endl;
+  
   ////////////////////////////////////////// flux_Xs
   
   cout<<" Flux and Xs systematics"<<endl;
@@ -1723,7 +1739,7 @@ void TLee::Set_Spectra_MatrixCov()
 
     matrix_flux_Xs_frac += (*map_matrix_flux_Xs_frac[idx]);    
     
-    if( idx<=13 ) {// flux
+    if( idx<=16 ) {// flux
       matrix_flux_frac += (*map_matrix_flux_Xs_frac[idx]);
     }
     else {// interaction
@@ -1889,5 +1905,10 @@ void TLee::Set_Spectra_MatrixCov()
     gh_mc_stat_bin[ibin]->GetPoint( gh_mc_stat_bin[ibin]->GetN()-1, x, y);
     gh_mc_stat_bin[ibin]->SetPoint( gh_mc_stat_bin[ibin]->GetN(), x+1, y);
   }  
+
+  cout<<endl;
+  cout<<" ---> Complete the initialization"<<endl;
+  cout<<" ---> Complete the initialization"<<endl;  
+  cout<<endl;
   
 }

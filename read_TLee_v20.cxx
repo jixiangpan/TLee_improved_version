@@ -228,7 +228,38 @@ int main(int argc, char** argv)
 
     Lee_test->Exe_Goodness_of_fit( 8, matrix_gof_trans.GetNcols()-8, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 7);
   }
+
   
+  if( 0 ) {// first 6 bins--> 1 bin, constrained by others
+    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 1 + (26-6) + 26*3 + 11*3 );// oldworld, newworld
+    for( int ibin=1; ibin<=6; ibin++) matrix_gof_trans(ibin-1, 0) = 1;
+    for( int ibin=1; ibin<=26*4+11*3-6; ibin++) matrix_gof_trans(6+ibin-1, ibin) = 1;
+    
+    
+    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
+    matrix_gof_trans_T.Transpose( matrix_gof_trans );
+
+    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
+
+    Lee_test->Exe_Goodness_of_fit( 1, matrix_gof_trans.GetNcols()-1, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 201);
+  }  
+  
+  if( 0 ) {// first 6 bins, constrained by others
+    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 26*4 + 11*3 );// oldworld, newworld
+    for( int ibin=1; ibin<=26*4 + 11*3; ibin++) matrix_gof_trans(ibin-1, ibin-1) = 1;
+    
+    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
+    matrix_gof_trans_T.Transpose( matrix_gof_trans );
+
+    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
+
+    Lee_test->Exe_Goodness_of_fit( 6, matrix_gof_trans.GetNcols()-6, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 202);
+  }
+
   ///////////////////////// gof
   
   if( flag_nueCC_HghE_FC_by_numuCC_pi0_nueFC ) {
@@ -614,18 +645,18 @@ int main(int argc, char** argv)
     
     /////////////// dchi2 distribution 
     
-    //int num_toy = 2;    
-    //Lee_test->Exe_Feldman_Cousins(Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);
+    // int num_toy = 2;    
+    // Lee_test->Exe_Feldman_Cousins(Lee_true_low, Lee_true_hgh, Lee_step, num_toy, ifile);
 
     /////////////// dchi2 of Asimov sample
     
-    //Lee_test->Exe_Fledman_Cousins_Asimov(Lee_true_low, Lee_true_hgh, Lee_step);
+    Lee_test->Exe_Fledman_Cousins_Asimov(Lee_true_low, Lee_true_hgh, Lee_step);
 
     /////////////// dchi2 of measured data
     
-    Lee_test->Set_measured_data();    
-    TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;    
-    Lee_test->Exe_Fiedman_Cousins_Data( matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step );
+    // Lee_test->Set_measured_data();    
+    // TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;    
+    // Lee_test->Exe_Fiedman_Cousins_Data( matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step );
     
   }
   
