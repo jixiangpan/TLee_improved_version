@@ -29,9 +29,14 @@ void plot_null_true()
   // double dchi2_data = 5.0884;// opendata, at LEE = 1
 
   /// fake5, 7ch
-  roostr = "./results_fake5/file_exLEE_exSM.root";
+  //roostr = "./results_fake5/file_exLEE_exSM.root";
   //double dchi2_data = 8.4120;// LEE=1
-  double dchi2_data = 3.1704;// LEE=0
+  //double dchi2_data = 3.1704;// LEE=0
+
+  /// fake5, 9ch
+  roostr = "./results_fake5_9ch/file_exLEE_exSM.root";
+  //double dchi2_data = 7.2006;// LEE=1
+  double dchi2_data = 3.6410;// LEE=0
 
   //////////////////////////////
   

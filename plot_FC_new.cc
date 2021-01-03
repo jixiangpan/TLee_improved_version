@@ -73,7 +73,7 @@ void plot_FC_new()
 
   bool flag_file_Asimov = 0;
 
-  double val_best = 0.2881;
+  double val_best = 0.3215;
   //TString dir_str = "./results_open5e19/";
   //TString dir_str = "./results_fake5/";
   TString dir_str = "./results_fake5_9ch/";

@@ -1616,7 +1616,7 @@ void TLee::Set_Spectra_MatrixCov()
   map_Lee_ch[9] = 1;
   */
   /////////////////////////////////////// case: fake data
-  /*  
+   
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
@@ -1629,9 +1629,9 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
-  */
+ 
   /////////////////////////////////////// case: 1u0p and 1uNp
-  
+  /*
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_1u0p_norm";
@@ -1646,7 +1646,7 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[10] = 1;
   map_Lee_ch[11] = 1;
-  
+  */
   //////////////////
   //////////////////
   
