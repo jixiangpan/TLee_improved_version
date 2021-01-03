@@ -7,22 +7,27 @@ namespace config_Lee
   /* TString detector_directory = "./data_framework_Doc33131/det_both/"; */
   /* TString mc_directory = "./data_framework_Doc33131/mc_stat/"; */
   
-  TString spectra_file = "./new_TLee_input_opendata5e19/merge.root";
-  TString flux_Xs_directory = "./new_TLee_input_opendata5e19/flux_Xs/";
-  TString detector_directory = "./new_TLee_input_opendata5e19/det/";
-  TString mc_directory = "./new_TLee_input_opendata5e19/mc_stat/";
+  /* TString spectra_file = "./new_TLee_input_opendata5e19/merge.root"; */
+  /* TString flux_Xs_directory = "./new_TLee_input_opendata5e19/flux_Xs/"; */
+  /* TString detector_directory = "./new_TLee_input_opendata5e19/det/"; */
+  /* TString mc_directory = "./new_TLee_input_opendata5e19/mc_stat/"; */
     
   /* TString spectra_file = "./new_TLee_input_fakeset5_myself/merge.root"; */
   /* TString flux_Xs_directory = "./new_TLee_input_fakeset5_myself/flux_Xs/"; */
   /* TString detector_directory = "./new_TLee_input_fakeset5_myself/det/"; */
   /* TString mc_directory = "./new_TLee_input_fakeset5_myself/mc_stat/"; */
 
+  TString spectra_file = "./new_TLee_input_fakeset5_1mu0p1muNp/merge.root";
+  TString flux_Xs_directory = "./new_TLee_input_fakeset5_1mu0p1muNp/flux_Xs/";
+  TString detector_directory = "./new_TLee_input_fakeset5_1mu0p1muNp/det/";
+  TString mc_directory = "./new_TLee_input_fakeset5_1mu0p1muNp/mc_stat/";
+    
   /* TString spectra_file = "./new_TLee_input_fakeset7_98percent/merge.root"; */
   /* TString flux_Xs_directory = "./new_TLee_input_fakeset7_98percent/flux_Xs/"; */
   /* TString detector_directory = "./new_TLee_input_fakeset7_98percent/det/"; */
   /* TString mc_directory = "./new_TLee_input_fakeset7_98percent/mc_stat/"; */
 
-  int channels_observation = 7;// data channels (=hdata_obsch_# in spectra_file above)
+  int channels_observation = 9;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
 
   int syst_cov_flux_Xs_begin = 1;// files in flux_Xs_directory above
@@ -71,7 +76,7 @@ namespace config_Lee
 
   ////////// Lee strength fitting -- data
 
-  bool flag_Lee_strength_data = 1;
+  bool flag_Lee_strength_data = 0;
 
   ////////// MicroBooNE suggested
 

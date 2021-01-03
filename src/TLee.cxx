@@ -1593,8 +1593,7 @@ void TLee::Set_Spectra_MatrixCov()
   TString roostr = "";
 
   ////////////////////////////////////// pred
-  
-  // https://www.phy.bnl.gov/xqian/talks/wire-cell/Leeana/configurations/cov_input.txt  
+  /*
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
@@ -1615,23 +1614,38 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
-  
+  */
+  /////////////////////////////////////// case: fake data
+  /*  
+  map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
+  map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
+  map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
+  map_input_spectrum_ch_str[4] = "numuCC_PC_norm";
+  map_input_spectrum_ch_str[5] = "CCpi0_FC_norm";
+  map_input_spectrum_ch_str[6] = "CCpi0_PC_norm";
+  map_input_spectrum_ch_str[7] = "NCpi0_norm";
+  map_input_spectrum_ch_str[8] = "Lee_FC";
+  map_input_spectrum_ch_str[9] = "Lee_PC"; 
+  /// flag for LEE channels corresponding to the cov_input.txt
+  map_Lee_ch[8] = 1;
+  map_Lee_ch[9] = 1;
+  */
   /////////////////////////////////////// case: 1u0p and 1uNp
   
-  // map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
-  // map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
-  // map_input_spectrum_ch_str[3] = "numuCC_FC_1u0p_norm";
-  // map_input_spectrum_ch_str[4] = "numuCC_PC_1u0p_norm";
-  // map_input_spectrum_ch_str[5] = "numuCC_FC_1uNp_norm";
-  // map_input_spectrum_ch_str[6] = "numuCC_PC_1uNp_norm";
-  // map_input_spectrum_ch_str[7] = "CCpi0_FC_norm";
-  // map_input_spectrum_ch_str[8] = "CCpi0_PC_norm";
-  // map_input_spectrum_ch_str[9] = "NCpi0_norm";
-  // map_input_spectrum_ch_str[10] = "Lee_FC";
-  // map_input_spectrum_ch_str[11] = "Lee_PC";
-  // /// flag for LEE channels corresponding to the cov_input.txt
-  // map_Lee_ch[10] = 1;
-  // map_Lee_ch[11] = 1;
+  map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
+  map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
+  map_input_spectrum_ch_str[3] = "numuCC_FC_1u0p_norm";
+  map_input_spectrum_ch_str[4] = "numuCC_PC_1u0p_norm";
+  map_input_spectrum_ch_str[5] = "numuCC_FC_1uNp_norm";
+  map_input_spectrum_ch_str[6] = "numuCC_PC_1uNp_norm";
+  map_input_spectrum_ch_str[7] = "CCpi0_FC_norm";
+  map_input_spectrum_ch_str[8] = "CCpi0_PC_norm";
+  map_input_spectrum_ch_str[9] = "NCpi0_norm";
+  map_input_spectrum_ch_str[10] = "Lee_FC";
+  map_input_spectrum_ch_str[11] = "Lee_PC";
+  /// flag for LEE channels corresponding to the cov_input.txt
+  map_Lee_ch[10] = 1;
+  map_Lee_ch[11] = 1;
   
   //////////////////
   //////////////////
@@ -1697,20 +1711,6 @@ void TLee::Set_Spectra_MatrixCov()
     for(int ibin=1; ibin<=h1_spectrum->GetNbinsX()+1; ibin++) {
       map_data_spectrum_ch_bin[ich][ibin-1] = h1_spectrum->GetBinContent(ibin);
 
-      // if( ich==1 ) {
-      // 	if( ibin==3 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 1.46;
-      // 	if( ibin==4 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 3.65;
-      // 	if( ibin==5 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 2;
-      // 	if( ibin==6 ) map_data_spectrum_ch_bin[ich][ibin-1] += 1.62;	
-      // }
-      
-      // if( ich==1 ) {
-      // 	if( ibin==3 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 1.327;
-      // 	if( ibin==4 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 2.289;
-      // 	if( ibin==5 ) map_data_spectrum_ch_bin[ich][ibin-1] += 1.05;
-      // 	if( ibin==6 ) map_data_spectrum_ch_bin[ich][ibin-1] -= 7.41;	
-      // }
-      
       line_data++;
       bins_newworld++;
       map_data_spectrum_newworld_bin[line_data] = map_data_spectrum_ch_bin[ich][ibin-1];

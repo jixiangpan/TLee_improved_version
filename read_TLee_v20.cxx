@@ -230,6 +230,21 @@ int main(int argc, char** argv)
   }
 
   
+  if( 1 ) {
+    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 26*6 + 11*3 );// oldworld, newworld
+    for( int ibin=1; ibin<=26*6 + 11*3; ibin++) matrix_gof_trans(ibin-1, ibin-1) = 1;
+    
+    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
+    matrix_gof_trans_T.Transpose( matrix_gof_trans );
+
+    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
+
+    Lee_test->Exe_Goodness_of_fit( 8, matrix_gof_trans.GetNcols()-8, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 7);
+  }
+
+  
   if( 0 ) {// first 6 bins--> 1 bin, constrained by others
     TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 1 + (26-6) + 26*3 + 11*3 );// oldworld, newworld
     for( int ibin=1; ibin<=6; ibin++) matrix_gof_trans(ibin-1, 0) = 1;
@@ -536,7 +551,7 @@ int main(int argc, char** argv)
 
     double val_dchi2 = val_chi2_Lee - val_chi2_sm;
     
-    cout<<endl<<TString::Format(" ---> dchi2 = Lee - sm: %4.2f", val_dchi2)<<endl<<endl;
+    cout<<endl<<TString::Format(" ---> dchi2 = Lee - sm: %7.4f, LEE %7.4f, sm %7.4f", val_dchi2, val_chi2_Lee, val_chi2_sm)<<endl<<endl;
   }
 
   ////////////////////////////////////////////////////////// sensitivity calcualtion by FC
@@ -650,24 +665,28 @@ int main(int argc, char** argv)
 
     /////////////// dchi2 of Asimov sample
     
-    Lee_test->Exe_Fledman_Cousins_Asimov(Lee_true_low, Lee_true_hgh, Lee_step);
+    //Lee_test->Exe_Fledman_Cousins_Asimov(Lee_true_low, Lee_true_hgh, Lee_step);
 
     /////////////// dchi2 of measured data
     
-    // Lee_test->Set_measured_data();    
-    // TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;    
-    // Lee_test->Exe_Fiedman_Cousins_Data( matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step );
+    Lee_test->Set_measured_data();    
+    TMatrixD matrix_data_input_fc = Lee_test->matrix_data_newworld;    
+    Lee_test->Exe_Fiedman_Cousins_Data( matrix_data_input_fc, Lee_true_low, Lee_true_hgh, Lee_step );
     
   }
   
   ////////////////////////////////////////////////////////////////////////////////////////
 
+  cout<<endl<<endl;
+  cout<<" ---> Finish all the program"<<endl;
+  cout<<endl<<endl;
+  
   if( config_Lee::flag_display_graphics ) {
     cout<<endl<<" Entrer Ctrl+c to end the program"<<endl;
     cout<<" Entrer Ctrl+c to end the program"<<endl<<endl;
     
     theApp.Run();
   }
-
+  
   return 0;
 }
