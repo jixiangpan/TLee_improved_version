@@ -34,13 +34,18 @@ void plot_null_true()
   //double dchi2_data = 3.1704;// LEE=0
 
   /// fake5, 9ch
-  roostr = "./results_fake5_9ch/file_exLEE_exSM.root";
+  //roostr = "./results_fake5_9ch/file_exLEE_exSM.root";
   //double dchi2_data = 7.2006;// LEE=1
-  double dchi2_data = 3.6410;// LEE=0
+  //double dchi2_data = 3.6410;// LEE=0
+
+  /// fake7, 7ch
+  roostr = "./results_fake7/file_exLEE_exSM.root";
+  double dchi2_data = 5.0879;// LEE=1
+  //double dchi2_data = 0.0623;// LEE=0
 
   //////////////////////////////
   
-  bool flag_exSM = 1;
+  bool flag_exSM = 0;
 
   int color_fill = 0;
   if( flag_exSM ) color_fill = kRed;
@@ -166,6 +171,7 @@ void plot_null_true()
   pt->Draw();
 
   h1_dchi2->Draw("same axis");
+    
   //canv_h1_dchi2->SaveAs("canv_h1_null8Lee_true8Lee.png");
   //canv_h1_dchi2->SaveAs("canv_h1_null8Lee_true8sm.png");
   canv_h1_dchi2->SaveAs("canv_h1_true8sm_Lee2sm.png");

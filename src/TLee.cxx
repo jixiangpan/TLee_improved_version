@@ -1448,6 +1448,7 @@ void TLee::Set_Collapse()
     for(int ibin=0; ibin<bins_newworld; ibin++) {
       double val_mc_stat_cov = gh_mc_stat_bin[ibin]->Eval( scaleF_Lee );
       matrix_absolute_cov_newworld(ibin, ibin) += val_mc_stat_cov;
+      //matrix_absolute_cov_newworld(ibin, ibin) += val_mc_stat_cov/4e6;
     }
   }
   
@@ -1593,7 +1594,7 @@ void TLee::Set_Spectra_MatrixCov()
   TString roostr = "";
 
   ////////////////////////////////////// pred
-  /*
+  
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
@@ -1614,9 +1615,9 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
-  */
+  
   /////////////////////////////////////// case: fake data
-   
+  /*
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
@@ -1629,7 +1630,7 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
- 
+  */
   /////////////////////////////////////// case: 1u0p and 1uNp
   /*
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
@@ -1667,7 +1668,23 @@ void TLee::Set_Spectra_MatrixCov()
     int bins = h1_spectrum->GetNbinsX() + 1;    
     cout<<Form(" %2d  %-20s   bin-num %2d", ich, map_input_spectrum_ch_str[ich].Data(), bins)<<endl;
     
-    for(int ibin=1; ibin<=bins; ibin++) map_input_spectrum_ch_bin[ich][ibin-1] = h1_spectrum->GetBinContent(ibin);
+    for(int ibin=1; ibin<=bins; ibin++) {
+      double content = h1_spectrum->GetBinContent(ibin);
+
+      // if( ich==1 || ich==8 ) {
+      // 	if( ibin==1 ) content *= 1.388;
+      // 	if( ibin==2 ) content *= 1.318;
+      // 	if( ibin==3 ) content *= 1.294;
+      // 	if( ibin==4 ) content *= 1.232;
+      // 	if( ibin==5 ) content *= 1.250;
+      // 	if( ibin==6 ) content *= 1.179;
+      // 	if( ibin==7 ) content *= 1.196;
+      // 	if( ibin==8 ) content *= 1.104;
+      // }    
+      
+      map_input_spectrum_ch_bin[ich][ibin-1] = content;
+    }
+    
   }
   cout<<endl;
 
@@ -1854,6 +1871,7 @@ void TLee::Set_Spectra_MatrixCov()
     
   for(int ifile=mc_file_begin; ifile<=mc_file_end; ifile++) {
     roostr = TString::Format(mc_directory+"%d.log", ifile);
+    
     ifstream InputFile_aa(roostr, ios::in);
     if(!InputFile_aa) { cerr<<" No input-list"<<endl; exit(1); }
 
@@ -1861,7 +1879,6 @@ void TLee::Set_Spectra_MatrixCov()
 
     int count_check = 0;
     string line_check;    
-    roostr = TString::Format(mc_directory+"%d.log", 0);
     ifstream file_check(roostr);
     while( getline(file_check, line_check) ) count_check++;
     //cout<<endl<<" Numbers of lines in the mc_stat file: "<<count_check<<endl<<endl;

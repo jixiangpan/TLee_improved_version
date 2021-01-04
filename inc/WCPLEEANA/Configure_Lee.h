@@ -7,10 +7,12 @@ namespace config_Lee
   /* TString detector_directory = "./data_framework_Doc33131/det_both/"; */
   /* TString mc_directory = "./data_framework_Doc33131/mc_stat/"; */
   
-  /* TString spectra_file = "./new_TLee_input_opendata5e19/merge.root"; */
-  /* TString flux_Xs_directory = "./new_TLee_input_opendata5e19/flux_Xs/"; */
-  /* TString detector_directory = "./new_TLee_input_opendata5e19/det/"; */
-  /* TString mc_directory = "./new_TLee_input_opendata5e19/mc_stat/"; */
+  TString spectra_file = "./new_TLee_input_opendata5e19/merge.root";
+  TString flux_Xs_directory = "./new_TLee_input_opendata5e19/flux_Xs/";
+  TString detector_directory = "./new_TLee_input_opendata5e19/det/";
+  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_11stat/";
+  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_norandom/";
+  TString mc_directory = "./new_TLee_input_opendata5e19/mc_stat/";
     
   /* TString spectra_file = "./new_TLee_input_fakeset5_myself/merge.root"; */
   /* TString flux_Xs_directory = "./new_TLee_input_fakeset5_myself/flux_Xs/"; */
@@ -22,10 +24,15 @@ namespace config_Lee
   /* TString detector_directory = "./new_TLee_input_fakeset5_1mu0p1muNp/det/"; */
   /* TString mc_directory = "./new_TLee_input_fakeset5_1mu0p1muNp/mc_stat/"; */
     
-  TString spectra_file = "./new_TLee_input_fakeset7_98percent/merge.root";
-  TString flux_Xs_directory = "./new_TLee_input_fakeset7_98percent/flux_Xs/";
-  TString detector_directory = "./new_TLee_input_fakeset7_98percent/det/";
-  TString mc_directory = "./new_TLee_input_fakeset7_98percent/mc_stat/";
+  /* TString spectra_file = "./new_TLee_input_fakeset7_98percent/merge.root"; */
+  /* TString flux_Xs_directory = "./new_TLee_input_fakeset7_98percent/flux_Xs/"; */
+  /* TString detector_directory = "./new_TLee_input_fakeset7_98percent/det/"; */
+  /* TString mc_directory = "./new_TLee_input_fakeset7_98percent/mc_stat/"; */
+
+  /* TString spectra_file = "./new_TLee_input_fakeset5_myself/merge.root"; */
+  /* TString flux_Xs_directory = "./new_TLee_input_fakeset5_myself/flux_Xs/"; */
+  /* TString detector_directory = "./new_TLee_input_fakeset5_myself/det/"; */
+  /* TString mc_directory = "./new_TLee_input_fakeset5_myself/mc_stat/"; */
 
   int channels_observation = 7;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
