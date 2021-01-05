@@ -25,3 +25,5 @@ $(EXECUTABLE):$(OBJECTS)
 
 clean:
 	rm -f *.o $(DIR_SRC)/*.o; rm $(EXECUTABLE); rm -f *.pcm *.d *.so
+canv:
+	rm -f canv*

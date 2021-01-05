@@ -10,9 +10,10 @@ namespace config_Lee
   TString spectra_file = "./new_TLee_input_opendata5e19/merge.root";
   TString flux_Xs_directory = "./new_TLee_input_opendata5e19/flux_Xs/";
   TString detector_directory = "./new_TLee_input_opendata5e19/det/";
-  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_11stat/";
-  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_norandom/";
   TString mc_directory = "./new_TLee_input_opendata5e19/mc_stat/";
+
+  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_11stat/";
+  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_norandom/";  
     
   /* TString spectra_file = "./new_TLee_input_fakeset5_myself/merge.root"; */
   /* TString flux_Xs_directory = "./new_TLee_input_fakeset5_myself/flux_Xs/"; */

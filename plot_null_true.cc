@@ -25,22 +25,22 @@ void plot_null_true()
 
   TString roostr = "";
 
-  // roostr = "./results_open5e19/file_exLEE_simple.root";
+  // roostr = "./new_results_open5e19/file_exLEE_simple.root";
   // double dchi2_data = 5.0884;// opendata, at LEE = 1
 
   /// fake5, 7ch
-  //roostr = "./results_fake5/file_exLEE_exSM.root";
+  roostr = "./new_results_fake5/file_exLEE_exSM.root";
   //double dchi2_data = 8.4120;// LEE=1
   //double dchi2_data = 3.1704;// LEE=0
 
   /// fake5, 9ch
-  //roostr = "./results_fake5_9ch/file_exLEE_exSM.root";
-  //double dchi2_data = 7.2006;// LEE=1
+  roostr = "./new_results_fake5_ch9/file_exLEE_exSM.root";
+  double dchi2_data = 7.2006;// LEE=1
   //double dchi2_data = 3.6410;// LEE=0
 
   /// fake7, 7ch
-  roostr = "./results_fake7/file_exLEE_exSM.root";
-  double dchi2_data = 5.0879;// LEE=1
+  //roostr = "./new_results_fake7/file_exLEE_exSM.root";
+  //double dchi2_data = 5.0879;// LEE=1
   //double dchi2_data = 0.0623;// LEE=0
 
   //////////////////////////////
