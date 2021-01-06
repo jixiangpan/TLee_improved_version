@@ -1448,7 +1448,7 @@ void TLee::Set_Collapse()
     for(int ibin=0; ibin<bins_newworld; ibin++) {
       double val_mc_stat_cov = gh_mc_stat_bin[ibin]->Eval( scaleF_Lee );
       matrix_absolute_cov_newworld(ibin, ibin) += val_mc_stat_cov;
-      //matrix_absolute_cov_newworld(ibin, ibin) += val_mc_stat_cov/4e6;
+      //matrix_absolute_cov_newworld(ibin, ibin) += val_mc_stat_cov/4e8;
     }
   }
   

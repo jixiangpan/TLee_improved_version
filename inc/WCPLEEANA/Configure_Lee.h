@@ -1,20 +1,20 @@
 namespace config_Lee
 {
   ////////// input files for spectra and covariance matrixes
-  
+
   /* TString spectra_file = "./data_framework_Doc33131/merge_all.root"; */
   /* TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/"; */
   /* TString detector_directory = "./data_framework_Doc33131/det_both/"; */
   /* TString mc_directory = "./data_framework_Doc33131/mc_stat/"; */
+
+  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_11stat/";
+  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_norandom/";  
   
   TString spectra_file = "./new_TLee_input_opendata5e19/merge.root";
   TString flux_Xs_directory = "./new_TLee_input_opendata5e19/flux_Xs/";
   TString detector_directory = "./new_TLee_input_opendata5e19/det/";
   TString mc_directory = "./new_TLee_input_opendata5e19/mc_stat/";
-
-  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_11stat/";
-  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_norandom/";  
-    
+  
   /* TString spectra_file = "./new_TLee_input_fakeset5_myself/merge.root"; */
   /* TString flux_Xs_directory = "./new_TLee_input_fakeset5_myself/flux_Xs/"; */
   /* TString detector_directory = "./new_TLee_input_fakeset5_myself/det/"; */
@@ -84,7 +84,7 @@ namespace config_Lee
 
   ////////// Lee strength fitting -- data
 
-  bool flag_Lee_strength_data = 1;
+  bool flag_Lee_strength_data = 0;
 
   ////////// MicroBooNE suggested
 
