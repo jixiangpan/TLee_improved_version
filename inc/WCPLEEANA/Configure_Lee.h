@@ -82,7 +82,7 @@ namespace config_Lee
 
   bool flag_GoF_output2file_default_0 = 0;
   
-  bool flag_both_numuCC            = 1;// 1
+  bool flag_both_numuCC            = 0;// 1
   bool flag_CCpi0_FC_by_numuCC     = 0;// 2
   bool flag_CCpi0_PC_by_numuCC     = 0;// 3
   bool flag_NCpi0_by_numuCC        = 0;// 4
