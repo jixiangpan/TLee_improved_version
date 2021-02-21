@@ -65,7 +65,7 @@ int main(int argc, char** argv)
   gStyle->SetGridWidth(snWidth);
   gStyle->SetLineStyleString(2,"[12 12]"); // postscript dashes
   gStyle->SetMarkerStyle(20);
-  gStyle->SetMarkerSize(1.0);
+  gStyle->SetMarkerSize(1.2);
   gStyle->SetEndErrorSize(4);
   gStyle->SetEndErrorSize(0);
 

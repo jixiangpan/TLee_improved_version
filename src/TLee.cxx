@@ -676,30 +676,47 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
 
   if( num_Y+num_X!=matrix_syst.GetNrows() ) {cout<<" ERROR"<<endl; exit(10);}
   
-  cout<<Form(" ---> Goodness of fit, %2d", index)<<endl;
+  cout<<Form(" ---> Goodness of fit: %2d", index)<<endl;
 
   int color_no = kRed;
   int color_wi = kBlue;
   int color_data = kBlack;
 
-  // TFile *file_cov = new TFile("file_cov_AA.root", "recreate");
-  // matrix_syst.Write("covariance_Flux");
-  // //matrix_pred.Write("matrix_prediction");
-  // //matrix_data.Write("matrix_measurement");
-  // file_cov->Close();
+  //////////////////////////////////// ttt
   
+  bool flag_axis_userAA = false;
+  bool flag_axis_userAB = false;
+  
+  TString title_axis_user = "E_{#nu}^{rec}";
+
+  TGaxis *axis_userAA = new TGaxis(0, 0, 25, 0,   0, 2500, 504, "S");
+  axis_userAA->SetName("axis_userAA");
+  axis_userAA->SetTickSize(0.06);
+  axis_userAA->SetLabelSize(0.078);
+  axis_userAA->SetLabelFont(42);
+  TGaxis *axis_userAA_clone = (TGaxis*)axis_userAA->Clone("axis_userAA_clone");
+  axis_userAA_clone->SetLabelSize(0);
+  axis_userAA_clone->SetTickSize(0.05);
+  TGaxis *axis_userAA_wi2no = (TGaxis*)axis_userAA->Clone("axis_userAA_clone");
+  axis_userAA_wi2no->SetLabelSize(0.05);
+  axis_userAA_wi2no->SetTickSize(0.03);
+    
+  TGaxis *axis_userAB = new TGaxis(25, 0, 52, 0,   0, 2500, 504, "S");
+  axis_userAB->SetName("axis_userAB");
+  axis_userAB->SetTickSize(0.06);
+  axis_userAB->SetLabelSize(0.078);
+  axis_userAB->SetLabelFont(42);
+  TGaxis *axis_userAB_clone = (TGaxis*)axis_userAB->Clone("axis_userAB_clone");
+  axis_userAB_clone->SetLabelSize(0);
+  axis_userAB_clone->SetTickSize(0.05);
+  TGaxis *axis_userAB_wi2no = (TGaxis*)axis_userAB->Clone("axis_userAB_clone");
+  axis_userAB_wi2no->SetLabelSize(0.05);
+  axis_userAB_wi2no->SetTickSize(0.03);
+    
   ///////////////////////////////////////////////////////////////////////////////////////////// for no-systematics
 
-  {
-    double val_cov = 0;
-    for(int ibin=0; ibin<matrix_syst.GetNrows(); ibin++) {
-      val_cov += matrix_syst(ibin, ibin);
-    }
-    if(val_cov==0) {
-      for(int ibin=0; ibin<matrix_syst.GetNrows(); ibin++) {
-	matrix_syst(ibin, ibin) = 1e-6;
-      } 
-    }    
+  for(int ibin=0; ibin<matrix_syst.GetNrows(); ibin++) {
+    if( matrix_syst(ibin, ibin)==0 ) matrix_syst(ibin, ibin) = 1e-6;
   }
   
   ///////////////////////////////////////////////////////////////////////////////////////////// noConstraint
@@ -707,9 +724,9 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   TMatrixD matrix_cov_stat(num_Y+num_X, num_Y+num_X);  
   TMatrixD matrix_cov_total(num_Y+num_X, num_Y+num_X);
   matrix_cov_total = matrix_cov_stat + matrix_syst;
-  for(int idx=1; idx<=num_Y+num_X; idx++) {
-    if( matrix_cov_total(idx-1, idx-1)==0 ) matrix_cov_total(idx-1, idx-1) = 1e-6;// case inverse
-  }   
+  // for(int idx=1; idx<=num_Y+num_X; idx++) {
+  //   if( matrix_cov_total(idx-1, idx-1)==0 ) matrix_cov_total(idx-1, idx-1) = 1e-6;// case inverse
+  // }    
   
   matrix_pred.T(); matrix_data.T();
   TMatrixD matrix_pred_Y = matrix_pred.GetSub(0, num_Y-1, 0, 0);
@@ -735,13 +752,6 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     }
 
     if( (val_pred==val_data) && (val_pred==0) ) matrix_goodness_cov_total_noConstraint(i,i) = 1e-6;
-
-    /// CNP
-    // double val_stat_cov = 0;
-    // if( val_data==0 ) val_stat_cov = val_pred/2;
-    // else val_stat_cov = 3./( 1./val_data + 2./val_pred );	
-    // if( val_data==0 && val_pred==0 ) val_stat_cov = 1e-6;
-    // matrix_goodness_cov_total_noConstraint(i,i) = val_stat_cov;
   }  
   matrix_goodness_cov_total_noConstraint = matrix_goodness_cov_total_noConstraint + matrix_YY;
 
@@ -761,23 +771,14 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     val_data_noConstraint += matrix_data_Y(idx,0);
     val_pred_noConstraint += matrix_pred_Y(idx,0);
   }
-  cout<<endl<<TString::Format(" ---> GOF noConstraint: chi2 %6.2f, ndf %3d, chi2/ndf %6.2f, p-value %10.8f, meas/pred %4.2f %4.2f",
-			      val_chi2_noConstraint, num_Y, val_chi2_noConstraint/num_Y, p_value_noConstraint,
-			      val_data_noConstraint, val_pred_noConstraint
-			      )<<endl;
-
+  cout<<TString::Format(" ---> GOF noConstraint: chi2 %6.2f, ndf %3d, chi2/ndf %6.2f, p-value %10.8f, meas/pred %4.2f %4.2f",
+			val_chi2_noConstraint, num_Y, val_chi2_noConstraint/num_Y, p_value_noConstraint,
+			val_data_noConstraint, val_pred_noConstraint
+			)<<endl;
+  
   val_GOF_noConstrain = val_chi2_noConstraint;
   val_GOF_NDF = num_Y;
-  
-  // double sum_chi2 = 0;
-  // for(int ibin=1; ibin<=num_Y; ibin++) {
-  //   double val_pred = matrix_pred_Y(ibin-1, 0);      
-  //   double val_data = matrix_data_Y(ibin-1, 0);
-  //   double val_chi2 = pow(val_pred-val_data,2)/val_pred;
-  //   sum_chi2 += val_chi2;
-  //   cout<<" ---> ibin "<<ibin<<"\t"<<val_chi2<<"\t"<<sum_chi2<<endl;;
-  // }
-  
+
   /////////////////////////////
 
   roostr = TString::Format("h1_pred_Y_noConstraint_%02d", index);
@@ -845,7 +846,8 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   h1_pred_Y_noConstraint->GetXaxis()->SetLabelOffset(2);
   h1_pred_Y_noConstraint->GetYaxis()->CenterTitle();
   h1_pred_Y_noConstraint->GetYaxis()->SetTitleOffset(1.2);
-  
+  h1_pred_Y_noConstraint->GetYaxis()->SetTickLength(0.02);
+    
   h1_pred_Y_noConstraint_clone->Draw("same hist");
   h1_pred_Y_noConstraint_clone->SetLineColor(color_no);
   
@@ -861,7 +863,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   TLegend *lg_top_no = new TLegend((index==1)?0.2:0.5, 0.60, (index==1)?0.4:0.85, 0.85);
   if( index==1 || index==7 ) { lg_top_no->SetX1(0.2); lg_top_no->SetX2(0.4);}
   lg_top_no->AddEntry(gh_data, "Data", "lep");
-  lg_top_no->AddEntry(h1_pred_Y_noConstraint, "Pred no constraint", "lf");
+  lg_top_no->AddEntry(h1_pred_Y_noConstraint, TString::Format("#color[%d]{Pred no constraint}", color_no), "lf");
   lg_top_no->AddEntry("", TString::Format("#color[%d]{#chi^{2}/ndf: %3.2f/%d}", color_no, val_chi2_noConstraint, num_Y), "");
   lg_top_no->Draw();
   lg_top_no->SetBorderSize(0); lg_top_no->SetFillStyle(0); lg_top_no->SetTextSize(0.065);
@@ -898,97 +900,25 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   
   gh_ratio_noConstraint->Draw("same pe");
   gh_ratio_noConstraint->SetMarkerStyle(20); gh_ratio_noConstraint->SetMarkerSize(1.12);
-  gh_ratio_noConstraint->SetMarkerColor(color_no); gh_ratio_noConstraint->SetLineColor(color_no);
+  gh_ratio_noConstraint->SetMarkerColor(color_no); gh_ratio_noConstraint->SetLineColor(color_no);  
 
-  ///
-  // if( index==1 ) {// numuCC
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetLabelColor(10);
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetTickLength(0);
-  //   h1_pred_Y_noConstraint_rel_error->SetXTitle("Reconstructed neutrino energy [MeV]");    
-  //   TGaxis *axis1 = new TGaxis(0, 0, 26, 0,   0, 2600, 505, "S");
-  //   axis1->SetName("axis1");
-  //   axis1->Draw();
-  //   axis1->SetTickSize(0.08);
-  //   axis1->SetLabelSize(0.078);
-  //   axis1->SetLabelFont(42);
-  //   TGaxis *axis2 = new TGaxis(26, 0, 52, 0,   0, 2600, 505, "S");
-  //   axis2->SetName("axis2");   
-  //   axis2->Draw();
-  //   axis2->SetTickSize(0.08);
-  //   axis2->SetLabelSize(0.078);
-  //   axis2->SetLabelFont(42);
-    
-  //   canv_spectra_GoF_no->cd(); pad_top_no->cd();    
-  //   lg_top_no->SetX1(0.2); lg_top_no->SetX2(0.4);
-  //   lg_top_no->Draw();
-  // }
+  h1_pred_Y_noConstraint_rel_error->Draw("same axis");
 
-  // if( index==1 ) {// numuCC
-    
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetLabelColor(10);
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetTickLength(0);
-  //   //h1_pred_Y_noConstraint_rel_error->SetXTitle("E^{rec}_{#mu} [MeV]");
-  //   //h1_pred_Y_noConstraint_rel_error->SetXTitle("cos#theta^{rec}_{#mu}");
-  //   //h1_pred_Y_noConstraint_rel_error->SetXTitle("E^{rec}_{had} [MeV]");
-  //   h1_pred_Y_noConstraint_rel_error->SetXTitle("Reconstructed neutrino energy [MeV]");
-  //   TGaxis *axis1 = new TGaxis(0, 0, 26, 0,   0,2600, 505, "S");
-  //   axis1->SetName("axis1");
-  //   axis1->Draw();
-  //   axis1->SetTickSize(0.08);
-  //   axis1->SetLabelSize(0.078);
-  //   axis1->SetLabelFont(42);
-  //   TGaxis *axis2 = new TGaxis(26, 0, 52, 0,   0,2600, 505, "S");
-  //   axis2->SetName("axis2");   
-  //   axis2->Draw();
-  //   axis2->SetTickSize(0.08);
-  //   axis2->SetLabelSize(0.078);
-  //   axis2->SetLabelFont(42);
+  if( flag_axis_userAA || flag_axis_userAB ) {
+    ///////////////////// bot
+    h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetTickLength(0);
+    h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetLabelSize(0);
+    h1_pred_Y_noConstraint_rel_error->SetXTitle( title_axis_user );
+    if( flag_axis_userAA )  axis_userAA->Draw();
+    if( flag_axis_userAB )  axis_userAB->Draw();
 
-  //   // TPaveText *ptA = new TPaveText(16-1.3, -0.3+0.05, 16+1.3, 0-0.04, "br");
-  //   // ptA->Draw();
-  //   // ptA->SetBorderSize(0);
-  //   // ptA->SetFillColor(0);	
-  //   // TPaveText *pt = new TPaveText(16-1.3, -0.3, 16+1.3, 0,"br");
-  //   // pt->SetLineWidth(2);
-  //   // TText *pt_LaTex = pt->AddText("1, -1");
-  //   // pt_LaTex->SetTextFont(42);
-  //   // pt_LaTex->SetTextSize(0.078);      
-  //   // pt->Draw();
-  //   // pt->SetBorderSize(0);
-  //   // pt->SetFillStyle(0);
-    
-  //   canv_spectra_GoF_no->cd(); pad_top_no->cd();    
-  //   h1_pred_Y_noConstraint->GetXaxis()->SetLabelColor(10);
-  //   h1_pred_Y_noConstraint->GetXaxis()->SetTickLength(0);
-  //   h1_pred_Y_noConstraint->SetXTitle("");    
-  //   TGaxis *axis3 = new TGaxis(0, 0, 26, 0,   0,2600, 505, "S");
-  //   axis3->SetName("axis3");
-  //   axis3->Draw();
-  //   axis3->SetTickSize(0.07);
-  //   axis3->SetLabelSize(0);
-  //   axis3->SetLabelFont(42);
-  //   axis3->SetLabelColor(10);
-  //   TGaxis *axis4 = new TGaxis(26, 0, 52, 0,   0,2600, 505, "S");
-  //   axis4->SetName("axis4");   
-  //   axis4->Draw();
-  //   axis4->SetTickSize(0.07);
-  //   axis4->SetLabelSize(0);
-  //   axis4->SetLabelFont(42);
-  //   axis4->SetLabelColor(10);
-  // }
-  
-  // if( index>=2 && index<=4 ) {// pi0
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetLabelColor(10);
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetTickLength(0);
-  //   h1_pred_Y_noConstraint_rel_error->SetXTitle("Reconstructed kinetic energy of #pi^{0}  [MeV]");
-  //   TGaxis *axis1 = new TGaxis(0, 0, 11, 0,   0, 1100, 508, "S");
-  //   axis1->SetName("axis1");
-  //   axis1->Draw();
-  //   axis1->SetTickSize(0.05);
-  //   axis1->SetLabelSize(0.078);
-  //   axis1->SetLabelFont(42);    
-  // }
-  
+    ///////////////////// top
+    canv_spectra_GoF_no->cd(); pad_top_no->cd();
+    h1_pred_Y_noConstraint->GetXaxis()->SetTickLength(0);
+    h1_pred_Y_noConstraint->GetXaxis()->SetLabelSize(0);
+    if( flag_axis_userAA ) axis_userAA_clone->Draw();
+    if( flag_axis_userAB ) axis_userAB_clone->Draw();    
+  }
   
   if( num_X==0 ) {
     gh_ratio_noConstraint->SetMarkerColor(kBlue); gh_ratio_noConstraint->SetLineColor(kBlue);
@@ -1052,7 +982,6 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   for(int idx=0; idx<num_Y; idx++) {
     val_data_wiConstraint += matrix_data_Y(idx,0);
     val_pred_wiConstraint += matrix_Y_under_X(idx,0);
-    //cout<<" ---> "<<matrix_Y_under_X(idx,0) - matrix_pred_Y(idx, 0)<<endl;
   }  
   cout<<TString::Format(" ---> GOF wiConstraint: chi2 %6.2f, ndf %3d, chi2/ndf %6.2f, p-value %10.8f, meas/pred %4.2f %4.2f",
 			val_chi2_wiConstraint, num_Y, val_chi2_wiConstraint/num_Y, p_value_wiConstraint,
@@ -1117,7 +1046,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   TLegend *lg_top_wi = new TLegend(0.5, 0.60, 0.85, 0.85);
   if( index==1 || index==7 ) { lg_top_wi->SetX1(0.2); lg_top_wi->SetX2(0.4);}
   lg_top_wi->AddEntry(gh_data, "Data", "lep");
-  lg_top_wi->AddEntry(h1_pred_Y_wiConstraint, "Pred wi constraint", "lf");
+  lg_top_wi->AddEntry(h1_pred_Y_wiConstraint, TString::Format("#color[%d]{Pred wi constraint}", color_wi), "lf");
   lg_top_wi->AddEntry("", TString::Format("#color[%d]{#chi^{2}/ndf: %3.2f/%d}", color_wi, val_chi2_wiConstraint, num_Y), "");
   lg_top_wi->Draw();
   lg_top_wi->SetBorderSize(0); lg_top_wi->SetFillStyle(0); lg_top_wi->SetTextSize(0.065);
@@ -1148,18 +1077,19 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   gh_ratio_wiConstraint->Draw("same pe");
   gh_ratio_wiConstraint->SetMarkerStyle(20); gh_ratio_wiConstraint->SetMarkerSize(1.12);
   gh_ratio_wiConstraint->SetMarkerColor(color_wi); gh_ratio_wiConstraint->SetLineColor(color_wi);
+
+  h1_pred_Y_wiConstraint_rel_error->Draw("same axis");
    
-  // if( index>=2 && index<=4 ) {// pi0
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetLabelColor(10);
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetTickLength(0);
-  //   h1_pred_Y_noConstraint_rel_error->SetXTitle("Reconstructed kinetic energy of #pi^{0}  [MeV]");
-  //   TGaxis *axis1 = new TGaxis(0, 0, 11, 0,   0, 1100, 508, "S");
-  //   axis1->SetName("axis1");
-  //   axis1->Draw();
-  //   axis1->SetTickSize(0.05);
-  //   axis1->SetLabelSize(0.078);
-  //   axis1->SetLabelFont(42);    
-  // }
+  if( flag_axis_userAA || flag_axis_userAB ) {
+    ///////////////////// bot
+    if( flag_axis_userAA )  axis_userAA->Draw();
+    if( flag_axis_userAB )  axis_userAB->Draw();
+
+    ///////////////////// top
+    canv_spectra_GoF_wi->cd(); pad_top_wi->cd();
+    if( flag_axis_userAA ) axis_userAA_clone->Draw();
+    if( flag_axis_userAB ) axis_userAB_clone->Draw();    
+  }
   
   /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1183,7 +1113,8 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   ////////////////
 
   roostr = TString::Format("h1_spectra_wi2no_%02d", index);
-  TH1D *h1_spectra_wi2no = new TH1D(roostr, "", num_Y, 0, num_Y);
+  TH1D *h1_spectra_wi2no = (TH1D*)h1_pred_Y_noConstraint->Clone(roostr);
+  h1_spectra_wi2no->SetFillStyle(0);
   for(int ibin=1; ibin<=num_Y; ibin++) {
     double val_wiConstraint = h1_pred_Y_wiConstraint->GetBinContent(ibin);
     double val_noConstraint = h1_pred_Y_noConstraint->GetBinContent(ibin);
@@ -1197,55 +1128,21 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   func_canv_margin(canv_spectra_wi2no, 0.15, 0.1, 0.1, 0.15);
   canv_spectra_wi2no->SetGridy();
       
-  h1_spectra_wi2no->Draw();
+  h1_spectra_wi2no->Draw("hist");
   h1_spectra_wi2no->SetLineColor(color_wi);
+  h1_spectra_wi2no->SetMinimum(0);
+  h1_spectra_wi2no->SetMaximum(2);
   func_title_size(h1_spectra_wi2no, 0.05, 0.05, 0.05, 0.05);
-  func_xy_title(h1_spectra_wi2no, "Bin index", "Prediction wi/no constraint");
+  func_xy_title(h1_spectra_wi2no, title_axis_user, "Prediction wi/no constraint");
   h1_spectra_wi2no->GetXaxis()->CenterTitle(); h1_spectra_wi2no->GetYaxis()->CenterTitle(); 
   h1_spectra_wi2no->GetYaxis()->SetTitleOffset(1.18);
   h1_spectra_wi2no->GetYaxis()->SetNdivisions(509);
-
-  // TF1 *f1_wi2no = new TF1("f1_wi2no", "1", 0, 1e6);
-  // f1_wi2no->Draw("same"); f1_wi2no->SetLineColor(kBlack); f1_wi2no->SetLineStyle(7);
-
-  // if( index==5 ) {// nueCC PC
-  //   h1_spectra_wi2no->GetXaxis()->SetLabelColor(10);
-  //   h1_spectra_wi2no->GetXaxis()->SetTickLength(0);
-  //   h1_spectra_wi2no->SetXTitle("Reconstructed neutrino energy [MeV]");
-  //   canv_spectra_wi2no->cd(); canv_spectra_wi2no->Update(); double yymin = gPad->GetUymin();
-  //   TGaxis *axis1 = new TGaxis(0, yymin, 26, yymin,   0, 2600, 508, "S");
-  //   axis1->SetName("axis1");
-  //   axis1->Draw();
-  //   axis1->SetTickSize(0.035);
-  //   axis1->SetLabelSize(0.05);
-  //   axis1->SetLabelFont(42);    
-  // }
-  
-  // if( index==6 ) {// nueCC PC
-  //   h1_spectra_wi2no->GetXaxis()->SetLabelColor(10);
-  //   h1_spectra_wi2no->GetXaxis()->SetTickLength(0);
-  //   h1_spectra_wi2no->SetXTitle("Reconstructed neutrino energy [MeV]");
-  //   canv_spectra_wi2no->cd(); canv_spectra_wi2no->Update(); double yymin = gPad->GetUymin();
-  //   TGaxis *axis1 = new TGaxis(0, yymin, 18, yymin,   800, 2600, 508, "S");
-  //   axis1->SetName("axis1");
-  //   axis1->Draw();
-  //   axis1->SetTickSize(0.035);
-  //   axis1->SetLabelSize(0.05);
-  //   axis1->SetLabelFont(42);    
-  // }
-  
-  // if( index==7 ) {// nueCC PC
-  //   h1_spectra_wi2no->GetXaxis()->SetLabelColor(10);
-  //   h1_spectra_wi2no->GetXaxis()->SetTickLength(0);
-  //   h1_spectra_wi2no->SetXTitle("Reconstructed neutrino energy [MeV]");
-  //   canv_spectra_wi2no->cd(); canv_spectra_wi2no->Update(); double yymin = gPad->GetUymin();
-  //   TGaxis *axis1 = new TGaxis(0, yymin, 8, yymin,   0, 800, 508, "S");
-  //   axis1->SetName("axis1");
-  //   axis1->Draw();
-  //   axis1->SetTickSize(0.035);
-  //   axis1->SetLabelSize(0.05);
-  //   axis1->SetLabelFont(42);    
-  // }
+  h1_spectra_wi2no->GetYaxis()->SetTickLength(0.03);
+        
+  if( flag_axis_userAA || flag_axis_userAB ) {/// ttt
+    if( flag_axis_userAA )  axis_userAA_wi2no->Draw();
+    if( flag_axis_userAB )  axis_userAB_wi2no->Draw(); 
+  }
   
   roostr = TString::Format("canv_spectra_wi2no_%02d.png", index); canv_spectra_wi2no->SaveAs(roostr);
   
@@ -1294,70 +1191,24 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   
   gh_ratio_noConstraint->Draw("same pe");
   gh_ratio_wiConstraint->Draw("same pe");
-  
-  // if( index==5 ) {// nueCC PC
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetLabelColor(10);
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetTickLength(0);
-  //   h1_pred_Y_noConstraint_rel_error->SetXTitle("Reconstructed neutrino energy [MeV]");
-  //   TGaxis *axis1 = new TGaxis(0, 0, 26, 0,   0, 2600, 508, "S");
-  //   axis1->SetName("axis1");
-  //   axis1->Draw();
-  //   axis1->SetTickSize(0.05);
-  //   axis1->SetLabelSize(0.078);
-  //   axis1->SetLabelFont(42);    
-  // }
-  
-  // if( index==7 ) {// nueCC PC
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetLabelColor(10);
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetTickLength(0);
-  //   h1_pred_Y_noConstraint_rel_error->SetXTitle("Reconstructed neutrino energy [MeV]");
-  //   TGaxis *axis1 = new TGaxis(0, 0, 8, 0,   0, 800, 508, "S");
-  //   axis1->SetName("axis1");
-  //   axis1->Draw();
-  //   axis1->SetTickSize(0.05);
-  //   axis1->SetLabelSize(0.078);
-  //   axis1->SetLabelFont(42);
+      
+  if( flag_axis_userAA || flag_axis_userAB ) {
+    ///////////////////// bot
+    if( flag_axis_userAA )  axis_userAA->Draw();
+    if( flag_axis_userAB )  axis_userAB->Draw();
 
-  //   canv_spectra_GoF_total->cd(); pad_top_total->cd();    
-  //   h1_pred_Y_wiConstraint->GetXaxis()->SetLabelColor(10);
-  //   h1_pred_Y_wiConstraint->GetXaxis()->SetTickLength(0);
-  //   h1_pred_Y_wiConstraint->SetXTitle("");    
-  //   TGaxis *axis3 = new TGaxis(0, 0, 8, 0,   0,800, 508, "S");
-  //   axis3->SetName("axis3");
-  //   axis3->Draw();
-  //   axis3->SetTickSize(0.045);
-  //   axis3->SetLabelSize(0);
-  //   axis3->SetLabelFont(42);
-  //   axis3->SetLabelColor(10);
-  // }
-   
-  // if( index==7 ) {// nueCC PC
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetLabelColor(10);
-  //   h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetTickLength(0);
-  //   h1_pred_Y_noConstraint_rel_error->SetXTitle("Reconstructed neutrino energy [MeV]");
-  //   TGaxis *axis1 = new TGaxis(0, 0, 8, 0,   0, 800, 508, "S");
-  //   axis1->SetName("axis1");
-  //   axis1->Draw();
-  //   axis1->SetTickSize(0.05);
-  //   axis1->SetLabelSize(0.078);
-  //   axis1->SetLabelFont(42);    
-  // }
+    ///////////////////// top
+    canv_spectra_GoF_wi->cd(); pad_top_wi->cd();
+    if( flag_axis_userAA ) axis_userAA_clone->Draw();
+    if( flag_axis_userAB ) axis_userAB_clone->Draw();    
+  }
   
-  /*
-  h1_spectra_wi2no->Draw("same");
-  h1_spectra_wi2no->SetLineColor(kGreen+1);
-  
-  TLegend *lg_wi2no = new TLegend(0.92, 0.15, 0.94, 0.60);
-  lg_wi2no->SetHeader( TString::Format("#color[%d]{Prediction wi/wo}", kGreen+1) );
-  lg_wi2no->Draw("same"); lg_wi2no->SetTextSize(0.078); lg_wi2no->SetTextAngle(90);
-  lg_wi2no->SetBorderSize(0);
-  */
-
-  // TFile *file_test = new TFile("file_test.root", "recreate");
-  // gh_ratio_noConstraint->Write("gh_data2no");
-  // h1_spectra_wi2no->Write();
-  // h1_pred_Y_wiConstraint_clone->Write();
-  // file_test->Close();
+  // h1_spectra_wi2no->Draw("same");
+  // h1_spectra_wi2no->SetLineColor(kGreen+1);  
+  // TLegend *lg_wi2no = new TLegend(0.92, 0.15, 0.94, 0.60);
+  // lg_wi2no->SetHeader( TString::Format("#color[%d]{Prediction wi/wo}", kGreen+1) );
+  // lg_wi2no->Draw("same"); lg_wi2no->SetTextSize(0.078); lg_wi2no->SetTextAngle(90);
+  // lg_wi2no->SetBorderSize(0);
   
   // TLatex *latex = new TLatex(0.5, 0.5, TString::Format("#color[%d]{Predictioin wi/wo}", kGreen+1));
   // latex->Draw("same"); latex->SetTextSize(0.078); //latex->SetTextAngle(90);
