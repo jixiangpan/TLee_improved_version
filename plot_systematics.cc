@@ -42,6 +42,7 @@ void plot_systematics()
   map<int, TMatrixD*>matrix_absolute_detector_sub_cov_newworld;
   for(int idx=1; idx<=10; idx++) {
     if( idx==5 ) continue;
+    //if( idx==10 ) continue;
     roostr = TString::Format("matrix_absolute_detector_sub_cov_newworld_%02d", idx);
     matrix_absolute_detector_sub_cov_newworld[idx] = (TMatrixD*)roofile_syst->Get(roostr);
   }
@@ -230,6 +231,8 @@ void plot_systematics()
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_flux_relerr->SetBinContent(ibin, val_relerr);
+
+	if( val_cv==0 ) h1_flux_relerr->SetBinContent(ibin, 0);
       }
       
     }// jbin
@@ -304,6 +307,8 @@ void plot_systematics()
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_Xs_relerr->SetBinContent(ibin, val_relerr);
+
+	if( val_cv==0 ) h1_Xs_relerr->SetBinContent(ibin, 0);
       }
       
     }// jbin
@@ -340,7 +345,9 @@ void plot_systematics()
   canv_h2_correlation_Xs->SaveAs("canv_h2_correlation_Xs.png");
   canv_h2_correlation_Xs->SaveAs("canv_h2_correlation_Xs.root");
   h2_correlation_Xs->SaveAs("h2_correlation_Xs.root");
-    
+
+  h2_correlation_Xs->SaveAs("h2_correlation_Xs.root");
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////// detector
 
   roostr = "h2_covariance_detector";
@@ -382,6 +389,8 @@ void plot_systematics()
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_detector_relerr->SetBinContent(ibin, val_relerr);
+
+	if( val_cv==0 ) h1_detector_relerr->SetBinContent(ibin, 0);
       }
       
     }// jbin
@@ -472,6 +481,8 @@ void plot_systematics()
 	  double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	  double val_relerr = sqrt(cov_ij)/val_cv;
 	  h1_detector_relerr_sub[idx]->SetBinContent(ibin, val_relerr);
+
+	  if( val_cv==0 ) h1_detector_relerr_sub[idx]->SetBinContent(ibin, 0);
 	}
       
       }// jbin
@@ -551,6 +562,8 @@ void plot_systematics()
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_mc_stat_relerr->SetBinContent(ibin, val_relerr);
+
+	if( val_cv==0 ) h1_mc_stat_relerr->SetBinContent(ibin, 0);
       }
       
     }// jbin
@@ -627,6 +640,8 @@ void plot_systematics()
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_additional_relerr->SetBinContent(ibin, val_relerr);
+
+	if( val_cv==0 ) h1_additional_relerr->SetBinContent(ibin, 0);
       }
       
     }// jbin
@@ -701,6 +716,8 @@ void plot_systematics()
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_total_relerr->SetBinContent(ibin, val_relerr);
+
+	if( val_cv==0 ) h1_total_relerr->SetBinContent(ibin, 0);
       }
       
     }// jbin
@@ -750,7 +767,7 @@ void plot_systematics()
   func_title_size(h2_relerr_flux_Xs, 0.06, 0.042, 0.04, 0.04);
   h2_relerr_flux_Xs->GetXaxis()->LabelsOption("v R");
   h2_relerr_flux_Xs->GetXaxis()->SetTickLength(0);
-  func_xy_title(h2_relerr_flux_Xs, "Reco energy [MeV]", "Relative error");
+  func_xy_title(h2_relerr_flux_Xs, "Reco energy [MeV]", "Relative uncertainty");
   h2_relerr_flux_Xs->GetXaxis()->CenterTitle(); h2_relerr_flux_Xs->GetYaxis()->CenterTitle();
   h2_relerr_flux_Xs->GetXaxis()->SetTitleOffset(1.9); h2_relerr_flux_Xs->GetYaxis()->SetTitleOffset(1.);
    

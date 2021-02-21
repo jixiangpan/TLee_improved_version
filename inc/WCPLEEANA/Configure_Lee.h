@@ -15,6 +15,15 @@ namespace config_Lee
   TString detector_directory = "./new_TLee_input_opendata5e19/det/";
   TString mc_directory = "./new_TLee_input_opendata5e19/mc_stat/";
   
+  /* TString spectra_file = "./run1_3_far_sideband/merge_run1.root"; */
+  /* //TString spectra_file = "./new_TLee_input_opendata5e19/merge.root"; */
+  /* //TString flux_Xs_directory = "./new_TLee_input_opendata5e19/flux_Xs/"; */
+  /* TString flux_Xs_directory = "./run1_3_far_sideband/"; */
+  /* //TString detector_directory = "./new_TLee_input_opendata5e19/det/"; */
+  //TString detector_directory = "./run1_3_far_sideband/";
+  /* //TString mc_directory = "./new_TLee_input_opendata5e19/mc_stat/"; */
+  /* TString mc_directory = "./run1_3_far_sideband/"; */
+  
   /* TString spectra_file = "./new_TLee_input_fakeset5_myself/merge.root"; */
   /* TString flux_Xs_directory = "./new_TLee_input_fakeset5_myself/flux_Xs/"; */
   /* TString detector_directory = "./new_TLee_input_fakeset5_myself/det/"; */
@@ -54,7 +63,7 @@ namespace config_Lee
   
   ////////// display graphics flag
 
-  bool flag_display_graphics = 0;
+  bool flag_display_graphics = 1;
   
   ////////// systematics flag
   
@@ -79,7 +88,7 @@ namespace config_Lee
   bool flag_NCpi0_by_numuCC        = 0;// 4
   bool flag_nueCC_PC_by_numuCC_pi0 = 0;// 5
   bool flag_nueCC_HghE_FC_by_numuCC_pi0_nueFC = 0;// 6, HghE>800 MeV
-  bool flag_nueCC_LowE_FC_by_all   = 0;// 7
+  bool flag_nueCC_LowE_FC_by_all   = 1;// 7
   bool flag_nueCC_FC_by_all        = 0;// 8
 
   ////////// Lee strength fitting -- data
