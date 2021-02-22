@@ -74,7 +74,7 @@ namespace config_Lee
 
   double Lee_strength_for_outputfile_covariance_matrix = 0;
   
-  bool flag_plotting_systematics   = 0;
+  bool flag_plotting_systematics   = 1;
   
   ////////// goodness of fit
   
