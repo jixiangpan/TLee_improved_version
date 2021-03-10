@@ -73,11 +73,23 @@ void plot_FC_new()
 
   bool flag_file_Asimov = 0;
 
-  double val_best = 0.3215;
+  
   //TString dir_str = "./new_results_open5e19/";
   //TString dir_str = "./new_results_fake5/";
-  TString dir_str = "./new_results_fake5_ch9/";
+  //TString dir_str = "./new_results_fake5_ch9/";
   //TString dir_str = "./new_results_fake7/";
+  
+  // double val_best = 0.0779;
+  // TString dir_str = "./result_fake7_ch7/";
+  
+  double val_best = 0.3648;
+  TString dir_str = "./result_fake5_ch9/";
+  
+  //double val_best = 0.3385;
+  //TString dir_str = "./result_fake5_ch7/";
+  
+  // double val_best = 0;
+  // TString dir_str = "./result_opendata_ch7/";
   
   //////////////////////////////////////////////////////////////////////////////////////// file_fc
 

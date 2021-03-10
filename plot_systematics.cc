@@ -268,7 +268,7 @@ void plot_systematics()
 
   canv_h2_correlation_flux->SaveAs("canv_h2_correlation_flux.png");
   canv_h2_correlation_flux->SaveAs("canv_h2_correlation_flux.root");
-  h2_correlation_flux->SaveAs("h2_correlation_flux.root");
+  //h2_correlation_flux->SaveAs("h2_correlation_flux.root");
   
   /////////////////////////////////////////////////////////////////////////////////////////////////////// Xs
 
@@ -344,9 +344,7 @@ void plot_systematics()
 
   canv_h2_correlation_Xs->SaveAs("canv_h2_correlation_Xs.png");
   canv_h2_correlation_Xs->SaveAs("canv_h2_correlation_Xs.root");
-  h2_correlation_Xs->SaveAs("h2_correlation_Xs.root");
-
-  h2_correlation_Xs->SaveAs("h2_correlation_Xs.root");
+  //h2_correlation_Xs->SaveAs("h2_correlation_Xs.root");
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////// detector
 
@@ -950,6 +948,7 @@ void plot_systematics()
     double val_flux = h1_flux_relerr->GetBinContent(ibin);
     double val_total = h1_total_relerr->GetBinContent(ibin);
     double val_frac = val_flux*val_flux*100./val_total/val_total;
+    if( val_total==0 ) val_frac = 0;
     h1_fraction_flux->SetBinContent( ibin, val_frac );
   }
   h1_fraction_flux->SetFillColor(color_flux);
@@ -962,6 +961,7 @@ void plot_systematics()
     double val_Xs = h1_Xs_relerr->GetBinContent(ibin);
     double val_total = h1_total_relerr->GetBinContent(ibin);
     double val_frac = val_Xs*val_Xs*100./val_total/val_total;
+    if( val_total==0 ) val_frac = 0;
     h1_fraction_Xs->SetBinContent( ibin, val_frac );
   }
   h1_fraction_Xs->SetFillColor(color_Xs);
@@ -974,6 +974,7 @@ void plot_systematics()
     double val_detector = h1_detector_relerr->GetBinContent(ibin);
     double val_total = h1_total_relerr->GetBinContent(ibin);
     double val_frac = val_detector*val_detector*100./val_total/val_total;
+    if( val_total==0 ) val_frac = 0;
     h1_fraction_detector->SetBinContent( ibin, val_frac );
   }
   h1_fraction_detector->SetFillColor(color_detector);
@@ -986,6 +987,7 @@ void plot_systematics()
     double val_mc_stat = h1_mc_stat_relerr->GetBinContent(ibin);
     double val_total = h1_total_relerr->GetBinContent(ibin);
     double val_frac = val_mc_stat*val_mc_stat*100./val_total/val_total;
+    if( val_total==0 ) val_frac = 0;
     h1_fraction_mc_stat->SetBinContent( ibin, val_frac );
   }
   h1_fraction_mc_stat->SetFillColor(color_mc_stat);
@@ -998,6 +1000,7 @@ void plot_systematics()
     double val_additional = h1_additional_relerr->GetBinContent(ibin);
     double val_total = h1_total_relerr->GetBinContent(ibin);
     double val_frac = val_additional*val_additional*100./val_total/val_total;
+    if( val_total==0 ) val_frac = 0;
     h1_fraction_additional->SetBinContent( ibin, val_frac );
   }
   h1_fraction_additional->SetFillColor(color_additional);

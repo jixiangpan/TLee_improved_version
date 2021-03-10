@@ -684,34 +684,142 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
 
   //////////////////////////////////// ttt
   
-  bool flag_axis_userAA = false;
-  bool flag_axis_userAB = false;
+  bool flag_axis_userAA = 0;
+  bool flag_axis_userAB = 0;
+
+  ///////////
+  
+  int axis_user_divisions = 508;
+  
+  double userAA_index_low = 0;
+  double userAA_index_hgh = 16;
+  double userAA_value_low = -1;
+  double userAA_value_hgh = 1;
+  double userAA_TickSize       = 0.06;
+  double userAA_LabelSize      = 0.078;  
+  double userAA_clone_TickSize = 0.05;
+  double userAA_wi2no_TickSize = 0.03;;
+  
+  double userAB_index_low = 0;
+  double userAB_index_hgh = 16;
+  double userAB_value_low = -1;
+  double userAB_value_hgh = 1;
+  double userAB_TickSize       = 0.06;
+  double userAB_LabelSize      = 0.078;  
+  double userAB_clone_TickSize = 0.05;
+  double userAB_wi2no_TickSize = 0.03;;
   
   TString title_axis_user = "E_{#nu}^{rec}";
 
-  TGaxis *axis_userAA = new TGaxis(0, 0, 25, 0,   0, 2500, 504, "S");
+  if( index==1 ) {    
+    flag_axis_userAA = 1;
+    flag_axis_userAB = 1;
+
+    title_axis_user = "Reco neutrino energy (MeV)";
+    axis_user_divisions = 503;
+      
+    userAA_index_low = 0;
+    userAA_index_hgh = 26;
+    userAA_value_low = 0;
+    userAA_value_hgh = 2600;
+    
+    userAB_index_low = 26;
+    userAB_index_hgh = 52;
+    userAB_value_low = 0;
+    userAB_value_hgh = 2600;    
+  }
+
+  if( index==2 || index==3 || index==4 ) {
+    flag_axis_userAA = 1;
+    flag_axis_userAB = 0;
+
+    title_axis_user = "Reco kinetic energy of #pi^{0} (MeV)";
+    axis_user_divisions = 508;
+      
+    userAA_index_low = 0;
+    userAA_index_hgh = 11;
+    userAA_value_low = 0;
+    userAA_value_hgh = 1100;    
+  }
+  
+  if( index==5 ) {
+    flag_axis_userAA = 1;
+    flag_axis_userAB = 0;
+
+    title_axis_user = "Reco neutrino energy (MeV)";
+    axis_user_divisions = 508;
+      
+    userAA_index_low = 0;
+    userAA_index_hgh = 26;
+    userAA_value_low = 0;
+    userAA_value_hgh = 2600;    
+  }
+   
+  if( index==6 ) {
+    flag_axis_userAA = 1;
+    flag_axis_userAB = 0;
+
+    title_axis_user = "Reco neutrino energy (MeV)";
+    axis_user_divisions = 508;
+      
+    userAA_index_low = 0;
+    userAA_index_hgh = 18;
+    userAA_value_low = 800;
+    userAA_value_hgh = 2600;    
+  }
+  
+  if( index==7 ) {
+    flag_axis_userAA = 1;
+    flag_axis_userAB = 0;
+
+    title_axis_user = "Reco neutrino energy (MeV)";
+    axis_user_divisions = 508;
+      
+    userAA_index_low = 0;
+    userAA_index_hgh = 8;
+    userAA_value_low = 0;
+    userAA_value_hgh = 800;    
+  }
+    
+  if( index==8 ) {
+    flag_axis_userAA = 1;
+    flag_axis_userAB = 0;
+
+    title_axis_user = "Reco neutrino energy (MeV)";
+    axis_user_divisions = 508;
+      
+    userAA_index_low = 0;
+    userAA_index_hgh = 26;
+    userAA_value_low = 0;
+    userAA_value_hgh = 2600;    
+  }
+  
+  
+  ///////////
+    
+  TGaxis *axis_userAA = new TGaxis(userAA_index_low, 0, userAA_index_hgh, 0,   userAA_value_low, userAA_value_hgh, axis_user_divisions, "S");
   axis_userAA->SetName("axis_userAA");
-  axis_userAA->SetTickSize(0.06);
-  axis_userAA->SetLabelSize(0.078);
+  axis_userAA->SetTickSize(userAA_TickSize);
+  axis_userAA->SetLabelSize(userAA_LabelSize);
   axis_userAA->SetLabelFont(42);
   TGaxis *axis_userAA_clone = (TGaxis*)axis_userAA->Clone("axis_userAA_clone");
   axis_userAA_clone->SetLabelSize(0);
-  axis_userAA_clone->SetTickSize(0.05);
+  axis_userAA_clone->SetTickSize(userAA_clone_TickSize);
   TGaxis *axis_userAA_wi2no = (TGaxis*)axis_userAA->Clone("axis_userAA_clone");
-  axis_userAA_wi2no->SetLabelSize(0.05);
-  axis_userAA_wi2no->SetTickSize(0.03);
+  axis_userAA_wi2no->SetLabelSize(userAA_clone_TickSize);
+  axis_userAA_wi2no->SetTickSize(userAA_wi2no_TickSize);
     
-  TGaxis *axis_userAB = new TGaxis(25, 0, 52, 0,   0, 2500, 504, "S");
+  TGaxis *axis_userAB = new TGaxis(userAB_index_low, 0, userAB_index_hgh, 0,   userAB_value_low, userAB_value_hgh, axis_user_divisions, "S");
   axis_userAB->SetName("axis_userAB");
-  axis_userAB->SetTickSize(0.06);
-  axis_userAB->SetLabelSize(0.078);
+  axis_userAB->SetTickSize(userAB_TickSize);
+  axis_userAB->SetLabelSize(userAB_LabelSize);
   axis_userAB->SetLabelFont(42);
   TGaxis *axis_userAB_clone = (TGaxis*)axis_userAB->Clone("axis_userAB_clone");
   axis_userAB_clone->SetLabelSize(0);
-  axis_userAB_clone->SetTickSize(0.05);
+  axis_userAB_clone->SetTickSize(userAB_clone_TickSize);
   TGaxis *axis_userAB_wi2no = (TGaxis*)axis_userAB->Clone("axis_userAB_clone");
-  axis_userAB_wi2no->SetLabelSize(0.05);
-  axis_userAB_wi2no->SetTickSize(0.03);
+  axis_userAB_wi2no->SetLabelSize(userAB_clone_TickSize);
+  axis_userAB_wi2no->SetTickSize(userAB_wi2no_TickSize);
     
   ///////////////////////////////////////////////////////////////////////////////////////////// for no-systematics
 
@@ -838,6 +946,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   
   h1_pred_Y_noConstraint->Draw("e2");
   h1_pred_Y_noConstraint->SetMinimum(0.);
+  //h1_pred_Y_noConstraint->SetMaximum(4.6);
   h1_pred_Y_noConstraint->SetMarkerSize(0.);
   h1_pred_Y_noConstraint->SetFillColor(color_no); h1_pred_Y_noConstraint->SetFillStyle(3005);
   h1_pred_Y_noConstraint->SetLineColor(color_no);
@@ -1437,7 +1546,7 @@ void TLee::Set_Spectra_MatrixCov()
   TString roostr = "";
 
   ////////////////////////////////////// pred
-  
+
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
@@ -1458,9 +1567,9 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
-
+ 
   /////////////////////////////////////// case: fake data
-  /*
+/*  
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
@@ -1469,13 +1578,14 @@ void TLee::Set_Spectra_MatrixCov()
   map_input_spectrum_ch_str[6] = "CCpi0_PC_norm";
   map_input_spectrum_ch_str[7] = "NCpi0_norm";
   map_input_spectrum_ch_str[8] = "Lee_FC";
-  map_input_spectrum_ch_str[9] = "Lee_PC"; 
+  map_input_spectrum_ch_str[9] = "Lee_PC";
+  
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
-  */
+*/  
   /////////////////////////////////////// case: 1u0p and 1uNp
-  /*
+/* 
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_1u0p_norm";
@@ -1487,10 +1597,11 @@ void TLee::Set_Spectra_MatrixCov()
   map_input_spectrum_ch_str[9] = "NCpi0_norm";
   map_input_spectrum_ch_str[10] = "Lee_FC";
   map_input_spectrum_ch_str[11] = "Lee_PC";
+
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[10] = 1;
   map_Lee_ch[11] = 1;
-  */
+*/ 
   //////////////////
   //////////////////
   
@@ -1647,6 +1758,42 @@ void TLee::Set_Spectra_MatrixCov()
   }
   cout<<endl;
 
+  if( 0 ) {
+    cout<<endl<<" testestest "<<endl<<endl;
+
+    int user_rows = matrix_detector_frac.GetNrows();
+    const double user_nue_reduced = sqrt(3.);
+    
+    for(int idx=0; idx<user_rows; idx++) {
+      for(int jdx=0; jdx<user_rows; jdx++) {
+
+	////
+        int flag_idx = 0;
+	if( idx>=1-1 || idx<=26*2-1 ) flag_idx = 1;
+	if( idx>=26*4+11*3 ) flag_idx = 1;
+	  
+	////
+	int flag_jdx = 0;
+	if( jdx>=1-1 || jdx<=26*2-1 ) flag_jdx = 1;
+	if( jdx>=26*4+11*3 ) flag_jdx = 1;
+
+	////
+	double val = matrix_detector_frac(idx, jdx);
+
+	if( flag_idx+flag_jdx==1 ) {
+	  val = val/user_nue_reduced;
+	}
+	if( flag_idx+flag_jdx==2 ) {
+	  val = val/user_nue_reduced/user_nue_reduced;
+	}
+
+	matrix_detector_frac(idx, jdx) = val;
+	
+      }// for(int jdx=0; jdx<user_rows; jdx++)
+    }//for(int idx=0; idx<user_rows; idx++) 
+    
+  }
+  
   ////////////////////////////////////////// additional
 
   TMatrixD *matrix_additional_abs_point = (TMatrixD*)file_spectra->Get("cov_mat_add");

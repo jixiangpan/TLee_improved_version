@@ -26,22 +26,27 @@ void plot_null_true()
   TString roostr = "";
 
   // roostr = "./new_results_open5e19/file_exLEE_simple.root";
-  // double dchi2_data = 5.0884;// opendata, at LEE = 1
+  // double dchi2_data = ;// opendata, at LEE = 1
 
   /// fake5, 7ch
-  roostr = "./new_results_fake5/file_exLEE_exSM.root";
-  //double dchi2_data = 8.4120;// LEE=1
-  //double dchi2_data = 3.1704;// LEE=0
-
+  //roostr = "./result_fake5_ch7/file_exLEE_exSM.root"; 
+  //double dchi2_data = 5.1594;// LEE=1
+  //double dchi2_data = 3.3346;// LEE=0
+  
   /// fake5, 9ch
-  roostr = "./new_results_fake5_ch9/file_exLEE_exSM.root";
-  double dchi2_data = 7.2006;// LEE=1
-  //double dchi2_data = 3.6410;// LEE=0
+  roostr = "./result_fake5_ch9/file_exLEE_exSM.root"; 
+  double dchi2_data = 4.3410;// LEE=1
+  //double dchi2_data = 3.4885;// LEE=0
+  
+  /// opendata, 7ch
+  //roostr = "./result_opendata_ch7/file_exLEE_simple.root";
+  //double dchi2_data = 4.7481;// LEE=1
+  //double dchi2_data = 4.7481;// LEE=0
 
   /// fake7, 7ch
-  //roostr = "./new_results_fake7/file_exLEE_exSM.root";
-  //double dchi2_data = 5.0879;// LEE=1
-  //double dchi2_data = 0.0623;// LEE=0
+  //roostr = "./result_fake7_ch7/file_exLEE_exSM.root";
+  //double dchi2_data = 3.9730;// LEE=1
+  //double dchi2_data = 0.0536;// LEE=0
 
   //////////////////////////////
   

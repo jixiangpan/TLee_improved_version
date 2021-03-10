@@ -246,9 +246,10 @@ int main(int argc, char** argv)
 
   
   if( 0 ) {// first 6 bins--> 1 bin, constrained by others
-    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 1 + (26-6) + 26*3 + 11*3 );// oldworld, newworld
-    for( int ibin=1; ibin<=6; ibin++) matrix_gof_trans(ibin-1, 0) = 1;
-    for( int ibin=1; ibin<=26*4+11*3-6; ibin++) matrix_gof_trans(6+ibin-1, ibin) = 1;
+    int nbins_first = 6;
+    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 1 + (26-nbins_first) + 26*3 + 11*3 );// oldworld, newworld
+    for( int ibin=1; ibin<=nbins_first; ibin++) matrix_gof_trans(ibin-1, 0) = 1;
+    for( int ibin=1; ibin<=26*4+11*3-nbins_first; ibin++) matrix_gof_trans(nbins_first+ibin-1, ibin) = 1;
     
     
     TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
@@ -262,6 +263,7 @@ int main(int argc, char** argv)
   }  
   
   if( 0 ) {// first 6 bins, constrained by others
+    int nbins_first = 6;
     TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 26*4 + 11*3 );// oldworld, newworld
     for( int ibin=1; ibin<=26*4 + 11*3; ibin++) matrix_gof_trans(ibin-1, ibin-1) = 1;
     
@@ -272,7 +274,7 @@ int main(int argc, char** argv)
     TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
     TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
 
-    Lee_test->Exe_Goodness_of_fit( 6, matrix_gof_trans.GetNcols()-6, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 202);
+    Lee_test->Exe_Goodness_of_fit( nbins_first, matrix_gof_trans.GetNcols()-nbins_first, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 202);
   }
 
   ///////////////////////// gof
@@ -657,7 +659,7 @@ int main(int argc, char** argv)
     tree->Branch("chi2_null_null8Lee_true8Lee", &chi2_null_null8Lee_true8Lee, "chi2_null_null8Lee_true8Lee/D" );
     tree->Branch("chi2_gmin_null8Lee_true8Lee", &chi2_gmin_null8Lee_true8Lee, "chi2_gmin_null8Lee_true8Lee/D" );
 
-    int N_toy = 100;
+    int N_toy = 500;
         
     for(int itoy=1; itoy<=N_toy; itoy++) {
             
