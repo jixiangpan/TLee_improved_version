@@ -1222,7 +1222,9 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   ////////////////
 
   roostr = TString::Format("h1_spectra_wi2no_%02d", index);
-  TH1D *h1_spectra_wi2no = (TH1D*)h1_pred_Y_noConstraint->Clone(roostr);
+  TString roostr_wi2no = roostr;
+  //TH1D *h1_spectra_wi2no = (TH1D*)h1_pred_Y_noConstraint->Clone(roostr);
+  TH1D *h1_spectra_wi2no = new TH1D(roostr, "", num_Y, 0, num_Y);
   h1_spectra_wi2no->SetFillStyle(0);
   for(int ibin=1; ibin<=num_Y; ibin++) {
     double val_wiConstraint = h1_pred_Y_wiConstraint->GetBinContent(ibin);
@@ -1239,21 +1241,26 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
       
   h1_spectra_wi2no->Draw("hist");
   h1_spectra_wi2no->SetLineColor(color_wi);
+  
   h1_spectra_wi2no->SetMinimum(0);
   h1_spectra_wi2no->SetMaximum(2);
   func_title_size(h1_spectra_wi2no, 0.05, 0.05, 0.05, 0.05);
-  func_xy_title(h1_spectra_wi2no, title_axis_user, "Prediction wi/no constraint");
+  
+  func_xy_title(h1_spectra_wi2no, "Bin index", "Prediction wi/no constraint");
   h1_spectra_wi2no->GetXaxis()->CenterTitle(); h1_spectra_wi2no->GetYaxis()->CenterTitle(); 
   h1_spectra_wi2no->GetYaxis()->SetTitleOffset(1.18);
   h1_spectra_wi2no->GetYaxis()->SetNdivisions(509);
-  h1_spectra_wi2no->GetYaxis()->SetTickLength(0.03);
-        
+  h1_spectra_wi2no->GetYaxis()->SetTickLength(0.03);    
   if( flag_axis_userAA || flag_axis_userAB ) {/// ttt
+    func_xy_title(h1_spectra_wi2no, title_axis_user, "Prediction wi/no constraint");
+    h1_spectra_wi2no->GetXaxis()->SetLabelSize(0);
     if( flag_axis_userAA )  axis_userAA_wi2no->Draw();
     if( flag_axis_userAB )  axis_userAB_wi2no->Draw(); 
   }
   
   roostr = TString::Format("canv_spectra_wi2no_%02d.png", index); canv_spectra_wi2no->SaveAs(roostr);
+
+  //h1_spectra_wi2no->SaveAs(roostr_wi2no+".root");
   
   ////////////////
   
@@ -1756,7 +1763,7 @@ void TLee::Set_Spectra_MatrixCov()
   TString roostr = "";
 
   ////////////////////////////////////// pred
-
+  
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
@@ -1777,9 +1784,15 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
- 
+  
+  /////////////////////////////////////// case: separate nueCC signal and bkg
+  /*
+  for(int idx=1; idx<=18; idx++) map_input_spectrum_ch_str[idx] = TString::Format("pred_%02d", idx);
+  map_Lee_ch[8] = 1;
+  map_Lee_ch[9] = 1;
+  */
   /////////////////////////////////////// case: fake data
-/*  
+  /*  
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
@@ -1793,9 +1806,9 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
-*/  
+  */  
   /////////////////////////////////////// case: 1u0p and 1uNp
-/* 
+  /* 
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_1u0p_norm";
@@ -1811,7 +1824,7 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[10] = 1;
   map_Lee_ch[11] = 1;
-*/ 
+  */ 
   //////////////////
   //////////////////
   
@@ -1824,6 +1837,10 @@ void TLee::Set_Spectra_MatrixCov()
   matrix_transform.ResizeTo( mat_collapse->GetNrows(), mat_collapse->GetNcols() );
   matrix_transform = (*mat_collapse);
 
+  ///
+  // TFile *file_wi2no_101 = new TFile("./h1_spectra_wi2no_101.root", "read");
+  // TH1D *h1_spectra_wi2no_101 = (TH1D*)file_wi2no_101->Get("h1_spectra_wi2no");
+  
   ///
   cout<<" Predictions"<<endl;
   for(int ich=1; ich<=(int)map_input_spectrum_ch_str.size(); ich++) {
@@ -1845,27 +1862,17 @@ void TLee::Set_Spectra_MatrixCov()
       // 	if( ibin==7 ) content *= 1.196;
       // 	if( ibin==8 ) content *= 1.104;
       // }    
+
+      //if( (ich==1 || ich==8) && ibin<=8 ) content *= h1_spectra_wi2no_101->GetBinContent(ibin);
       
       map_input_spectrum_ch_bin[ich][ibin-1] = content;
     }
     
   }
   cout<<endl;
-
   
-  ////////////////////for fake data set, begin
-  // for(int idx=10; idx<=13; idx++) {
-  //   for(int ibin=1; ibin<=26; ibin++) {
-  //     map_input_spectrum_ch_bin[idx][ibin-1] = 0;
-  //   }
-  // }  
-  // for(int idx=14; idx<=16; idx++) {
-  //   for(int ibin=1; ibin<=11; ibin++) {
-  //     map_input_spectrum_ch_bin[idx][ibin-1] = 0;
-  //   }
-  // }
-  ////////////////////for fake data set, end
-  
+  ////////////////////
+  ////////////////////
 
   bins_oldworld = 0;
   for(auto it_ch=map_input_spectrum_ch_bin.begin(); it_ch!=map_input_spectrum_ch_bin.end(); it_ch++) {
@@ -1958,7 +1965,6 @@ void TLee::Set_Spectra_MatrixCov()
     
     map_file_detector_frac[idx] = new TFile(roostr, "read");
     map_matrix_detector_frac[idx] = (TMatrixD*)map_file_detector_frac[idx]->Get(TString::Format("frac_cov_det_mat_%d", idx));
-    // cout<<TString::Format(" ---> check: detector, %2d  ", idx)<<roostr<<endl;
 
     matrix_detector_frac += (*map_matrix_detector_frac[idx]);
 
@@ -1968,9 +1974,10 @@ void TLee::Set_Spectra_MatrixCov()
   }
   cout<<endl;
 
+  
   if( 0 ) {
     cout<<endl<<" testestest "<<endl<<endl;
-
+    
     int user_rows = matrix_detector_frac.GetNrows();
     const double user_nue_reduced = sqrt(3.);
     
@@ -2000,10 +2007,10 @@ void TLee::Set_Spectra_MatrixCov()
 	matrix_detector_frac(idx, jdx) = val;
 	
       }// for(int jdx=0; jdx<user_rows; jdx++)
-    }//for(int idx=0; idx<user_rows; idx++) 
-    
+    }//for(int idx=0; idx<user_rows; idx++)     
   }
   
+    
   ////////////////////////////////////////// additional
 
   TMatrixD *matrix_additional_abs_point = (TMatrixD*)file_spectra->Get("cov_mat_add");

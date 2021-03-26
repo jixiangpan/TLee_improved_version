@@ -362,6 +362,55 @@ int main(int argc, char** argv)
 
   ////////////////////////////////////////////////////////////////////
 
+  if( 0 ) {
+    vector<int>vc_target_chs;
+    vc_target_chs.push_back( 1 );
+    //vc_target_chs.push_back( 2 );
+    
+    vector<int>vc_support_chs;
+    vc_support_chs.push_back( 3 );
+    vc_support_chs.push_back( 4 );
+    vc_support_chs.push_back( 5 );
+    vc_support_chs.push_back( 6 );
+    vc_support_chs.push_back( 7 );
+
+    Lee_test->Exe_Goodness_of_fit( vc_target_chs, vc_support_chs, 101 );
+  }
+
+  if( 0 ) {
+    vector<int>vc_target_chs;
+    //vc_target_chs.push_back( 1 );
+    vc_target_chs.push_back( 2 );
+    
+    vector<int>vc_support_chs;
+    vc_support_chs.push_back( 3 );
+    vc_support_chs.push_back( 4 );
+    vc_support_chs.push_back( 5 );
+    vc_support_chs.push_back( 6 );
+    vc_support_chs.push_back( 7 );
+
+    Lee_test->Exe_Goodness_of_fit( vc_target_chs, vc_support_chs, 102 );
+  }
+
+  
+  if( 0 ) {
+    vector<int>vc_target_chs;
+    for(int idx=1; idx<=8; idx++) vc_target_chs.push_back( idx-1 );
+    
+    vector<int>vc_support_chs;
+    for(int idx=9; idx<=Lee_test->bins_newworld; idx++) {
+      if( idx>=26+1 && idx<=26+8 ) continue;
+      vc_support_chs.push_back( idx-1 );
+    }
+
+    Lee_test->Exe_Goodness_of_fit_detailed( vc_target_chs, vc_support_chs, 101 );
+  }
+
+  
+
+  
+  ////////////////////////////////////////////////////////////////////
+
   bool flag_publicnote = 0;
   
   if( flag_publicnote ) {
