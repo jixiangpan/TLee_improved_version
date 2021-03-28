@@ -143,11 +143,11 @@ void plot_systematics()
     line_root_xx[idx] = new TLine( line_xy[idx], 0, line_xy[idx], rows );
     line_root_xx[idx]->SetLineWidth(1);
     line_root_xx[idx]->SetLineColor(kBlack);
-    line_root_xx[idx]->SetLineStyle(1);
+    line_root_xx[idx]->SetLineStyle(7);
     line_root_yy[idx] = new TLine( 0, line_xy[idx], rows, line_xy[idx]);
     line_root_yy[idx]->SetLineWidth(1);
     line_root_yy[idx]->SetLineColor(kBlack);
-    line_root_yy[idx]->SetLineStyle(1);
+    line_root_yy[idx]->SetLineStyle(7);
   }
 
   //////////////////
@@ -228,6 +228,8 @@ void plot_systematics()
       h2_correlation_flux->SetBinContent(ibin, jbin, val_correlation);
 
       if( ibin==jbin ) {
+	h2_correlation_flux->SetBinContent(ibin, jbin, 1);
+	
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_flux_relerr->SetBinContent(ibin, val_relerr);
@@ -304,6 +306,8 @@ void plot_systematics()
       h2_correlation_Xs->SetBinContent(ibin, jbin, val_correlation);
 
       if( ibin==jbin ) {
+	h2_correlation_Xs->SetBinContent(ibin, jbin, 1);
+	
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_Xs_relerr->SetBinContent(ibin, val_relerr);
@@ -384,6 +388,8 @@ void plot_systematics()
       h2_correlation_detector->SetBinContent(ibin, jbin, val_correlation);
 
       if( ibin==jbin ) {
+	h2_correlation_detector->SetBinContent(ibin, jbin, 1);
+	
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_detector_relerr->SetBinContent(ibin, val_relerr);
@@ -476,12 +482,17 @@ void plot_systematics()
 	h2_correlation_detector_sub[idx]->SetBinContent(ibin, jbin, val_correlation);
 
 	if( ibin==jbin ) {
+	  if( ibin==jbin ) h2_correlation_detector_sub[idx]->SetBinContent(ibin, jbin, 1);
+	  
 	  double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	  double val_relerr = sqrt(cov_ij)/val_cv;
 	  h1_detector_relerr_sub[idx]->SetBinContent(ibin, val_relerr);
 
-	  if( val_cv==0 ) h1_detector_relerr_sub[idx]->SetBinContent(ibin, 0);
-	}
+	  if( val_cv==0 ) {
+	    h1_detector_relerr_sub[idx]->SetBinContent(ibin, 0);
+	  }
+	  
+	}	
       
       }// jbin
     }// ibin
@@ -503,8 +514,10 @@ void plot_systematics()
     for(int idx=0; idx<num_ch-1; idx++) {
       line_root_xx[idx]->Draw("same");
       line_root_yy[idx]->Draw("same");
-      line_root_xx[idx]->SetLineColor(kRed);
-      line_root_yy[idx]->SetLineColor(kRed);
+      line_root_xx[idx]->SetLineColor(kBlack);
+      line_root_yy[idx]->SetLineColor(kBlack);
+      //line_root_xx[idx]->SetLineColor(kRed);
+      //line_root_yy[idx]->SetLineColor(kRed);
     }
 
     for(auto it=map_line_axis_xy.begin(); it!=map_line_axis_xy.end(); it++) {
@@ -557,6 +570,8 @@ void plot_systematics()
       h2_correlation_mc_stat->SetBinContent(ibin, jbin, val_correlation);
 
       if( ibin==jbin ) {
+	h2_correlation_mc_stat->SetBinContent(ibin, jbin, 1);
+	
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_mc_stat_relerr->SetBinContent(ibin, val_relerr);
@@ -635,6 +650,8 @@ void plot_systematics()
       h2_correlation_additional->SetBinContent(ibin, jbin, val_correlation);
 
       if( ibin==jbin ) {
+	h2_correlation_additional->SetBinContent(ibin, jbin, 1);
+	
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_additional_relerr->SetBinContent(ibin, val_relerr);
@@ -711,6 +728,8 @@ void plot_systematics()
       h2_correlation_total->SetBinContent(ibin, jbin, val_correlation);
 
       if( ibin==jbin ) {
+	h2_correlation_total->SetBinContent(ibin, jbin, 1);
+	
 	double val_cv = (*matrix_pred_newworld)(0, ibin-1);
 	double val_relerr = sqrt(cov_ij)/val_cv;
 	h1_total_relerr->SetBinContent(ibin, val_relerr);
