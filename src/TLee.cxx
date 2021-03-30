@@ -1275,6 +1275,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
 
   h1_pred_Y_wiConstraint->Draw("e2");
   h1_pred_Y_wiConstraint->SetXTitle("Energy (#times 100 MeV)");
+  //if( index==7 ) h1_pred_Y_wiConstraint->SetMaximum(25);
   h1_pred_Y_noConstraint->Draw("same e2");  
   h1_pred_Y_wiConstraint_clone->Draw("same hist");
   h1_pred_Y_noConstraint_clone->Draw("same hist");  
@@ -1314,7 +1315,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     if( flag_axis_userAB )  axis_userAB->Draw();
 
     ///////////////////// top
-    canv_spectra_GoF_wi->cd(); pad_top_wi->cd();
+    canv_spectra_GoF_total->cd(); pad_top_total->cd();
     if( flag_axis_userAA ) axis_userAA_clone->Draw();
     if( flag_axis_userAB ) axis_userAB_clone->Draw();    
   }
@@ -1792,7 +1793,7 @@ void TLee::Set_Spectra_MatrixCov()
   map_Lee_ch[9] = 1;
   */
   /////////////////////////////////////// case: fake data
-  /*  
+  /*
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
   map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
   map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
@@ -1806,7 +1807,7 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
-  */  
+  */
   /////////////////////////////////////// case: 1u0p and 1uNp
   /* 
   map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
