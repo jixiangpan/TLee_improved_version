@@ -102,6 +102,7 @@ int main(int argc, char** argv)
   Lee_test->flag_syst_mc_stat    = config_Lee::flag_syst_mc_stat;
   
   Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_outputfile_covariance_matrix;
+  Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_GoF;
   Lee_test->Set_Collapse();
 
   Lee_test->flag_Lee_minimization_after_constraint = config_Lee::flag_Lee_minimization_after_constraint;
@@ -153,8 +154,8 @@ int main(int argc, char** argv)
   
   //////////////////////////////////////////////////////////////////////////////////////// Goodness of fit
   
-  Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_GoF;
-  Lee_test->Set_Collapse();
+  //Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_GoF;
+  //Lee_test->Set_Collapse();
 
   if( config_Lee::flag_GoF_output2file_default_0 ) {
     file_collapsed_covariance_matrix->cd();
@@ -365,7 +366,7 @@ int main(int argc, char** argv)
   if( 0 ) {
     vector<int>vc_target_chs;
     vc_target_chs.push_back( 1 );
-    //vc_target_chs.push_back( 2 );
+    vc_target_chs.push_back( 2 );
     
     vector<int>vc_support_chs;
     vc_support_chs.push_back( 3 );

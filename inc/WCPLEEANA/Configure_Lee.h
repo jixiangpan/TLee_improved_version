@@ -29,13 +29,24 @@ namespace config_Lee
   /* TString flux_Xs_directory = "./new_new_TLee_input_normal_highstatDetVar/flux_Xs/"; */
   /* TString detector_directory = "./new_new_TLee_input_normal_highstatDetVar/det/"; */
   /* TString mc_directory = "./new_new_TLee_input_normal_highstatDetVar/mc_stat/"; */
-
   
   TString spectra_file = "./TLee_input_Mar25_final_16chs_standard/merge.root";
   TString flux_Xs_directory = "./TLee_input_Mar25_final_16chs_standard/flux_Xs/";
   TString detector_directory = "./TLee_input_Mar25_final_16chs_standard/det/";
   TString mc_directory = "./TLee_input_Mar25_final_16chs_standard/mc_stat/";
-  
+
+  /*
+  TString spectra_file = "./numi_summary_noosc/merge.root";
+  TString flux_Xs_directory = "./numi_summary_noosc/XsFlux/";
+  TString detector_directory = "./numi_summary_noosc/det/";
+  TString mc_directory = "./numi_summary_noosc/mcstat/";
+  */
+  /*
+  TString spectra_file = "./numi_summary_osc/merge.root";
+  TString flux_Xs_directory = "./numi_summary_osc/XsFlux/";
+  TString detector_directory = "./numi_summary_osc/det/";
+  TString mc_directory = "./numi_summary_osc/mcstat/";
+  */
   
   int channels_observation = 7;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse

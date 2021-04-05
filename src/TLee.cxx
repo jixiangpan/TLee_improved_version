@@ -711,6 +711,11 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   
   TString title_axis_user = "E_{#nu}^{rec}";
 
+  TLine *line_FC_PC = new TLine(num_Y/2, 0, num_Y/2, 2);
+  line_FC_PC->SetLineColor(kGray+1);
+  line_FC_PC->SetLineWidth(4);
+  //line_FC_PC->SetLineStyle(7);
+
   if( index==1 ) {    
     flag_axis_userAA = 1;
     flag_axis_userAB = 1;
@@ -727,6 +732,24 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     userAB_index_hgh = 52;
     userAB_value_low = 0;
     userAB_value_hgh = 2600;    
+  }
+
+  if( index==9 ) {    
+    flag_axis_userAA = 1;
+    flag_axis_userAB = 1;
+
+    title_axis_user = "Reco neutrino energy (MeV)";
+    axis_user_divisions = 504;
+      
+    userAA_index_low = 0;
+    userAA_index_hgh = 31;
+    userAA_value_low = 0;
+    userAA_value_hgh = 3100;
+    
+    userAB_index_low = 31;
+    userAB_index_hgh = 62;
+    userAB_value_low = 0;
+    userAB_value_hgh = 3100;    
   }
 
   if( index==2 || index==3 || index==4 ) {
@@ -923,8 +946,6 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     array_val_data_low[ibin-1] = val_data_low;
     array_val_data_hgh[ibin-1] = val_data_hgh;
     
-    ///////
-
     double val_ratio_no = val_data/val_pred_noConstraint;
     double val_ratio_no_low = val_ratio_no - val_data_low/val_pred_noConstraint;
     double val_ratio_no_hgh = val_data_hgh/val_pred_noConstraint - val_ratio_no;
@@ -933,6 +954,23 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     gh_ratio_noConstraint->SetPointError( ibin-1, 0.5, 0.5, val_ratio_no_low, val_ratio_no_hgh );    
   }
 
+  ///////
+  
+  double ymax_pred = 0;
+  double ymax_data = 0;
+    
+  for(int ibin=1; ibin<=num_Y; ibin++) {
+    double val_pred = h1_pred_Y_noConstraint->GetBinContent(ibin)
+      + h1_pred_Y_noConstraint->GetBinError(ibin);
+    if( ymax_pred<val_pred ) ymax_pred = val_pred;
+      
+    double xx_data(0), yy_data(0);
+    gh_data->GetPoint(ibin-1, xx_data, yy_data);
+    if( ymax_data<yy_data ) ymax_data = yy_data;      
+  }
+
+  ///////
+  
   roostr = TString::Format("canv_spectra_GoF_no_%02d", index);
   TCanvas *canv_spectra_GoF_no = new TCanvas(roostr, roostr, 1000, 950);
   
@@ -947,6 +985,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   h1_pred_Y_noConstraint->Draw("e2");
   h1_pred_Y_noConstraint->SetMinimum(0.);
   //h1_pred_Y_noConstraint->SetMaximum(4.6);
+  if( ymax_data>ymax_pred*1.05 ) h1_pred_Y_noConstraint->SetMaximum(ymax_data*1.1);
   h1_pred_Y_noConstraint->SetMarkerSize(0.);
   h1_pred_Y_noConstraint->SetFillColor(color_no); h1_pred_Y_noConstraint->SetFillStyle(3005);
   h1_pred_Y_noConstraint->SetLineColor(color_no);
@@ -1018,6 +1057,9 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetTickLength(0);
     h1_pred_Y_noConstraint_rel_error->GetXaxis()->SetLabelSize(0);
     h1_pred_Y_noConstraint_rel_error->SetXTitle( title_axis_user );
+    
+    if( flag_axis_userAA && flag_axis_userAB ) line_FC_PC->Draw("same");
+    
     if( flag_axis_userAA )  axis_userAA->Draw();
     if( flag_axis_userAB )  axis_userAB->Draw();
 
@@ -1027,7 +1069,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     h1_pred_Y_noConstraint->GetXaxis()->SetLabelSize(0);
     if( flag_axis_userAA ) axis_userAA_clone->Draw();
     if( flag_axis_userAB ) axis_userAB_clone->Draw();    
-  }
+  }  
   
   if( num_X==0 ) {
     gh_ratio_noConstraint->SetMarkerColor(kBlue); gh_ratio_noConstraint->SetLineColor(kBlue);
@@ -1191,9 +1233,12 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
    
   if( flag_axis_userAA || flag_axis_userAB ) {
     ///////////////////// bot
+    
+    if( flag_axis_userAA && flag_axis_userAB ) line_FC_PC->Draw("same");
+    
     if( flag_axis_userAA )  axis_userAA->Draw();
     if( flag_axis_userAB )  axis_userAB->Draw();
-
+    
     ///////////////////// top
     canv_spectra_GoF_wi->cd(); pad_top_wi->cd();
     if( flag_axis_userAA ) axis_userAA_clone->Draw();
@@ -1276,6 +1321,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   h1_pred_Y_wiConstraint->Draw("e2");
   h1_pred_Y_wiConstraint->SetXTitle("Energy (#times 100 MeV)");
   //if( index==7 ) h1_pred_Y_wiConstraint->SetMaximum(25);
+  //if( index==9 ) h1_pred_Y_wiConstraint->SetMaximum(50);
   h1_pred_Y_noConstraint->Draw("same e2");  
   h1_pred_Y_wiConstraint_clone->Draw("same hist");
   h1_pred_Y_noConstraint_clone->Draw("same hist");  
@@ -1311,6 +1357,9 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
       
   if( flag_axis_userAA || flag_axis_userAB ) {
     ///////////////////// bot
+    
+    if( flag_axis_userAA && flag_axis_userAB ) line_FC_PC->Draw("same");
+    
     if( flag_axis_userAA )  axis_userAA->Draw();
     if( flag_axis_userAB )  axis_userAB->Draw();
 
@@ -1336,9 +1385,71 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   // lg_bot_total->Draw();
   // lg_bot_total->SetBorderSize(0); lg_bot_total->SetTextSize(0.078);
   // lg_bot_total->SetFillColor(10); 
-  
-  h1_pred_Y_noConstraint_rel_error->Draw("same axis");
+
   roostr = TString::Format("canv_spectra_GoF_total_%02d.png", index); canv_spectra_GoF_total->SaveAs(roostr);
+
+  //////////////////////////////////////////////////////////////////
+
+  roostr = TString::Format("h1_spectra_relerr_%02d", index);
+  TH1D *h1_spectra_relerr = new TH1D(roostr, "", num_Y, 0, num_Y);
+
+  roostr = TString::Format("h1_spectra_relerr_wi_%02d", index);
+  TH1D *h1_spectra_relerr_wi = new TH1D(roostr, "", num_Y, 0, num_Y);
+
+  for(int ibin=1; ibin<=num_Y; ibin++) {    
+    double val_noConstraint = h1_pred_Y_noConstraint_rel_error->GetBinError(ibin);
+    double val_wiConstraint = h1_pred_Y_wiConstraint_rel_error->GetBinError(ibin);
+    h1_spectra_relerr->SetBinContent(ibin, val_noConstraint);
+    h1_spectra_relerr_wi->SetBinContent(ibin, val_wiConstraint);    
+  }
+  
+  roostr = TString::Format("canv_spectra_relerr_%02d", index);
+  TCanvas *canv_spectra_relerr = new TCanvas(roostr, roostr, 900, 650);
+  func_canv_margin(canv_spectra_relerr, 0.15, 0.1, 0.1, 0.15);
+  canv_spectra_relerr->SetGridy();
+      
+  h1_spectra_relerr->Draw("hist");
+  h1_spectra_relerr->SetLineColor(color_no);
+       
+  h1_spectra_relerr_wi->Draw("same hist");
+  h1_spectra_relerr_wi->SetLineColor(color_wi);
+  
+  h1_spectra_relerr->SetMinimum(0);
+  h1_spectra_relerr->SetMaximum(0.5);
+  func_title_size(h1_spectra_relerr, 0.05, 0.05, 0.05, 0.05);
+  
+  h1_spectra_relerr->Draw("same axis");
+  
+  func_xy_title(h1_spectra_relerr, "Bin index", "Rel.Err to Pred no constraint");
+  h1_spectra_relerr->GetXaxis()->CenterTitle(); h1_spectra_relerr->GetYaxis()->CenterTitle(); 
+  h1_spectra_relerr->GetYaxis()->SetTitleOffset(1.18);
+  h1_spectra_relerr->GetYaxis()->SetNdivisions(509);
+  h1_spectra_relerr->GetYaxis()->SetTickLength(0.03);    
+  if( flag_axis_userAA || flag_axis_userAB ) {/// ttt
+    func_xy_title(h1_spectra_relerr, title_axis_user,"Rel.Err to Pred no constraint");
+    
+    if( flag_axis_userAA && flag_axis_userAB ) {
+      line_FC_PC->Draw("same");
+      line_FC_PC->SetY2(0.5);
+    }
+    
+    h1_spectra_relerr->GetXaxis()->SetLabelSize(0);
+    h1_spectra_relerr->GetXaxis()->SetTickSize(0);
+    
+    if( flag_axis_userAA )  {
+      axis_userAA->Draw();
+      axis_userAA->SetTickSize(0.06);
+      axis_userAA->SetLabelSize(0.05);
+    }
+    if( flag_axis_userAB )  {
+      axis_userAB->Draw();
+      axis_userAB->SetTickSize(0.06);
+      axis_userAB->SetLabelSize(0.05);
+    }
+  } 
+  
+  roostr = TString::Format("canv_spectra_relerr_%02d.png", index); canv_spectra_relerr->SaveAs(roostr);
+  roostr = TString::Format("canv_h1_spectra_relerr_wi_%02d.root", index); h1_spectra_relerr_wi->SaveAs(roostr);  
   
   return 1;
 }
@@ -1952,6 +2063,7 @@ void TLee::Set_Spectra_MatrixCov()
   map_detectorfile_str[8] = detector_directory+"cov_WMX.root";
   map_detectorfile_str[9] = detector_directory+"cov_WMYZ.root";
   map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
+
   
   map<int, TFile*>map_file_detector_frac;
   map<int, TMatrixD*>map_matrix_detector_frac;
