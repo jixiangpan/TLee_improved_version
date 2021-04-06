@@ -817,6 +817,12 @@ int main(int argc, char** argv)
   
   ////////////////////////////////////////////////////////////////////////////////////////
 
+  cout<<endl;
+  cout<<" ---> flag_syst_flux_Xs    "<<Lee_test->flag_syst_flux_Xs<<endl;
+  cout<<" ---> flag_syst_detector   "<<Lee_test->flag_syst_detector<<endl;
+  cout<<" ---> flag_syst_additional "<<Lee_test->flag_syst_additional<<endl;
+  cout<<" ---> flag_syst_mc_stat    "<<Lee_test->flag_syst_mc_stat<<endl;  
+  
   cout<<endl<<endl;
   cout<<" ---> Finish all the program"<<endl;
   cout<<endl<<endl;
