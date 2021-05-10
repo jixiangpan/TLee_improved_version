@@ -145,7 +145,14 @@ int main(int argc, char** argv)
   }
      
   Lee_test->matrix_pred_newworld.Write("matrix_pred_newworld");// (1, bins)
-  Lee_test->matrix_data_newworld.Write("matrix_data_newworld");// (1, bins)  
+  Lee_test->matrix_data_newworld.Write("matrix_data_newworld");// (1, bins)
+
+  for(auto it_sub=Lee_test->matrix_sub_flux_geant4_Xs_newworld.begin(); it_sub!=Lee_test->matrix_sub_flux_geant4_Xs_newworld.end(); it_sub++) {
+    int index = it_sub->first;
+    roostr = TString::Format("matrix_sub_flux_geant4_Xs_newworld_%d", index);
+    Lee_test->matrix_sub_flux_geant4_Xs_newworld[index].Write(roostr);
+  }
+  
   //file_collapsed_covariance_matrix->Close();
   
   //////////

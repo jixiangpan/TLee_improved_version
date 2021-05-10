@@ -128,7 +128,10 @@ public:
   map<int, TMatrixD>matrix_absolute_detector_sub_cov_newworld;
   TMatrixD matrix_absolute_mc_stat_cov_newworld;
   TMatrixD matrix_absolute_additional_cov_newworld;
-
+  
+  map<int, TMatrixD>matrix_sub_flux_geant4_Xs_oldworld;
+  map<int, TMatrixD>matrix_sub_flux_geant4_Xs_newworld;
+  
   map<int, map<int, double> >map_toy_variation;
   
   map<int, double>map_fake_data;

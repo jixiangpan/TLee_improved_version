@@ -1735,6 +1735,27 @@ void TLee::Set_Collapse()
   
   ////////////////////////////////////////
 
+  for( auto it_sub=matrix_sub_flux_geant4_Xs_oldworld.begin(); it_sub!=matrix_sub_flux_geant4_Xs_oldworld.end(); it_sub++ ) {
+    int index = it_sub->first;
+    int rows = matrix_sub_flux_geant4_Xs_oldworld[index].GetNrows();
+    
+    for(int idx=0; idx<rows; idx++) {
+      for(int jdx=0; jdx<rows; jdx++) {
+	double cv_i = map_input_spectrum_oldworld_bin[idx];
+	double cv_j = map_input_spectrum_oldworld_bin[jdx];
+	double fcov_ij = matrix_sub_flux_geant4_Xs_oldworld[index](idx, jdx);
+	matrix_sub_flux_geant4_Xs_oldworld[index](idx, jdx) = cv_i*cv_j*fcov_ij;	
+      }// jdx
+    }// idx
+
+    matrix_sub_flux_geant4_Xs_newworld[index].Clear();
+    matrix_sub_flux_geant4_Xs_newworld[index].ResizeTo(bins_newworld, bins_newworld);
+    matrix_sub_flux_geant4_Xs_newworld[index] = matrix_transform_Lee_T * matrix_sub_flux_geant4_Xs_oldworld[index] * matrix_transform_Lee;
+  }
+
+  
+  ////////////////////////////////////////
+
   if( flag_individual_cov_newworld ) {
     cout<<" ---> Producing the systematics for plotting (should appear only one time)"<<endl;
     cout<<" ---> The LEE strength used for the producing is corresponding to the one in the Configure_LEE.h"<<endl<<endl;
@@ -2037,6 +2058,10 @@ void TLee::Set_Spectra_MatrixCov()
     map_matrix_flux_Xs_frac[idx] = (TMatrixD*)map_file_flux_Xs_frac[idx]->Get(TString::Format("frac_cov_xf_mat_%d", idx));
     cout<<TString::Format(" %2d %s", idx, roostr.Data())<<endl;
 
+    matrix_sub_flux_geant4_Xs_oldworld[idx].Clear();
+    matrix_sub_flux_geant4_Xs_oldworld[idx].ResizeTo(bins_oldworld, bins_oldworld);
+    matrix_sub_flux_geant4_Xs_oldworld[idx] += (*map_matrix_flux_Xs_frac[idx]); 
+    
     //if( idx!=17 )
     matrix_flux_Xs_frac += (*map_matrix_flux_Xs_frac[idx]);    
     
