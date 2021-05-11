@@ -120,7 +120,7 @@ void plot_systematics_sub()
   
   int color_flux     = kRed;
   int color_Xs       = kBlue;
-  int color_geant    = kGray+2;
+  int color_geant    = kAzure+7;
   int color_detector = kMagenta;
   int color_dirt     = kOrange-3;
   int color_mc_stat  = kGreen+1;
@@ -879,6 +879,10 @@ void plot_systematics_sub()
   for(int ibin=1; ibin<=rows; ibin++) h1_rel_total->SetBinContent( ibin, sqrt(h2_sum_total_rel_cov->GetBinContent(ibin, ibin)) );
 
   ////////////
+
+  
+  
+  ////////////
   
   TCanvas *canv_h1_rel_total = new TCanvas("canv_h1_rel_total", "canv_h1_rel_total", 1300, 700);
   func_canv_margin(canv_h1_rel_total, 0.1, 0.24, 0.11, 0.15);
@@ -913,8 +917,8 @@ void plot_systematics_sub()
   lg_fraction_total->SetTextSize(0.045);
   lg_fraction_total->AddEntry(h1_rel_total,    TString::Format("#color[%d]{Total}", color_total ), "l");
   lg_fraction_total->AddEntry(h1_rel_flux,     TString::Format("#color[%d]{Flux}", color_flux ), "l");
-  lg_fraction_total->AddEntry(h1_rel_geant,    TString::Format("#color[%d]{Reinteraction}", color_geant ), "l");
   lg_fraction_total->AddEntry(h1_rel_Xs,       TString::Format("#color[%d]{#nu-Ar Xs}", color_Xs ), "l");
+  lg_fraction_total->AddEntry(h1_rel_geant,    TString::Format("#color[%d]{Reinteraction}", color_geant ), "l");
   lg_fraction_total->AddEntry(h1_rel_detector, TString::Format("#color[%d]{detector}", color_detector ), "l");
   lg_fraction_total->AddEntry(h1_rel_mc_stat,  TString::Format("#color[%d]{MC stat}", color_mc_stat ), "l");
   lg_fraction_total->AddEntry(h1_rel_dirt,     TString::Format("#color[%d]{dirt}", color_dirt ), "l");
@@ -953,8 +957,8 @@ void plot_systematics_sub()
   lg_rel_flux->Draw();
   lg_rel_flux->SetTextSize(0.045);
   lg_rel_flux->AddEntry(h1_rel_flux,     TString::Format("#color[%d]{Flux}", color_flux ), "l");
-  lg_rel_flux->AddEntry(h1_rel_geant,    TString::Format("#color[%d]{Reinteraction}", color_geant ), "l");
   lg_rel_flux->AddEntry(h1_rel_Xs,       TString::Format("#color[%d]{#nu-Ar Xs}", color_Xs ), "l");
+  lg_rel_flux->AddEntry(h1_rel_geant,    TString::Format("#color[%d]{Reinteraction}", color_geant ), "l");
   
   canv_h1_rel_flux->SaveAs("canv_h1_rel_flux.png");
   //canv_h1_rel_flux->SaveAs("canv_h1_rel_flux.pdf");
@@ -1016,7 +1020,7 @@ void plot_systematics_sub()
   }
 
   /////////////////////////////////// flux
-  /*
+  
   TCanvas *canv_h2_sum_flux_correlation = new TCanvas("canv_h2_sum_flux_correlation", "canv_h2_sum_flux_correlation", 800, 700);
   func_canv_margin(canv_h2_sum_flux_correlation, 0.15, 0.15, 0.1, 0.15);
   canv_h2_sum_flux_correlation->cd();
@@ -1040,11 +1044,146 @@ void plot_systematics_sub()
     h2_sum_flux_correlation->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
     h2_sum_flux_correlation->GetYaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);  
   }
+  for(auto it_map=map_line_label_xx.begin(); it_map!=map_line_label_xx.end(); it_map++) {    
+    map_line_label_xx[it_map->first]->Draw(); map_line_label_xx[it_map->first]->SetY2(3);
+    map_line_label_yy[it_map->first]->Draw();
+  }
+  
+  canv_h2_sum_flux_correlation->SaveAs("canv_h2_sum_flux_correlation.png");
+  //canv_h2_sum_flux_correlation->SaveAs("canv_h2_sum_flux_correlation.pdf");
+    
+  /////////////////////////////////// geant
+  
+  TCanvas *canv_h2_sum_geant_correlation = new TCanvas("canv_h2_sum_geant_correlation", "canv_h2_sum_geant_correlation", 800, 700);
+  func_canv_margin(canv_h2_sum_geant_correlation, 0.15, 0.15, 0.1, 0.15);
+  canv_h2_sum_geant_correlation->cd();
+  canv_h2_sum_geant_correlation->Update();
+  h2_sum_geant_correlation->Draw("colz");
+  h2_sum_geant_correlation->SetTitle("");
+  func_title_size(h2_sum_geant_correlation, 0.05, 0.033, 0.05, 0.033);
+  h2_sum_geant_correlation->GetZaxis()->SetLabelSize(0.033);
+  h2_sum_geant_correlation->GetZaxis()->SetRangeUser(-1, 1);
+  h2_sum_geant_correlation->GetXaxis()->SetTickLength(0);
+  h2_sum_geant_correlation->GetYaxis()->SetTickLength(0);
+  h2_sum_geant_correlation->GetXaxis()->SetLabelSize(0.05);
+  h2_sum_geant_correlation->GetYaxis()->SetLabelSize(0.05);
+  func_xy_title(h2_sum_geant_correlation, "Reco energy [MeV]", "Reco energy [MeV]");
+  h2_sum_geant_correlation->GetXaxis()->CenterTitle(); h2_sum_geant_correlation->GetYaxis()->CenterTitle();
+  h2_sum_geant_correlation->GetXaxis()->SetTitleOffset(2.2); h2_sum_geant_correlation->GetYaxis()->SetTitleOffset(1.9);
+
+  for(int idx=0; idx<num_ch; idx++) { pt_text_ch_corr[idx]->Draw(); pt_text_ch_corr[idx]->SetTextSize(0.033); }  
+  for(int idx=0; idx<num_ch-1; idx++) { line_xx_corr[idx]->Draw(); line_yy_corr[idx]->Draw(); }
+  for(int ibin=1; ibin<=rows; ibin++) {
+    h2_sum_geant_correlation->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+    h2_sum_geant_correlation->GetYaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);  
+  }
   for(auto it_map=map_line_label_xx.begin(); it_map!=map_line_label_xx.end(); it_map++) {
     map_line_label_xx[it_map->first]->Draw();
     map_line_label_yy[it_map->first]->Draw();
   }
-  */
+  
+  canv_h2_sum_geant_correlation->SaveAs("canv_h2_sum_geant_correlation.png");
+  //canv_h2_sum_geant_correlation->SaveAs("canv_h2_sum_geant_correlation.pdf");
+    
+  /////////////////////////////////// Xs
+  
+  TCanvas *canv_h2_sum_Xs_correlation = new TCanvas("canv_h2_sum_Xs_correlation", "canv_h2_sum_Xs_correlation", 800, 700);
+  func_canv_margin(canv_h2_sum_Xs_correlation, 0.15, 0.15, 0.1, 0.15);
+  canv_h2_sum_Xs_correlation->cd();
+  canv_h2_sum_Xs_correlation->Update();
+  h2_sum_Xs_correlation->Draw("colz");
+  h2_sum_Xs_correlation->SetTitle("");
+  func_title_size(h2_sum_Xs_correlation, 0.05, 0.033, 0.05, 0.033);
+  h2_sum_Xs_correlation->GetZaxis()->SetLabelSize(0.033);
+  h2_sum_Xs_correlation->GetZaxis()->SetRangeUser(-1, 1);
+  h2_sum_Xs_correlation->GetXaxis()->SetTickLength(0);
+  h2_sum_Xs_correlation->GetYaxis()->SetTickLength(0);
+  h2_sum_Xs_correlation->GetXaxis()->SetLabelSize(0.05);
+  h2_sum_Xs_correlation->GetYaxis()->SetLabelSize(0.05);
+  func_xy_title(h2_sum_Xs_correlation, "Reco energy [MeV]", "Reco energy [MeV]");
+  h2_sum_Xs_correlation->GetXaxis()->CenterTitle(); h2_sum_Xs_correlation->GetYaxis()->CenterTitle();
+  h2_sum_Xs_correlation->GetXaxis()->SetTitleOffset(2.2); h2_sum_Xs_correlation->GetYaxis()->SetTitleOffset(1.9);
+
+  for(int idx=0; idx<num_ch; idx++) { pt_text_ch_corr[idx]->Draw(); pt_text_ch_corr[idx]->SetTextSize(0.033); }  
+  for(int idx=0; idx<num_ch-1; idx++) { line_xx_corr[idx]->Draw(); line_yy_corr[idx]->Draw(); }
+  for(int ibin=1; ibin<=rows; ibin++) {
+    h2_sum_Xs_correlation->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+    h2_sum_Xs_correlation->GetYaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);  
+  }
+  for(auto it_map=map_line_label_xx.begin(); it_map!=map_line_label_xx.end(); it_map++) {
+    map_line_label_xx[it_map->first]->Draw();
+    map_line_label_yy[it_map->first]->Draw();
+  }
+  
+  canv_h2_sum_Xs_correlation->SaveAs("canv_h2_sum_Xs_correlation.png");
+  //canv_h2_sum_Xs_correlation->SaveAs("canv_h2_sum_Xs_correlation.pdf");
+             
+  /////////////////////////////////// detector
+  
+  TCanvas *canv_h2_sum_detector_correlation = new TCanvas("canv_h2_sum_detector_correlation", "canv_h2_sum_detector_correlation", 800, 700);
+  func_canv_margin(canv_h2_sum_detector_correlation, 0.15, 0.15, 0.1, 0.15);
+  canv_h2_sum_detector_correlation->cd();
+  canv_h2_sum_detector_correlation->Update();
+  h2_sum_detector_correlation->Draw("colz");
+  h2_sum_detector_correlation->SetTitle("");
+  func_title_size(h2_sum_detector_correlation, 0.05, 0.033, 0.05, 0.033);
+  h2_sum_detector_correlation->GetZaxis()->SetLabelSize(0.033);
+  h2_sum_detector_correlation->GetZaxis()->SetRangeUser(-1, 1);
+  h2_sum_detector_correlation->GetXaxis()->SetTickLength(0);
+  h2_sum_detector_correlation->GetYaxis()->SetTickLength(0);
+  h2_sum_detector_correlation->GetXaxis()->SetLabelSize(0.05);
+  h2_sum_detector_correlation->GetYaxis()->SetLabelSize(0.05);
+  func_xy_title(h2_sum_detector_correlation, "Reco energy [MeV]", "Reco energy [MeV]");
+  h2_sum_detector_correlation->GetXaxis()->CenterTitle(); h2_sum_detector_correlation->GetYaxis()->CenterTitle();
+  h2_sum_detector_correlation->GetXaxis()->SetTitleOffset(2.2); h2_sum_detector_correlation->GetYaxis()->SetTitleOffset(1.9);
+
+  for(int idx=0; idx<num_ch; idx++) { pt_text_ch_corr[idx]->Draw(); pt_text_ch_corr[idx]->SetTextSize(0.033); }  
+  for(int idx=0; idx<num_ch-1; idx++) { line_xx_corr[idx]->Draw(); line_yy_corr[idx]->Draw(); }
+  for(int ibin=1; ibin<=rows; ibin++) {
+    h2_sum_detector_correlation->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+    h2_sum_detector_correlation->GetYaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);  
+  }
+  for(auto it_map=map_line_label_xx.begin(); it_map!=map_line_label_xx.end(); it_map++) {
+    map_line_label_xx[it_map->first]->Draw();
+    map_line_label_yy[it_map->first]->Draw();
+  }
+  
+  canv_h2_sum_detector_correlation->SaveAs("canv_h2_sum_detector_correlation.png");
+  //canv_h2_sum_detector_correlation->SaveAs("canv_h2_sum_detector_correlation.pdf");
+         
+  /////////////////////////////////// total
+  
+  TCanvas *canv_h2_sum_total_correlation = new TCanvas("canv_h2_sum_total_correlation", "canv_h2_sum_total_correlation", 800, 700);
+  func_canv_margin(canv_h2_sum_total_correlation, 0.15, 0.15, 0.1, 0.15);
+  canv_h2_sum_total_correlation->cd();
+  canv_h2_sum_total_correlation->Update();
+  h2_sum_total_correlation->Draw("colz");
+  h2_sum_total_correlation->SetTitle("");
+  func_title_size(h2_sum_total_correlation, 0.05, 0.033, 0.05, 0.033);
+  h2_sum_total_correlation->GetZaxis()->SetLabelSize(0.033);
+  h2_sum_total_correlation->GetZaxis()->SetRangeUser(-1, 1);
+  h2_sum_total_correlation->GetXaxis()->SetTickLength(0);
+  h2_sum_total_correlation->GetYaxis()->SetTickLength(0);
+  h2_sum_total_correlation->GetXaxis()->SetLabelSize(0.05);
+  h2_sum_total_correlation->GetYaxis()->SetLabelSize(0.05);
+  func_xy_title(h2_sum_total_correlation, "Reco energy [MeV]", "Reco energy [MeV]");
+  h2_sum_total_correlation->GetXaxis()->CenterTitle(); h2_sum_total_correlation->GetYaxis()->CenterTitle();
+  h2_sum_total_correlation->GetXaxis()->SetTitleOffset(2.2); h2_sum_total_correlation->GetYaxis()->SetTitleOffset(1.9);
+
+  for(int idx=0; idx<num_ch; idx++) { pt_text_ch_corr[idx]->Draw(); pt_text_ch_corr[idx]->SetTextSize(0.033); }  
+  for(int idx=0; idx<num_ch-1; idx++) { line_xx_corr[idx]->Draw(); line_yy_corr[idx]->Draw(); }
+  for(int ibin=1; ibin<=rows; ibin++) {
+    h2_sum_total_correlation->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);
+    h2_sum_total_correlation->GetYaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);  
+  }
+  for(auto it_map=map_line_label_xx.begin(); it_map!=map_line_label_xx.end(); it_map++) {
+    map_line_label_xx[it_map->first]->Draw();
+    map_line_label_yy[it_map->first]->Draw();
+  }
+  
+  canv_h2_sum_total_correlation->SaveAs("canv_h2_sum_total_correlation.png");
+  //canv_h2_sum_total_correlation->SaveAs("canv_h2_sum_total_correlation.pdf");
+        
   
   
 }
