@@ -19,6 +19,7 @@ using namespace std;
 #include "TGraphErrors.h"
 #include "TGraphAsymmErrors.h"
 #include "THStack.h"
+#include "THashList.h"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -522,7 +523,7 @@ void plot_systematics_sub()
   lg_fraction_geant->Draw();
   lg_fraction_geant->SetTextSize(0.045);
 
-  lg_fraction_geant->AddEntry("", "Re-interaction", "");
+  lg_fraction_geant->AddEntry("", "Reinteraction", "");
   
   index_geant = 14;
   lg_fraction_geant->AddEntry(h1_frac_sub_geant[index_geant], TString::Format("#color[%d]{%s}", map_color_geant[index_geant], map_name_fgx_sub[index_geant].Data()), "f");  
@@ -715,7 +716,12 @@ void plot_systematics_sub()
   for(int idx=detector_bgn; idx<=detector_end; idx++) {
     if( idx==5 ) continue;
     index_detector = idx;
-    lg_fraction_detector->AddEntry(h1_frac_sub_detector[index_detector], TString::Format("#color[%d]{%s}", map_color_detector[index_detector], map_name_detector_sub[index_detector].Data()), "f");   
+    lg_fraction_detector->AddEntry(h1_frac_sub_detector[index_detector], TString::Format("#color[%d]{%s}", map_color_detector[index_detector], map_name_detector_sub[index_detector].Data()), "f");
+
+    double cov_total = h2_sum_detector_abs_cov->Integral();
+    double cov_sub = h2_sub_detector_abs_cov[idx]->Integral();
+    double value = cov_sub*100./cov_total;
+    //cout<<TString::Format(" ---> detector %2d, %6.1f  %s", idx, value, map_name_detector_sub[index_detector].Data())<<endl;
   }
 
   canv_h2_basic_stack_detector->SaveAs("canv_h2_basic_stack_detector.png");
@@ -898,6 +904,61 @@ void plot_systematics_sub()
       h1_percentage_dirt->SetBinContent(ibin, h2_sum_dirt_abs_cov->GetBinContent(ibin, ibin)*100./cov_total );      
     }
   }
+
+  h1_stack_total->Add( h1_percentage_flux ); h1_percentage_flux->SetFillColor(color_flux); h1_percentage_flux->SetLineColor(kBlack);
+  h1_stack_total->Add( h1_percentage_Xs ); h1_percentage_Xs->SetFillColor(color_Xs); h1_percentage_Xs->SetLineColor(kBlack);
+  h1_stack_total->Add( h1_percentage_geant ); h1_percentage_geant->SetFillColor(color_geant); h1_percentage_geant->SetLineColor(kBlack);
+  h1_stack_total->Add( h1_percentage_detector ); h1_percentage_detector->SetFillColor(color_detector); h1_percentage_detector->SetLineColor(kBlack);
+  h1_stack_total->Add( h1_percentage_mc_stat ); h1_percentage_mc_stat->SetFillColor(color_mc_stat); h1_percentage_mc_stat->SetLineColor(kBlack);
+  h1_stack_total->Add( h1_percentage_dirt ); h1_percentage_dirt->SetFillColor(color_dirt); h1_percentage_dirt->SetLineColor(kBlack);
+
+  //////////////////////////
+  
+  TH2D *h2_basic_stack_total = new TH2D("h2_basic_stack_total", "" , rows, 0, rows, 110, 0, 110);
+  
+  TCanvas *canv_h2_basic_stack_total = new TCanvas("canv_h2_basic_stack_total", "canv_h2_basic_stack_total", 1300, 700);
+  func_canv_margin(canv_h2_basic_stack_total, 0.1, 0.24, 0.11, 0.15);
+  h2_basic_stack_total->Draw();
+  func_title_size(h2_basic_stack_total, 0.06, 0.045, 0.045, 0.045);
+  func_xy_title(h2_basic_stack_total, "Reco energy [MeV]", "Syst. percentage [%]");
+  h2_basic_stack_total->GetXaxis()->CenterTitle(); h2_basic_stack_total->GetYaxis()->CenterTitle();
+  h2_basic_stack_total->GetXaxis()->SetTitleOffset(1.8); h2_basic_stack_total->GetYaxis()->SetTitleOffset(0.9);
+
+  h1_stack_total->Draw("same");
+
+  h2_basic_stack_total->Draw("same axis");
+  h2_basic_stack_total->GetYaxis()->SetTickLength(0.02);
+  h2_basic_stack_total->GetXaxis()->SetTickLength(0);
+  h2_basic_stack_total->GetXaxis()->SetLabelSize(0.065);
+  
+  for(int ibin=1; ibin<=rows; ibin++) {
+    h2_basic_stack_total->GetXaxis()->SetBinLabel(ibin, axis_label_str[ibin-1]);  
+  }
+  for(auto it_map=map_line_label_xx.begin(); it_map!=map_line_label_xx.end(); it_map++) {
+    map_line_label_xx[it_map->first]->Draw();
+  }
+  
+  for(int idx=0; idx<num_ch-1; idx++) {
+    line_percentage[idx]->Draw();
+  }
+
+  for(int idx=0; idx<num_ch; idx++) {
+    pt_text_ch[idx]->Draw();
+  }
+
+  TLegend *lg_percentage_total = new TLegend(0.76+0.01, 0.15, 0.98, 0.89);
+  lg_percentage_total->Draw();
+  lg_percentage_total->SetTextSize(0.045);
+
+  lg_percentage_total->AddEntry(h1_percentage_flux, TString::Format("#color[%d]{Flux}", color_flux), "f");  
+  lg_percentage_total->AddEntry(h1_percentage_Xs, TString::Format("#color[%d]{#nu-Ar Xs}", color_Xs), "f");  
+  lg_percentage_total->AddEntry(h1_percentage_geant, TString::Format("#color[%d]{Reinteraction}", color_geant), "f");  
+  lg_percentage_total->AddEntry(h1_percentage_detector, TString::Format("#color[%d]{Detector}", color_detector), "f");  
+  lg_percentage_total->AddEntry(h1_percentage_mc_stat, TString::Format("#color[%d]{MC stat}", color_mc_stat), "f");  
+  lg_percentage_total->AddEntry(h1_percentage_dirt, TString::Format("#color[%d]{Dirt}", color_dirt), "f");  
+
+  canv_h2_basic_stack_total->SaveAs("canv_h2_basic_stack_total.png");
+  //canv_h2_basic_stack_total->SaveAs("canv_h2_basic_stack_total.pdf");
   
   
   ////////////
@@ -1202,7 +1263,127 @@ void plot_systematics_sub()
   canv_h2_sum_total_correlation->SaveAs("canv_h2_sum_total_correlation.png");
   //canv_h2_sum_total_correlation->SaveAs("canv_h2_sum_total_correlation.pdf");
         
+  ///////////////////////////////////////////////////////////////////////////////////// one bin for detector
+  ///////////////////////////////////////////////////////////////////////////////////// one bin for detector
+
+  // 1  hdata_obsch_1          bin-num 26
+  // 2  hdata_obsch_2          bin-num 26
+  // 3  hdata_obsch_3          bin-num 26
+  // 4  hdata_obsch_4          bin-num 26
+  // 5  hdata_obsch_5          bin-num 11
+  // 6  hdata_obsch_6          bin-num 11
+  // 7  hdata_obsch_7          bin-num 11
+
+  // const int num_ch = 7;
+  // int bins_ch[num_ch] = {26, 26, 26, 26, 11, 11, 11};  
+  // int rows = matrix_absolute_additional_cov_newworld->GetNrows();
+
+  TMatrixD matrix_trans(rows, num_ch);
+
+  for(int idx=0; idx<num_ch; idx++) {
+    int ilow = 0;
+    int ihgh = 0;
+    for(int jdx=0; jdx<=idx; jdx++) {
+      ihgh += bins_ch[jdx];
+    }
+    ilow = ihgh - bins_ch[idx];
+
+    int eff_ilow = ilow;
+    int eff_ihgh = ihgh-1;
+    //cout<<TString::Format(" ---> check %3d - %3d", eff_ilow, eff_ihgh)<<endl;
+
+    for(int kdx=eff_ilow; kdx<=eff_ihgh; kdx++) {
+      //cout<<TString::Format(" ---> check %3d, belong to %2d", kdx, idx)<<endl;
+      matrix_trans(kdx, idx) = 1;
+    }
+      
+  }// idx
+
+  TMatrixD matrix_trans_T = matrix_trans.T(); matrix_trans.T(); 
+
+  TMatrixD matrix_pred_userworld = (*matrix_pred_newworld) * matrix_trans;
   
+  map<int, TMatrixD>matrix_detector_sub_userworld;
+  TMatrixD matrix_detector_sum_userworld(num_ch, num_ch);
+  
+  map<int, TH1D*>map_h1_detector_percenatge_userworld;
+  THStack *h1_stack_detector_userworld = new THStack("h1_stack_detector_userworld", "");
+
+  for(int idx=1; idx<=10; idx++) {
+    if(idx==5) continue;
+    matrix_detector_sub_userworld[idx].Clear();
+    matrix_detector_sub_userworld[idx].ResizeTo(num_ch, num_ch);
+    matrix_detector_sub_userworld[idx] = matrix_trans_T * (*matrix_detector_sub[idx]) * matrix_trans;
+    matrix_detector_sum_userworld += matrix_detector_sub_userworld[idx];
+  }
+
+  for(int idx=1; idx<=10; idx++) {
+    if(idx==5) continue;
+    roostr = TString::Format("map_h1_detector_percenatge_userworld_%d", idx);
+    map_h1_detector_percenatge_userworld[idx] = new TH1D(roostr, "", num_ch, 0, num_ch);
+    for(int ibin=1; ibin<=num_ch; ibin++) {
+      double cov_total = matrix_detector_sum_userworld(ibin-1, ibin-1);
+      double cov_sub = matrix_detector_sub_userworld[idx](ibin-1, ibin-1);
+      if( cov_total!=0 ) {
+	map_h1_detector_percenatge_userworld[idx]->SetBinContent( ibin, cov_sub*100./cov_total );
+	//cout<<TString::Format(" ---> ibin %2d, results %7.2f, det %20s", ibin, cov_sub*100./cov_total, map_name_detector_sub[idx].Data() )<<endl;
+      }
+      
+    }
+    map_h1_detector_percenatge_userworld[idx]->SetFillColor( map_color_detector[idx] );
+    map_h1_detector_percenatge_userworld[idx]->SetLineColor( kBlack );
+    h1_stack_detector_userworld->Add( map_h1_detector_percenatge_userworld[idx] );
+  }
+
+  ///////////////////////////////////////
+  
+  TH2D *h2_basic_stack_detector_userworld = new TH2D("h2_basic_stack_detector_userworld", "" , num_ch, 0, num_ch, 110, 0, 110);
+  
+  TCanvas *canv_h2_basic_stack_detector_userworld = new TCanvas("canv_h2_basic_stack_detector_userworld", "canv_h2_basic_stack_detector_userworld", 1300, 700);
+  func_canv_margin(canv_h2_basic_stack_detector_userworld, 0.1, 0.24, 0.11, 0.15);
+  //canv_h2_basic_stack_detector_userworld->SetGridx();
+  h2_basic_stack_detector_userworld->Draw();  
+  func_title_size(h2_basic_stack_detector_userworld, 0.06, 0.045, 0.045, 0.045);  
+  //h2_basic_stack_detector_userworld->GetXaxis()->LabelsOption("v R");
+  //h2_basic_stack_detector_userworld->GetXaxis()->SetTickLength(0);
+  func_xy_title(h2_basic_stack_detector_userworld, "", "Syst. percentage [%]");
+  //h2_basic_stack_detector_userworld->GetXaxis()->CenterTitle();
+  h2_basic_stack_detector_userworld->GetYaxis()->CenterTitle();
+  h2_basic_stack_detector_userworld->GetXaxis()->SetTitleOffset(1.8);
+  h2_basic_stack_detector_userworld->GetYaxis()->SetTitleOffset(0.9);
+  h2_basic_stack_detector_userworld->GetXaxis()->SetLabelOffset(0.04);
+  
+  h1_stack_detector_userworld->Draw("same");
+
+  h2_basic_stack_detector_userworld->Draw("same axis");
+  h2_basic_stack_detector_userworld->GetYaxis()->SetTickLength(0.02);
+  h2_basic_stack_detector_userworld->GetXaxis()->SetTickLength(0);
+  h2_basic_stack_detector_userworld->GetXaxis()->SetNdivisions(114);
+  h2_basic_stack_detector_userworld->GetXaxis()->SetLabelSize(0.045);
+
+  TString pt_str_ch_userworld[num_ch*2+1] = {" ", "FC #nu_{e}CC", " ", "PC #nu_{e}CC", " ", "FC #nu_{#mu}CC",
+					     " ", "PC #nu_{#mu}CC", " ", "FC CC#pi^{0}", " ", "PC CC#pi^{0}",
+					     " ", "NC#pi^{0}", " "};
+  
+  for(int idx=0; idx<num_ch*2+1; idx++) {
+    h2_basic_stack_detector_userworld->GetXaxis()->ChangeLabel( idx+1, 30, -1, -1, 0, -1, pt_str_ch_userworld[idx] );
+  }
+
+  index_detector = 0;
+  TLegend *lg_userworld_fraction_detector = new TLegend(0.76+0.01, 0.15, 0.98, 0.89);
+  lg_userworld_fraction_detector->Draw();
+  lg_userworld_fraction_detector->SetTextSize(0.045);
+
+  lg_userworld_fraction_detector->AddEntry("", "Detector Syst", "");
+
+  for(int idx=detector_bgn; idx<=detector_end; idx++) {
+    if( idx==5 ) continue;
+    index_detector = idx;
+    lg_userworld_fraction_detector->AddEntry(h1_frac_sub_detector[index_detector], TString::Format("#color[%d]{%s}", map_color_detector[index_detector], map_name_detector_sub[index_detector].Data()), "f");   
+  }
+  
+  canv_h2_basic_stack_detector_userworld->SaveAs("canv_h2_basic_stack_detector_userworld.png");
+  //canv_h2_basic_stack_detector_userworld->SaveAs("canv_h2_basic_stack_detector_userworld.pdf");
   
 }
 

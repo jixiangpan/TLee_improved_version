@@ -1921,7 +1921,12 @@ void TLee::Set_Spectra_MatrixCov()
   /// flag for LEE channels corresponding to the cov_input.txt
   map_Lee_ch[8] = 1;
   map_Lee_ch[9] = 1;
- 
+  
+
+  ///////////////////////////////////////
+
+  //for(int idx=1; idx<=14; idx++) map_input_spectrum_ch_str[idx] = TString::Format("pred_%02d", idx);
+  
   /////////////////////////////////////// case: separate nueCC signal and bkg
   /*
   for(int idx=1; idx<=18; idx++) map_input_spectrum_ch_str[idx] = TString::Format("pred_%02d", idx);
