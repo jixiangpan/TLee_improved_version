@@ -880,6 +880,24 @@ void plot_systematics_sub()
 
   ////////////
 
+  THStack *h1_stack_total = new THStack("h1_stack_total", "");
+  roostr = "h1_percentage_flux"; TH1D *h1_percentage_flux = new TH1D(roostr, roostr, rows, 0, rows);
+  roostr = "h1_percentage_Xs"; TH1D *h1_percentage_Xs = new TH1D(roostr, roostr, rows, 0, rows);
+  roostr = "h1_percentage_geant"; TH1D *h1_percentage_geant = new TH1D(roostr, roostr, rows, 0, rows);
+  roostr = "h1_percentage_detector"; TH1D *h1_percentage_detector = new TH1D(roostr, roostr, rows, 0, rows);
+  roostr = "h1_percentage_mc_stat"; TH1D *h1_percentage_mc_stat = new TH1D(roostr, roostr, rows, 0, rows);
+  roostr = "h1_percentage_dirt"; TH1D *h1_percentage_dirt = new TH1D(roostr, roostr, rows, 0, rows);
+  for(int ibin=1; ibin<=rows; ibin++) {
+    double cov_total = h2_sum_total_abs_cov->GetBinContent(ibin, ibin);
+    if( cov_total!=0 ) {
+      h1_percentage_flux->SetBinContent(ibin, h2_sum_flux_abs_cov->GetBinContent(ibin, ibin)*100./cov_total );
+      h1_percentage_Xs->SetBinContent(ibin, h2_sum_Xs_abs_cov->GetBinContent(ibin, ibin)*100./cov_total );
+      h1_percentage_geant->SetBinContent(ibin, h2_sum_geant_abs_cov->GetBinContent(ibin, ibin)*100./cov_total );
+      h1_percentage_detector->SetBinContent(ibin, h2_sum_detector_abs_cov->GetBinContent(ibin, ibin)*100./cov_total );
+      h1_percentage_mc_stat->SetBinContent(ibin, h2_sum_mc_stat_abs_cov->GetBinContent(ibin, ibin)*100./cov_total );
+      h1_percentage_dirt->SetBinContent(ibin, h2_sum_dirt_abs_cov->GetBinContent(ibin, ibin)*100./cov_total );      
+    }
+  }
   
   
   ////////////
