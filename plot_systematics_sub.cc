@@ -411,9 +411,11 @@ void plot_systematics_sub()
 	double cov_i = (*matrix_fgx_sub[idx])(ibin-1, ibin-1);
 	double cov_j = (*matrix_fgx_sub[idx])(jbin-1, jbin-1);
 
+	
 	total_cov_ij += sub_cov;
 	total_cov_i += cov_i;
 	total_cov_j += cov_j;
+	
 	
 	double rel_cov = 0;
 	double correlation = 0;
