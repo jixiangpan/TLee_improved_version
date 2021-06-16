@@ -868,20 +868,35 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
  
   ///////////////////////////// goodness of fit, Pearson's format
 
+  /// docDB 32520, when the prediction is sufficiently low
+  double array_pred_protect[11] = {0, 0.461, 0.916, 1.382, 1.833, 2.298, 2.767, 3.225, 3.669, 4.141, 4.599};
+  
   TMatrixD matrix_goodness_cov_total_noConstraint(num_Y, num_Y);
   for( int i=0; i<num_Y; i++ ) {
     double val_pred = matrix_pred_Y(i, 0);
-    double val_data = matrix_data_Y(i, 0);
+    double val_data = matrix_data_Y(i, 0);        
+    matrix_goodness_cov_total_noConstraint(i,i) = val_pred;
+
     
-    matrix_goodness_cov_total_noConstraint(i,i) = val_pred;    
-    if( val_data==1 ) {
-      if( val_pred<0.461 ) {// DocDB-32520, when the prediction is sufficiently low
-        double numerator = pow(val_pred-val_data, 2);
+    // if( val_data==1 ) {
+    //   if( val_pred<0.461 ) {// DocDB-32520, when the prediction is sufficiently low
+    //     double numerator = pow(val_pred-val_data, 2);
+    //     double denominator = 2*( val_pred - val_data + val_data*log(val_data/val_pred) );
+    //     matrix_goodness_cov_total_noConstraint(i,i) = numerator/denominator;
+    //   }
+    // }
+
+    
+    int int_data = (int)(val_data+0.1);
+    if( int_data>=1 && int_data<=10) {
+      if( val_pred<array_pred_protect[int_data] ) {
+	double numerator = pow(val_pred-val_data, 2);
         double denominator = 2*( val_pred - val_data + val_data*log(val_data/val_pred) );
-        matrix_goodness_cov_total_noConstraint(i,i) = numerator/denominator;
+	matrix_goodness_cov_total_noConstraint(i,i) = numerator/denominator;
       }
     }
 
+    
     if( (val_pred==val_data) && (val_pred==0) ) matrix_goodness_cov_total_noConstraint(i,i) = 1e-6;
   }  
   matrix_goodness_cov_total_noConstraint = matrix_goodness_cov_total_noConstraint + matrix_YY;
@@ -1087,7 +1102,25 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   matrix_pred.T(); matrix_data.T();
 
   TMatrixD matrix_XX = matrix_cov_total.GetSub(num_Y, num_Y+num_X-1, num_Y, num_Y+num_X-1);
-  for(int ibin=1; ibin<=num_X; ibin++) matrix_XX(ibin-1, ibin-1) += matrix_pred_X(ibin-1, 0);// Pearson's term for statistics
+  for(int ibin=1; ibin<=num_X; ibin++) {
+    //matrix_XX(ibin-1, ibin-1) += matrix_pred_X(ibin-1, 0);// Pearson's term for statistics
+
+    
+    double user_stat = matrix_pred_X(ibin-1, 0);
+    double val_meas = matrix_data_X(ibin-1,0);
+    double val_pred = matrix_pred_X(ibin-1,0);
+    int int_meas = (int)(val_meas+0.1);    
+    if( int_meas>=1 && int_meas<=10) {
+      if( val_pred<array_pred_protect[int_meas] ) {
+	double numerator = pow(val_pred-val_meas, 2);
+        double denominator = 2*( val_pred - val_meas + val_meas*log(val_meas/val_pred) );
+	user_stat = numerator/denominator;
+      }
+    }    
+    matrix_XX(ibin-1, ibin-1) += user_stat;
+
+    
+  }
   TMatrixD matrix_XX_inv = matrix_XX;
   matrix_XX_inv.Invert();
 
@@ -1098,21 +1131,59 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   TMatrixD matrix_YY_under_XX = matrix_YY - matrix_YX * matrix_XX_inv * matrix_XY;
   // Here, only for systetmaics uncertainty because of no stat in matrix_YY
   
+  /////////////////////////////
+  /////////////////////////////
+
+  double pred_cv_before = 0;
+  double pred_err_before = 0;
+
+  double pred_cv_after = 0;
+  double pred_err_after = 0;
+
+  for(int idx=0; idx<num_Y; idx++) {
+    pred_cv_before += matrix_pred_Y(idx, 0);
+    pred_cv_after += matrix_Y_under_X(idx, 0);
+
+    for(int jdx=0; jdx<num_Y; jdx++) {
+      pred_err_before += matrix_YY(idx, jdx);
+      pred_err_after += matrix_YY_under_XX(idx, jdx);
+    }
+  }
+
+  cout<<endl;
+  cout<<TString::Format(" ---> %6d befor constraint: %6.2f %6.2f", index, pred_cv_before, sqrt(pred_err_before) )<<endl;
+  cout<<TString::Format(" ---> %6d after constraint: %6.2f %6.2f", index, pred_cv_after, sqrt(pred_err_after) )<<endl;
+  cout<<endl;
+
+
+  /////////////////////////////
   ///////////////////////////// goodness of fit, Pearson's format
 
   TMatrixD matrix_goodness_cov_total_wiConstraint(num_Y, num_Y);
   for( int i=0; i<num_Y; i++ ) {
     double val_pred = matrix_Y_under_X(i, 0);
-    double val_data = matrix_data_Y(i, 0);
+    double val_data = matrix_data_Y(i, 0);    
+    matrix_goodness_cov_total_wiConstraint(i,i) = val_pred;
+
     
-    matrix_goodness_cov_total_wiConstraint(i,i) = val_pred;    
-    if( val_data==1 ) {
-      if( val_pred<0.461 ) {// DocDB-32520, when the prediction is sufficiently low
-        double numerator = pow(val_pred-val_data, 2);
-        double dewiminator = 2*( val_pred - val_data + val_data*log(val_data/val_pred) );
-        matrix_goodness_cov_total_wiConstraint(i,i) = numerator/dewiminator;
+    // if( val_data==1 ) {
+    //   if( val_pred<0.461 ) {// DocDB-32520, when the prediction is sufficiently low
+    //     double numerator = pow(val_pred-val_data, 2);
+    //     double dewiminator = 2*( val_pred - val_data + val_data*log(val_data/val_pred) );
+    //     matrix_goodness_cov_total_wiConstraint(i,i) = numerator/dewiminator;
+    //   }
+    // }
+
+    
+    int int_data = (int)(val_data+0.1);
+    if( int_data>=1 && int_data<=10) {
+      if( val_pred<array_pred_protect[int_data] ) {
+	double numerator = pow(val_pred-val_data, 2);
+        double denominator = 2*( val_pred - val_data + val_data*log(val_data/val_pred) );
+        matrix_goodness_cov_total_wiConstraint(i,i) = numerator/denominator;
       }
     }
+    
 
     if( (val_pred==val_data) && (val_pred==0) ) matrix_goodness_cov_total_wiConstraint(i,i) = 1e-6;
   }  
@@ -1925,7 +1996,7 @@ void TLee::Set_Spectra_MatrixCov()
 
   ///////////////////////////////////////
 
-  //for(int idx=1; idx<=14; idx++) map_input_spectrum_ch_str[idx] = TString::Format("pred_%02d", idx);
+  //for(int idx=1; idx<=16; idx++) map_input_spectrum_ch_str[idx] = TString::Format("pred_%02d", idx);
   
   /////////////////////////////////////// case: separate nueCC signal and bkg
   /*
@@ -2088,6 +2159,7 @@ void TLee::Set_Spectra_MatrixCov()
   cout<<" Detector systematics"<<endl;
     
   map<int, TString>map_detectorfile_str;
+  
   map_detectorfile_str[1] = detector_directory+"cov_LYDown.root";
   map_detectorfile_str[2] = detector_directory+"cov_LYRayleigh.root";
   map_detectorfile_str[3] = detector_directory+"cov_Recomb2.root";
@@ -2098,7 +2170,7 @@ void TLee::Set_Spectra_MatrixCov()
   map_detectorfile_str[8] = detector_directory+"cov_WMX.root";
   map_detectorfile_str[9] = detector_directory+"cov_WMYZ.root";
   map_detectorfile_str[10]= detector_directory+"cov_LYatt.root";
-
+  
   
   map<int, TFile*>map_file_detector_frac;
   map<int, TMatrixD*>map_matrix_detector_frac;

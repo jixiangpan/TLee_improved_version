@@ -414,6 +414,26 @@ int main(int argc, char** argv)
     Lee_test->Exe_Goodness_of_fit( vc_target_chs, vc_support_chs, 1 );
   }
 
+  if( 0 ) {
+    TMatrixD matrix_gof_trans( Lee_test->bins_newworld, 52 );// oldworld, newworld
+    for( int ibin=1; ibin<=52; ibin++) matrix_gof_trans(52+ibin-1, ibin-1) = 1;
+    
+    TMatrixD matrix_gof_trans_T( matrix_gof_trans.GetNcols(), matrix_gof_trans.GetNrows() );
+    matrix_gof_trans_T.Transpose( matrix_gof_trans );
+
+    TMatrixD matrix_gof_pred = Lee_test->matrix_pred_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_data = Lee_test->matrix_data_newworld * matrix_gof_trans;
+    TMatrixD matrix_gof_syst = matrix_gof_trans_T * (Lee_test->matrix_absolute_cov_newworld) * matrix_gof_trans;
+
+    Lee_test->Exe_Goodness_of_fit( 52, 0, matrix_gof_pred, matrix_gof_data, matrix_gof_syst, 123);
+
+    TFile *file_numu = new TFile("file_numu.root", "recreate");
+    matrix_gof_pred.Write("matrix_gof_pred");
+    matrix_gof_data.Write("matrix_gof_meas");
+    matrix_gof_syst.Write("matrix_gof_syst");
+    file_numu->Close();
+  }
+  
   ///////////////////////// gof
   
   if( flag_CCpi0_FC_by_numuCC ) { 

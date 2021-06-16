@@ -31,13 +31,23 @@ namespace config_Lee
   /* TString mc_directory = "./new_new_TLee_input_normal_highstatDetVar/mc_stat/"; */
 
 
+
+  
   
   TString spectra_file = "./TLee_input_Mar25_final_16chs_standard/merge.root";
   TString flux_Xs_directory = "./TLee_input_Mar25_final_16chs_standard/flux_Xs/";
   TString detector_directory = "./TLee_input_Mar25_final_16chs_standard/det/";
   TString mc_directory = "./TLee_input_Mar25_final_16chs_standard/mc_stat/";
+
+
   
   
+  
+  /* TString spectra_file = "./TLee_input_NumiReinteractionIssue_cutbased/merge.root"; */
+  /* TString flux_Xs_directory = "./TLee_input_NumiReinteractionIssue_cutbased/flux_Xs/"; */
+  /* TString detector_directory = "./TLee_input_NumiReinteractionIssue_cutbased/det/"; */
+  /* TString mc_directory = "./TLee_input_NumiReinteractionIssue_cutbased/mc_stat/"; */
+
   
   /* TString spectra_file = "./numi_result_syst_0_0/merge.root"; */
   /* TString flux_Xs_directory = "./numi_result_syst_0_0/XsFlux/"; */

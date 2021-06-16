@@ -74,6 +74,7 @@ void plot_systematics_sub()
   TString roostr = "";
 
   roostr = "file_collapsed_covariance_matrix.root";
+  //roostr = "file_collapsed_covariance_matrix_numi.root";
   //roostr = "file_collapsed_covariance_matrix_DetNoRandom.root";
   TFile *roofile_syst = new TFile(roostr, "read");
 
