@@ -897,7 +897,7 @@ void TLee::Plotting_singlecase(TMatrixD matrix_pred_temp, TMatrixD matrix_meas_t
       double pvalue_local_AA = TMath::Prob( sum_AA, user_vec_size );
       
       double coeff = TMath::Factorial(rows)/TMath::Factorial(rows-user_vec_size)/TMath::Factorial(user_vec_size);
-      double pvalue_global_AA = 1 - coeff*pvalue_local_AA;
+      double pvalue_global_AA = coeff*pvalue_local_AA;
       sigma_global = sqrt( TMath::ChisquareQuantile( 1-pvalue_global_AA, 1 ) );            
     }
   }
