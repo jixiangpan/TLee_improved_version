@@ -861,7 +861,7 @@ void TLee::Plotting_singlecase(TMatrixD matrix_pred_temp, TMatrixD matrix_meas_t
   h1_lambda_sigmax2->Draw("same axis");
 
   double shift_x_lambda_sigma = -0.15;
-  TLegend *lg_lambda_sigma = new TLegend(0.35+shift_x_lambda_sigma, 0.75, 0.7+shift_x_lambda_sigma, 0.85);
+  TLegend *lg_lambda_sigma = new TLegend(0.35+shift_x_lambda_sigma, 0.75, 0.7+shift_x_lambda_sigma, 0.85+0.02);
   // lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{Total num: %d}", kBlue, rows), "");
   // lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{|#sigma_{i}\'| #in (1, 2]: %1.0f, expect. %3.2f}",
   // 						kBlue, lambda_sigma_12, rows*0.2718), "");
@@ -877,46 +877,35 @@ void TLee::Plotting_singlecase(TMatrixD matrix_pred_temp, TMatrixD matrix_meas_t
   double sigma_global = 0;
   double sigma_global_AA = 0;
   double sigma_global_BB = 0;
-  
+  double sum_AA = 0;
+ 
   if( (int)(map_above3sigma.size())>=1 ) {    
     if( (int)(map_above3sigma.size())==1 ) {
       double chi2_local = pow(map_above3sigma.begin()->second, 2);
       double pvalue_local = TMath::Prob( chi2_local, 1 );
       pvalue_global = 1 - pow(1-pvalue_local, rows);
       sigma_global = sqrt( TMath::ChisquareQuantile( 1-pvalue_global, 1 ) );
+      sum_AA = chi2_local;
     }
-    else {
+    else {      
       int user_vec_size = vec_above3sigma.size();
-      sort( vec_above3sigma.begin(), vec_above3sigma.end() );
-
-      double chi2_local_AA = pow( vec_above3sigma.at(0), 2 );
-      double pvalue_local_AA = TMath::Prob( chi2_local_AA, 1 );
-      double sum_AA = 0;
-      for(int idx=0; idx<user_vec_size; idx++) {
-	double coeff = TMath::Factorial(rows)/TMath::Factorial(rows-idx)/TMath::Factorial(idx);
-	sum_AA += coeff*pow(pvalue_local_AA, idx)*pow( 1-pvalue_local_AA, rows-idx );
-      }
-      double pvalue_global_AA = 1 - sum_AA;
-      sigma_global_AA = sqrt( TMath::ChisquareQuantile( 1-pvalue_global_AA, 1 ) );
       
-      double chi2_local_BB = pow( vec_above3sigma.at(user_vec_size-1), 2 );
-      double pvalue_local_BB = TMath::Prob( chi2_local_BB, 1 );
-      double sum_BB = 0;
+      sum_AA = 0;
       for(int idx=0; idx<user_vec_size; idx++) {
-	double coeff = TMath::Factorial(rows)/TMath::Factorial(rows-idx)/TMath::Factorial(idx);
-	sum_BB += coeff*pow(pvalue_local_BB, idx)*pow( 1-pvalue_local_BB, rows-idx );
+	sum_AA += pow( vec_above3sigma.at(idx), 2 );	
       }
-      double pvalue_global_BB = 1 - sum_BB;
-      sigma_global_BB = sqrt( TMath::ChisquareQuantile( 1-pvalue_global_BB, 1 ) );      
+      double pvalue_local_AA = TMath::Prob( sum_AA, user_vec_size );
+      
+      double coeff = TMath::Factorial(rows)/TMath::Factorial(rows-user_vec_size)/TMath::Factorial(user_vec_size);
+      double pvalue_global_AA = 1 - coeff*pvalue_local_AA;
+      sigma_global = sqrt( TMath::ChisquareQuantile( 1-pvalue_global_AA, 1 ) );            
     }
   }
   
-  lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{#chi^{2}/ndf: %3.1f/%d, significance: %3.1f#sigma}", kBlue, chi2, rows, sigma_default), "");
+  lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{%3.1f#sigma:        overall #chi^{2}/dof: %3.1f/%d}", kBlue, sigma_default, chi2, rows), "");
   if( lambda_sigma_3p>=1 ) {
-    if( lambda_sigma_3p==1 )
-      lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{Significance (look elsewhere effect): %3.1f#sigma}", kRed, sigma_global), "");
-    else
-      lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{Significance (look elsewhere effect): (%3.1f, %3.1f)#sigma}", kRed, sigma_global_AA, sigma_global_BB), "");
+    lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{%3.1f#sigma (LEE corr.): #chi^{2}/dof: %3.1f/%d (|#epsilon_{i}\'|>3)}",
+						  kRed, sigma_global, sum_AA, (int)(map_above3sigma.size())), "");
   }
   else {
     lg_lambda_sigma->AddEntry("", "", "");
