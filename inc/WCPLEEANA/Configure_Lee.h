@@ -29,40 +29,21 @@ namespace config_Lee
   /* TString flux_Xs_directory = "./new_new_TLee_input_normal_highstatDetVar/flux_Xs/"; */
   /* TString detector_directory = "./new_new_TLee_input_normal_highstatDetVar/det/"; */
   /* TString mc_directory = "./new_new_TLee_input_normal_highstatDetVar/mc_stat/"; */
-
-
-
-  
-  
-  TString spectra_file = "./TLee_input_Mar25_final_16chs_standard/merge.root";
-  TString flux_Xs_directory = "./TLee_input_Mar25_final_16chs_standard/flux_Xs/";
-  TString detector_directory = "./TLee_input_Mar25_final_16chs_standard/det/";
-  TString mc_directory = "./TLee_input_Mar25_final_16chs_standard/mc_stat/";
-
-
-  
-  
-  
+          
   /* TString spectra_file = "./TLee_input_NumiReinteractionIssue_cutbased/merge.root"; */
   /* TString flux_Xs_directory = "./TLee_input_NumiReinteractionIssue_cutbased/flux_Xs/"; */
   /* TString detector_directory = "./TLee_input_NumiReinteractionIssue_cutbased/det/"; */
   /* TString mc_directory = "./TLee_input_NumiReinteractionIssue_cutbased/mc_stat/"; */
-
   
   /* TString spectra_file = "./numi_result_syst_0_0/merge.root"; */
   /* TString flux_Xs_directory = "./numi_result_syst_0_0/XsFlux/"; */
   /* TString detector_directory = "./TLee_input_Mar25_final_16chs_standard/det/"; */
-  /* TString mc_directory = "./numi_result_syst_0_0/mc_stat/"; */
-
-  
+  /* TString mc_directory = "./numi_result_syst_0_0/mc_stat/"; */  
   
   /* TString spectra_file = "./TLee_input_eLEEnote1/merge.root"; */
   /* TString flux_Xs_directory = "./TLee_input_eLEEnote1/flux_Xs/"; */
   /* TString detector_directory = "./TLee_input_eLEEnote1/det/"; */
   /* TString mc_directory = "./TLee_input_eLEEnote1/mc_stat/"; */
-
-
-
   
   /*
   TString spectra_file = "./numi_summary_noosc/merge.root";
@@ -76,6 +57,15 @@ namespace config_Lee
   TString detector_directory = "./numi_summary_osc/det/";
   TString mc_directory = "./numi_summary_osc/mcstat/";
   */
+
+
+  
+  TString spectra_file = "./TLee_input_Mar25_final_16chs_standard/merge.root";
+  TString flux_Xs_directory = "./TLee_input_Mar25_final_16chs_standard/flux_Xs/";
+  TString detector_directory = "./TLee_input_Mar25_final_16chs_standard/det/";
+  TString mc_directory = "./TLee_input_Mar25_final_16chs_standard/mc_stat/";
+
+
   
   int channels_observation = 7;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
@@ -111,9 +101,11 @@ namespace config_Lee
   
   ////////// goodness of fit
   
-  double Lee_strength_for_GoF      = 0;
+  double Lee_strength_for_GoF         = 0;
 
   bool flag_GoF_output2file_default_0 = 0;
+
+  bool flag_lookelsewhere             = 0;
   
   bool flag_both_numuCC            = 0;// 1
   bool flag_CCpi0_FC_by_numuCC     = 0;// 2

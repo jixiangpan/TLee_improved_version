@@ -64,6 +64,8 @@ public:
     rand = new TRandom3(0);
     flag_individual_cov_newworld = true;
     flag_Lee_minimization_after_constraint = false;
+
+    flag_lookelsewhere = false;
   }
 
   /////////////////////////////////////////////////////// data memeber
@@ -78,6 +80,8 @@ public:
   bool flag_syst_additional;
   bool flag_syst_mc_stat;
 
+  bool flag_lookelsewhere;
+  
   TString spectra_file;
   TString flux_Xs_directory;
   TString detector_directory;
@@ -170,6 +174,10 @@ public:
 
   // target detailed channels are constrained by supported detailed channels
   int Exe_Goodness_of_fit_detailed(vector<int>vc_target_detailed_chs, vector<int>vc_support_detailed_chs, int index);
+
+  // Significance corrected by look elsewhere effect
+  double GetChi2(TMatrixD matrix_pred_temp, TMatrixD matrix_meas_temp, TMatrixD matrix_syst_abscov_temp);
+  void Plotting_singlecase(TMatrixD matrix_pred_temp, TMatrixD matrix_meas_temp, TMatrixD matrix_syst_abscov_temp, bool saveFIG, TString ffstr, int index);
   
   // produceing pseudo-experiments
   void Set_Variations(int num_toy);

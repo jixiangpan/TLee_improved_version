@@ -86,7 +86,9 @@ int main(int argc, char** argv)
   Lee_test->syst_cov_flux_Xs_end   = config_Lee::syst_cov_flux_Xs_end;
   Lee_test->syst_cov_mc_stat_begin = config_Lee::syst_cov_mc_stat_begin;
   Lee_test->syst_cov_mc_stat_end   = config_Lee::syst_cov_mc_stat_end;  
-  
+ 
+  Lee_test->flag_lookelsewhere     = config_Lee::flag_lookelsewhere;
+
   Lee_test->scaleF_POT = scaleF_POT;
   Lee_test->Set_config_file_directory(config_Lee::spectra_file, config_Lee::flux_Xs_directory,
                                       config_Lee::detector_directory, config_Lee::mc_directory);
