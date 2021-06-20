@@ -256,6 +256,8 @@ void plot_systematics_sub()
 	  correlation = sub_cov/sqrt(cov_i)/sqrt(cov_j);
 	}
 
+	if( ibin==jbin ) correlation = 1;
+	
 	h2_sub_flux_abs_cov[idx]->SetBinContent(ibin, jbin, sub_cov);
 	h2_sub_flux_rel_cov[idx]->SetBinContent(ibin, jbin, rel_cov);
 	h2_sub_flux_correlation[idx]->SetBinContent(ibin, jbin, correlation);
@@ -272,7 +274,9 @@ void plot_systematics_sub()
 	rel_cov = total_cov_ij/cv_i/cv_j;
 	correlation = total_cov_ij/sqrt(total_cov_i)/sqrt(total_cov_j);
       }
-            
+      
+      if( ibin==jbin ) correlation = 1;
+      
       h2_sum_flux_abs_cov->SetBinContent( ibin, jbin, total_cov_ij );
       h2_sum_flux_rel_cov->SetBinContent( ibin, jbin, rel_cov );
       h2_sum_flux_correlation->SetBinContent(ibin, jbin, correlation);
@@ -427,7 +431,9 @@ void plot_systematics_sub()
 	  rel_cov = sub_cov/cv_i/cv_j;
 	  correlation = sub_cov/sqrt(cov_i)/sqrt(cov_j);
 	}
-
+	
+	if( ibin==jbin ) correlation = 1;
+	
 	h2_sub_geant_abs_cov[idx]->SetBinContent(ibin, jbin, sub_cov);
 	h2_sub_geant_rel_cov[idx]->SetBinContent(ibin, jbin, rel_cov);
 	h2_sub_geant_correlation[idx]->SetBinContent(ibin, jbin, correlation);
@@ -444,7 +450,9 @@ void plot_systematics_sub()
 	rel_cov = total_cov_ij/cv_i/cv_j;
 	correlation = total_cov_ij/sqrt(total_cov_i)/sqrt(total_cov_j);
       }
-            
+         	
+      if( ibin==jbin ) correlation = 1;
+   
       h2_sum_geant_abs_cov->SetBinContent( ibin, jbin, total_cov_ij );
       h2_sum_geant_rel_cov->SetBinContent( ibin, jbin, rel_cov );
       h2_sum_geant_correlation->SetBinContent(ibin, jbin, correlation);
@@ -611,6 +619,8 @@ void plot_systematics_sub()
 	  rel_cov = sub_cov/cv_i/cv_j;
 	  correlation = sub_cov/sqrt(cov_i)/sqrt(cov_j);
 	}
+	
+	if( ibin==jbin ) correlation = 1;
 
 	h2_sub_detector_abs_cov[idx]->SetBinContent(ibin, jbin, sub_cov);
 	h2_sub_detector_rel_cov[idx]->SetBinContent(ibin, jbin, rel_cov);
@@ -628,7 +638,9 @@ void plot_systematics_sub()
 	rel_cov = total_cov_ij/cv_i/cv_j;
 	correlation = total_cov_ij/sqrt(total_cov_i)/sqrt(total_cov_j);
       }
-            
+      
+      if( ibin==jbin ) correlation = 1;
+     
       h2_sum_detector_abs_cov->SetBinContent( ibin, jbin, total_cov_ij );
       h2_sum_detector_rel_cov->SetBinContent( ibin, jbin, rel_cov );
       h2_sum_detector_correlation->SetBinContent(ibin, jbin, correlation);
@@ -767,6 +779,8 @@ void plot_systematics_sub()
 	rel_cov = cov_ij/cv_i/cv_j;
 	correlation = cov_ij/sqrt(cov_i)/sqrt(cov_j);
       }
+	
+      if( ibin==jbin ) correlation = 1;
 
       h2_sum_Xs_abs_cov->SetBinContent(ibin, jbin, cov_ij);
       h2_sum_Xs_rel_cov->SetBinContent(ibin, jbin, rel_cov);
@@ -800,7 +814,9 @@ void plot_systematics_sub()
 	rel_cov = cov_ij/cv_i/cv_j;
 	correlation = cov_ij/sqrt(cov_i)/sqrt(cov_j);
       }
-
+	
+      if( ibin==jbin ) correlation = 1;
+	
       h2_sum_mc_stat_abs_cov->SetBinContent(ibin, jbin, cov_ij);
       h2_sum_mc_stat_rel_cov->SetBinContent(ibin, jbin, rel_cov);
       h2_sum_mc_stat_correlation->SetBinContent(ibin, jbin, correlation);      
@@ -833,6 +849,8 @@ void plot_systematics_sub()
 	rel_cov = cov_ij/cv_i/cv_j;
 	correlation = cov_ij/sqrt(cov_i)/sqrt(cov_j);
       }
+	
+      if( ibin==jbin ) correlation = 1;
 
       h2_sum_dirt_abs_cov->SetBinContent(ibin, jbin, cov_ij);
       h2_sum_dirt_rel_cov->SetBinContent(ibin, jbin, rel_cov);
@@ -878,6 +896,8 @@ void plot_systematics_sub()
 	rel_cov = cov_ij/cv_i/cv_j;
 	correlation = cov_ij/sqrt(cov_i)/sqrt(cov_j);
       }
+	
+      if( ibin==jbin ) correlation = 1;
 
       h2_sum_total_rel_cov->SetBinContent(ibin, jbin, rel_cov);
       h2_sum_total_correlation->SetBinContent(ibin, jbin, correlation);      
